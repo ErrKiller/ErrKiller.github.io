@@ -1,0 +1,59 @@
+*{
+	margin:0;
+	padding: 0;
+}
+a{
+	text-decoration: none;
+}
+#logo{
+	
+	font-size: 30px;
+	font-weight: 600;
+	text-align: center;
+}
+#logo:hover{
+transition-duration:5s ;
+font-size: 30px;
+color: #ffffff;
+background-color: #00ff7f;
+}
+#dingwei{
+	padding-top: 30px;
+	font-size: 20px;
+	text-align: center;
+	position: fixed;
+	bottom: 10px;
+	right: 5px;
+	height: 100px;
+	width: 100px;
+	background-color: #72d3ff;
+}
+#fa{
+	flex-direction: row;
+	display: flex;
+	width:100%;
+	height: 500px;
+	background-color: yellow;
+}
+#son1{
+	flex:1;
+	background-color: #72D3FF;
+}
+#son2{
+	flex:2;
+	background-color: bisque;
+	
+}
+#son3{
+	background-color: #ff55ff;
+	flex: 1;
+}
+#son1 img{
+	width: 360px;
+	height: 500px;
+}
+#fw{
+	width: 100%;
+height: 6000px;
+background-color: #55ff7f;
+}
