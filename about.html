@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>关于</title>
+		<style type="text/css">
+			#body{
+				width: auto;
+				height:auto ;
+			}
+		.ml15 {
+		  font-weight: 800;
+		  font-size: 7em;
+		  text-transform: uppercase;
+		  letter-spacing: 0px;
+		}
+		
+		.ml15 .word {
+		  display: inline-block;
+		  line-height: 1em;
+		}
+		</style>
+	</head>
+	<body>
+		<div id="body">
+			<h1 class="ml15">
+		  <span class="word">你好，</span>
+		  <span class="word">我是199000320</span>
+		</h1>
+		</div>
+		
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
+		<script type="text/javascript">
+			anime.timeline({loop: true})
+			  .add({
+			    targets: '.ml15 .word',
+			    scale: [14,1],
+			    opacity: [0,1],
+			    easing: "easeOutCirc",
+			    duration: 800,
+			    delay: (el, i) => 800 * i
+			  }).add({
+			    targets: '.ml15',
+			    opacity: 0,
+			    duration: 1000,
+			    easing: "easeOutExpo",
+			    delay: 1000
+			  });
+		</script>
+	</body>
+</html>
