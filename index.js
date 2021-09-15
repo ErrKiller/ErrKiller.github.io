@@ -13,6 +13,7 @@
 
 //倒计时功能
 //b为截至时间,格式为：2021/7/7
+//软考倒计时
 var showtime = function (b) {
     var nowtime = new Date(),  //获取当前时间
         endtime = new Date(b);  //定义结束时间
@@ -29,6 +30,13 @@ sysj.innerHTML=showtime("2021/11/6");
 sysj.style.cssText="color:#ffffff;";
 }, 1000);  //反复执行函数本身
 
+
+//cet4倒计时
+var cet4 = document.getElementById("cet4");
+setInterval (function () {
+cet4.innerHTML=showtime("2021/12/18");
+cet4.style.cssText="color:#ffffff;";
+}, 1000);  //反复执行函数本身
 //son2(中间的区域)
 
 
@@ -57,54 +65,23 @@ anime.timeline({loop: true})
   });
   
   //logo
-  var ml4 = {};
-  ml4.opacityIn = [0,1];
-  ml4.scaleIn = [0.2, 1];
-  ml4.scaleOut = 3;
-  ml4.durationIn = 800;
-  ml4.durationOut = 600;
-  ml4.delay = 500;
-
+  // Wrap every letter in a span
+  var textWrapper = document.querySelector('.ml6 .letters');
+  textWrapper.innerHTML = textWrapper.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
+  
   anime.timeline({loop: true})
     .add({
-      targets: '.ml4 .letters-1',
-      opacity: ml4.opacityIn,
-      scale: ml4.scaleIn,
-      duration: ml4.durationIn
+      targets: '.ml6 .letter',
+      translateY: ["1.1em", 0],
+      translateZ: 0,
+      duration: 750,
+      delay: (el, i) => 50 * i
     }).add({
-      targets: '.ml4 .letters-1',
+      targets: '.ml6',
       opacity: 0,
-      scale: ml4.scaleOut,
-      duration: ml4.durationOut,
-      easing: "easeInExpo",
-      delay: ml4.delay
-    }).add({
-      targets: '.ml4 .letters-2',
-      opacity: ml4.opacityIn,
-      scale: ml4.scaleIn,
-      duration: ml4.durationIn
-    }).add({
-      targets: '.ml4 .letters-2',
-      opacity: 0,
-      scale: ml4.scaleOut,
-      duration: ml4.durationOut,
-      easing: "easeInExpo",
-      delay: ml4.delay
-    }).add({
-      targets: '.ml4 .letters-3',
-      opacity: ml4.opacityIn,
-      scale: ml4.scaleIn,
-      duration: ml4.durationIn
-    }).add({
-      targets: '.ml4 .letters-3',
-      opacity: 0,
-      scale: ml4.scaleOut,
-      duration: ml4.durationOut,
-      easing: "easeInExpo",
-      delay: ml4.delay
-    }).add({
-      targets: '.ml4',
-      opacity: 0,
-      duration: 500,
-      delay: 500
+      duration: 1000,
+      easing: "easeOutExpo",
+      delay: 1000
     });
+	
+	
