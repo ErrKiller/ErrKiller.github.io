@@ -5,6 +5,9 @@
 a{
 	text-decoration: none;
 }
+#netyun{
+margin: 0 auto;
+}
 /* 软考倒计时动态 */
 .ml2 {
   font-weight: 900;
