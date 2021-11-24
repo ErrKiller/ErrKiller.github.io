@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>京东选项卡切换</title>
+		<script src="jquery-3.6.0.js"></script>
+		<style>
+			*{margin:0;padding:0;list-style:none;}
+			body{background:#fff;font:normal 12px/22px 宋体;}
+			img{border:0;}
+			a{text-decoration:none;color:#333;}
+			a:hover{color:#1974A1;}
+			/* tabdemo css */
+			.tabox{width:890px;margin:30px auto;border-top:2px solid #c00;}
+			.tabox .hd{overflow:hidden;background:url(bg.png) 0 -32px #efefef;border-left:1px solid #ddd;}
+			.tabox .hd li{position:relative;margin-left:-1px;height:37px;line-height:37px;text-align:center;width:177px;float:left;border:1px solid #ddd;border-top:0;font:normal 14px/37px "Microsoft YaHei";_font-weight:bold;cursor:default;}
+			/* .tabox .hd li.on{width:176px;background:#fff;border-bottom:1px solid #fff;color:#c00;} */ 
+			.tabox .bd{height:230px;border:1px solid #ddd;border-top:0;}
+			.tabox .lh{overflow:hidden;}
+			.tabox .lh li{width:156px;padding:0 10px;float:left;}
+			.tabox .lh li .p-img{width:130px;height:132px;padding:30px 13px 0 13px;margin:0 auto;text-align:center;}
+			.tabox .lh li .p-name{height:36px;line-height:18px;word-break:break-all;word-wrap:break-word;overflow:hidden;}
+			.tabox .lh li .p-price{color:#999;}
+			.tabox .lh li .p-price strong{color:#c00;font-size:14px;font-family:verdana;}
+			.sphp{width:176px;background:#fff;border-bottom:1px solid #fff;color:#c00;}
+		</style>
+		<script type="text/javascript">
+			//199000320童艳飞
+			$(function(){
+				$("ul>li").click(function(e){
+					$("ul>li").eq($(this).index()).addClass("sphp");
+					$("ul>li").eq($(this).index()).siblings().removeClass();
+					$(".bd>ul").eq($(this).index()).siblings().hideA("300ms");
+					$(".bd>ul").eq($(this).index()).toggle("400ms");
+				});
+				
+			}
+			
+			);
+		</script>
+	<body>
+		<div class="tabox">
+		      <div class="hd">
+		        <ul>
+		          <li class="on" id="tyf">疯狂抢购</li>
+		          <li class=" ">猜您喜欢</li>
+		          <li class=" ">热卖商品</li>
+		          <li class=" ">热评商品</li>
+		          <li class=" ">新品上架</li></ul>
+		      </div>
+		      <div class="bd">
+		        <ul class="lh">
+		          <img src="p1.jpg" >
+		        </ul>
+		        <ul class="lh" style="display: none;">
+		          <img src="p2.jpg" >
+		        </ul>
+		        <ul class="lh" style="display: none;">
+		          <img src="p3.jpg" >
+		        </ul>
+		        <ul class="lh" style="display: none;">
+		          <img src="p4.jpg" >
+		        </ul>
+		        <ul class="lh" style="display: none;">
+		          <img src="p5.jpg" >
+		        </ul>
+		      </div>
+		    </div>
+	</body>
+</html>
