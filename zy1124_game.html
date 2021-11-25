@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<script src="js/jquery-3.6.0.js"></script>
+		<script>
+			$(function(){
+				$(document).click(function(e){
+					let player=$("#player");
+					let mouseX=e.clientX;
+					let mouseY=e.clientY;
+					let imgX=player.css("left");
+					if(mouseX>parseInt(imgX)){
+						player.attr("src","img/player_right.gif");
+					}else{
+						player.attr("src","img/player_left.gif");
+					}
+					player.stop().animate({
+						left:mouseX-100+"px",
+						top:mouseY-100+"px"
+					},1500);
+				}
+				);
+			}
+			);
+		</script>
+		<style type="text/css">
+			body{
+				background-color: black;
+			}
+			
+			img{
+				position: absolute;
+				left: 500px;
+				top:200px;
+			}
+		</style>
+		
+	</head>
+	<body>
+		<img id="player" src="img/player_left.gif" >
+	</body>
+</html>
