@@ -26,7 +26,7 @@ var showtime = function (b) {
 }
 var sysj = document.getElementById("djs");
 setInterval (function () {
-sysj.innerHTML=showtime("2021/11/6");
+sysj.innerHTML=showtime("2022/12/20");
 sysj.style.cssText="color:#ffffff;";
 }, 1000);  //反复执行函数本身
 
