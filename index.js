@@ -39,11 +39,11 @@ cet4.style.cssText="color:#ffffff;";
 }, 1000);  //反复执行函数本身
 //son2(中间的区域)
 
-//cet4倒计时
+//lqb倒计时
 var lqb = document.getElementById("lqb");
 setInterval (function () {
-cet4.innerHTML=showtime("2022/4/9");
-cet4.style.cssText="color:#ffffff;";
+lqb.innerHTML=showtime("2022/4/9");
+lqb.style.cssText="color:#ffffff;";
 }, 1000);  //反复执行函数本身
 //son2(中间的区域)
 
