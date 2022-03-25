@@ -13,7 +13,7 @@
 
 //倒计时功能
 //b为截至时间,格式为：2021/7/7
-//软考倒计时
+//2023考研倒计时
 var showtime = function (b) {
     var nowtime = new Date(),  //获取当前时间
         endtime = new Date(b);  //定义结束时间
@@ -26,7 +26,7 @@ var showtime = function (b) {
 }
 var sysj = document.getElementById("djs");
 setInterval (function () {
-sysj.innerHTML=showtime("2022/12/20");
+sysj.innerHTML=showtime("2022/12/15");
 sysj.style.cssText="color:#ffffff;";
 }, 1000);  //反复执行函数本身
 
@@ -34,15 +34,22 @@ sysj.style.cssText="color:#ffffff;";
 //cet4倒计时
 var cet4 = document.getElementById("cet4");
 setInterval (function () {
-cet4.innerHTML=showtime("2021/12/18");
+cet4.innerHTML=showtime("2022/6/10");
+cet4.style.cssText="color:#ffffff;";
+}, 1000);  //反复执行函数本身
+//son2(中间的区域)
+
+//cet4倒计时
+var lqb = document.getElementById("lqb");
+setInterval (function () {
+cet4.innerHTML=showtime("2022/4/9");
 cet4.style.cssText="color:#ffffff;";
 }, 1000);  //反复执行函数本身
 //son2(中间的区域)
 
 
-
 //动效
-//软考倒计时的
+//考研倒计时的
 // Wrap every letter in a span
 var textWrapper = document.querySelector('.ml2');
 textWrapper.innerHTML = textWrapper.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
