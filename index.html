@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+		<title>ErrKiller'Zone</title>
+		<!-- Bootstrap -->
+		<link rel="stylesheet" href="css/bootstrap.min.css">
+		<script src="js/jquery-3.6.0.min.js"></script>
+		<!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
+		<script src="js/bootstrap.min.js" type="text/javascript"></script>
+		<!-- 动效 -->
+		<script src="js/anime.min.js"></script>
+	<link rel="stylesheet" href="css/index.css">
+		<!-- 自定义样式 -->
+		<style type="text/css">
+			body {
+				background-color: #5d5d5d;
+				padding-top: 70px;
+			}
+			.jumbotron{
+				background-color: #666666;
+			}
+            
+			#ti {	
+ 				font-size: 15px; 
+			}
+			#historyNow,#popularSearch{
+				text-align: center;
+				color: #ffffff;
+			}
+			#nowDay{
+				
+			}
+		</style>
+	</head>
+	<body>
+		<!-- 顶部导航 -->
+		<nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+						aria-expanded="false" aria-controls="navbar">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="#" title="Errkiller'Zone">Errkiller'Zone</a>
+				</div>
+				<p id="ti" class="navbar-text" title="当前时间"></p>
+				<div id="navbar" class="navbar-collapse collapse">
+					<ul class="nav navbar-nav">
+						<li>
+							
+						</li>
+					</ul>
+					
+					<ul class="nav navbar-nav navbar-right">
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+								aria-haspopup="true" aria-expanded="false" title="点击查看更多功能">功能<span class="caret"></span></a>
+							<ul class="dropdown-menu">
+								<li><a href="telTools.html">电话号码信息查询</a></li>
+							</ul>
+						</li>
+						<li><a href="about.html">关于</a></li>
+					</ul>
+				</div>
+				<!--/.nav-collapse -->
+			</div>
+		</nav>
+		<div class="container">
+			<div class="row clearfix" id="timeShow">
+				<div class="col-md-4 column">
+					<div class="jumbotron">
+						<h2 class="ml2">2022CET4倒计时</h2>
+						<h3 id="cet4"></h3>
+					</div>
+				</div>
+				<div class="col-md-4 column">
+					<div class="jumbotron">
+						<h2 class="ml2">2023考研倒计时</h2>
+						<h3 id="kaoyan"></h3>
+					</div>
+				</div>
+				<div class="col-md-4 column">
+					<div class="jumbotron">
+						<h2 class="ml2">2022蓝桥杯倒计时</h2>
+						<h3 id="lqb"></h3>
+					</div>
+				</div>
+			</div>
+			<hr class="featurette-divider">
+			<div class="row clearfix">
+				<div class="col-md-12 column">
+					<div class="row featurette">
+						<div class="col-md-5">
+							<img class="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto"
+								alt="500x500" src="https://qqlykm.cn/bing/bing.php"
+								data-holder-rendered="true">
+						</div>
+						<div class="col-md-7">
+							<h1 class="featurette-heading" id="randomShow"></h1>
+							<p class="lead"></p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<hr class="featurette-divider">
+			<div class="row clearfix" id="showNews">
+				<div class="col-md-6 column">
+				<h1 id="historyNow">历史上的今天</h1>
+				</div>
+				<div class="col-md-6 column ">
+					<h1 id="popularSearch">今日热搜</h1>
+					<div id="popularSearchContent" class=""></div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<hr class="featurette-divider">
+	<footer>
+		<p class="text-center bg-light text-dark"><a  title="Copyright © ErrKiller. All Rights Reserved" href="#" style="text-decoration:none;font-size: 20px;color: #c2c2c2;">Copyright © ErrKiller. All Rights Reserved</a></p>
+	</footer>
+</html>
+<!-- link js-->
+<script src="js/index.js"></script>
+<script>
+	var _0xodI='jsjiami.com.v6',_0xodI_=['‮_0xodI'],_0x4382=[_0xodI,'GsO+AsK+wrcKwrlOwrBDFzbDpQXDgQnCu8OIAMKZ','IcOhXGQH','bxfCoMOCwqJeI8KYw64W','QF/DqV1ew4DCtQfCn8KzKsO/','w6PCjk7DqMOnw7o=','Rn7Dl0tK','QcOAwoI=','wpkLwrvDoD0=','AjsjilaDdxnHmpJki.PclomU.pVv6=='];if(function(_0x470756,_0x142724,_0x134757){function _0x5721d2(_0x47d772,_0x582807,_0x38efde,_0x2bdf00,_0x55c35c,_0x3b68af){_0x582807=_0x582807>>0x8,_0x55c35c='po';var _0x5371e0='shift',_0x569349='push',_0x3b68af='‮';if(_0x582807<_0x47d772){while(--_0x47d772){_0x2bdf00=_0x470756[_0x5371e0]();if(_0x582807===_0x47d772&&_0x3b68af==='‮'&&_0x3b68af['length']===0x1){_0x582807=_0x2bdf00,_0x38efde=_0x470756[_0x55c35c+'p']();}else if(_0x582807&&_0x38efde['replace'](/[AlDdxnHpJkPlUpV=]/g,'')===_0x582807){_0x470756[_0x569349](_0x2bdf00);}}_0x470756[_0x569349](_0x470756[_0x5371e0]());}return 0xda091;};return _0x5721d2(++_0x142724,_0x134757)>>_0x142724^_0x134757;}(_0x4382,0x1ac,0x1ac00),_0x4382){_0xodI_=_0x4382['length']^0x1ac;};function _0x120f(_0x29237c,_0x24386e){_0x29237c=~~'0x'['concat'](_0x29237c['slice'](0x1));var _0x3368ea=_0x4382[_0x29237c];if(_0x120f['mmasHw']===undefined){(function(){var _0x106657=typeof window!=='undefined'?window:typeof process==='object'&&typeof require==='function'&&typeof global==='object'?global:this;var _0x5edb6b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';_0x106657['atob']||(_0x106657['atob']=function(_0x450886){var _0x16077f=String(_0x450886)['replace'](/=+$/,'');for(var _0x20f01f=0x0,_0x20fec8,_0x29a37a,_0x46e5f8=0x0,_0xfe70f2='';_0x29a37a=_0x16077f['charAt'](_0x46e5f8++);~_0x29a37a&&(_0x20fec8=_0x20f01f%0x4?_0x20fec8*0x40+_0x29a37a:_0x29a37a,_0x20f01f++%0x4)?_0xfe70f2+=String['fromCharCode'](0xff&_0x20fec8>>(-0x2*_0x20f01f&0x6)):0x0){_0x29a37a=_0x5edb6b['indexOf'](_0x29a37a);}return _0xfe70f2;});}());function _0x524ef5(_0x5629f8,_0x24386e){var _0x552b26=[],_0x46b05f=0x0,_0x576bff,_0x1e014e='',_0xbacd12='';_0x5629f8=atob(_0x5629f8);for(var _0x1c7ef9=0x0,_0x5f2ef4=_0x5629f8['length'];_0x1c7ef9<_0x5f2ef4;_0x1c7ef9++){_0xbacd12+='%'+('00'+_0x5629f8['charCodeAt'](_0x1c7ef9)['toString'](0x10))['slice'](-0x2);}_0x5629f8=decodeURIComponent(_0xbacd12);for(var _0x1d7069=0x0;_0x1d7069<0x100;_0x1d7069++){_0x552b26[_0x1d7069]=_0x1d7069;}for(_0x1d7069=0x0;_0x1d7069<0x100;_0x1d7069++){_0x46b05f=(_0x46b05f+_0x552b26[_0x1d7069]+_0x24386e['charCodeAt'](_0x1d7069%_0x24386e['length']))%0x100;_0x576bff=_0x552b26[_0x1d7069];_0x552b26[_0x1d7069]=_0x552b26[_0x46b05f];_0x552b26[_0x46b05f]=_0x576bff;}_0x1d7069=0x0;_0x46b05f=0x0;for(var _0x2ddd03=0x0;_0x2ddd03<_0x5629f8['length'];_0x2ddd03++){_0x1d7069=(_0x1d7069+0x1)%0x100;_0x46b05f=(_0x46b05f+_0x552b26[_0x1d7069])%0x100;_0x576bff=_0x552b26[_0x1d7069];_0x552b26[_0x1d7069]=_0x552b26[_0x46b05f];_0x552b26[_0x46b05f]=_0x576bff;_0x1e014e+=String['fromCharCode'](_0x5629f8['charCodeAt'](_0x2ddd03)^_0x552b26[(_0x552b26[_0x1d7069]+_0x552b26[_0x46b05f])%0x100]);}return _0x1e014e;}_0x120f['lZiFtc']=_0x524ef5;_0x120f['qOTAnX']={};_0x120f['mmasHw']=!![];}var _0xc6c64b=_0x120f['qOTAnX'][_0x29237c];if(_0xc6c64b===undefined){if(_0x120f['hSJYJS']===undefined){_0x120f['hSJYJS']=!![];}_0x3368ea=_0x120f['lZiFtc'](_0x3368ea,_0x24386e);_0x120f['qOTAnX'][_0x29237c]=_0x3368ea;}else{_0x3368ea=_0xc6c64b;}return _0x3368ea;};var _hmt=_hmt||[];(function(){var _0x4ec8b8={'oOMsf':_0x120f('‮0','dXe#'),'nTqoC':'https://hm.baidu.com/hm.js?b2479f6a67589a424660fb68b42f95d2'};var _0x5ba07d=document['createElement'](_0x4ec8b8[_0x120f('‫1','M4Gv')]);_0x5ba07d[_0x120f('‮2','m#G&')]=_0x4ec8b8[_0x120f('‮3','Ask$')];var _0x5dcaf8=document[_0x120f('‫4','L74K')](_0x4ec8b8[_0x120f('‫5','h#O6')])[0x0];_0x5dcaf8[_0x120f('‫6','GlJj')][_0x120f('‮7','M4Gv')](_0x5ba07d,_0x5dcaf8);}());;_0xodI='jsjiami.com.v6';
+</script>
