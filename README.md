@@ -1,2 +1,2 @@
 # ErrKiller.github.io
-٩(͡๏̯͡๏)۶
+٩(͡๏̯͡๏)۶,Pursue better
