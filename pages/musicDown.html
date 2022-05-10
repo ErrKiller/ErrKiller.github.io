@@ -4,107 +4,114 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-		<!-- Bootstrap -->
+		
+		
 		<link rel="stylesheet" href="../css/bootstrap.min.css">
 		<script src="../js/jquery-3.6.0.min.js"></script>
-		<!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
+		
 		<script src="../js/bootstrap.min.js" type="text/javascript"></script>
-		<!-- vpplayer-->
+		
 		<link rel="stylesheet" type="text/css" href="../css/vpplayer.css">
 		<script src="../js/vpplayer.js"></script>
 		<meta charset="utf-8">
 		<title>音乐解析||ErrKiller</title>
 		<style>
-			body {
-				background: url("https://s1.ax1x.com/2022/05/03/OABOVe.jpg") no-repeat center;
-				background-repeat: no-repeat;
-				background-size: cover;
-				background-position: center 0;
-				background-repeat: no-repeat;
-				background-attachment: fixed;
-				-webkit-background-size: cover;
-				-o-background-size: cover;
-				-moz-background-size: cover;
-				-ms-background-size: cover;
-			}
+body {
+	background: url("https://s1.ax1x.com/2022/05/03/OABOVe.jpg") no-repeat center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center 0;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	-webkit-background-size: cover;
+	-o-background-size: cover;
+	-moz-background-size: cover;
+	-ms-background-size: cover;
+}
 
-			.container h1,
-			h2,
-			h3 {
-				text-align: center;
-			}
+.container h1,
+h2,
+h3 {
+	text-align: center;
+}
 
-			#show {
-				margin-top: 10%;
-			}
+#show {
+	margin-top: 10%;
+}
 
-			#songName {}
+#songName {}
 
-			#player {
+#player {
+	margin-bottom: 10px;
+}
 
-				margin-bottom: 200px;
-			}
+#tips a {
+	text-decoration: none;
+	color: #ffff7f;
+}
 
-			#tips a {
-				text-decoration: none;
-				color: #ffff7f;
-			}
 		</style>
 	</head>
 	<body>
 		<div class="container" id="show">
-			<div class="row clearfix">
-				<div class="col-md-12 column">
-					<h2 id="tips">Errkiller Music</a></h2>
-					<form role="form">
-						<div class="form-group">
-							<h3>歌曲/歌手名称：</h3>
-							<input class="form-control" id="songName" type="text" placeholder="请输入歌曲/歌手名称" />
-						</div>
-					</form>
-					<button id="subPost" class="btn btn-lg btn-success">搜索</button>
-				</div>
-			</div>
-			<div class="row clearfix" id="resShow">
-				<div class="col-md-6 column" id="songsList">
-				</div>
-				<div class="col-md-6 column">
-					<div class="col-md-12 column">
-						<div id="songMess">
-							
-						</div>
-					</div>
-					<div class="col-md-12 column">
-						<div id="player"></div>
-					</div>
-				</div>
-			</div>
+<div class="row clearfix">
+	<div class="col-md-12 column">
+		<h2 id="tips">Errkiller Music</a></h2>
+		<form role="form">
+<div class="form-group">
+	<h3>歌曲名称：</h3>
+	<input class="form-control" id="songName" type="text" placeholder="请输入歌曲名称" />
+</div>
+		</form>
+		<button id="subPost" class="btn btn-lg btn-success">搜索</button>
+	</div>
+</div>
+<div class="row clearfix" id="resShow">
+	<div class="col-md-6 column" id="songsList">
+		
+		
+	</div>
+	<div class="col-md-6 column">
+		<div class="col-md-12 column">
+<div id="songMess">
+	
+</div>
+		</div>
+		<div class="col-md-12 column">
+
+<div id="player"></div>
+
+<div id="songComment">
+
+</div>
+		</div>
+	</div>
+</div>
 		</div>
 		<div class="container">
-			<div class="row clearfix">
-				<div class="col-md-12 column">
-					<h1 style="font-size:30px;"><a
-							style="background-color: #000000;color: #efef00;text-decoration: none;" id="modal-92659"
-							href="#modal-container-92659" data-toggle="modal">免责声明</a></h1>
-					<div class="modal fade" id="modal-container-92659" role="dialog" aria-labelledby="myModalLabel"
-						aria-hidden="true">
-						<div class="modal-dialog" style="background-color: #ffffff;">
-							<h1 style="text-align: center;color: #ff2163;">免责声明</h1>
-							<h1>本站MP3文件来自各网站接口，只是调用音频播放</h1>
-							<h1>本站只提供数据查询服务，不提供任何音频存储和修改</h1>
-							<h1>音频仅供学习试听，访客下载后请自觉销毁，不得传播</h1>
-							<h1>数字时代，请尊重作者版权，文明试听学习交流</h1>
-						</div>
+<div class="row clearfix">
+	<div class="col-md-12 column">
+		<h1 style="font-size:30px;"><a
+	style="background-color: #000000;color: #efef00;text-decoration: none;" id="modal-92659"
+	href="#modal-container-92659" data-toggle="modal">免责声明</a></h1>
+		<div class="modal fade" id="modal-container-92659" role="dialog" aria-labelledby="myModalLabel"
+aria-hidden="true">
+<div class="modal-dialog" style="background-color: #ffffff;">
+	<h1 style="text-align: center;color: #ff2163;">免责声明</h1>
+	<h1>本站MP3文件来自各网站接口，只是调用音频播放</h1>
+	<h1>本站只提供数据查询服务，不提供任何音频存储和修改</h1>
+	<h1>音频仅供学习试听，访客下载后请自觉销毁，不得传播</h1>
+	<h1>数字时代，请尊重作者版权，文明试听学习交流</h1>
+</div>
 
-					</div>
-				</div>
-			</div>
+		</div>
+	</div>
+</div>
 		</div>
 		<footer style="margin-top: 50px;">
-			<p class="text-center bg-light text-dark"><a title="Copyright © ErrKiller. All Rights Reserved"
-					href="../index.html" style="text-decoration:none;font-size: 20px;color: #ffffff;">Copyright ©
-					ErrKiller. All Rights Reserved</a></p>
+<p class="text-center bg-light text-dark"><a title="Copyright © ErrKiller. All Rights Reserved"
+		href="../index.html" style="text-decoration:none;font-size: 20px;color: #ffffff;">Copyright ©
+		ErrKiller. All Rights Reserved</a></p>
 		</footer>
 	</body>
 	<script type="text/javascript" src="../js/musicDown.js"></script>
