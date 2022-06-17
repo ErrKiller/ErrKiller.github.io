@@ -29,7 +29,7 @@
 				$("ul>li").click(function(e){
 					$("ul>li").eq($(this).index()).addClass("sphp");
 					$("ul>li").eq($(this).index()).siblings().removeClass();
-					$(".bd>ul").eq($(this).index()).siblings().hideA("300ms");
+					$(".bd>ul").eq($(this).index()).siblings().hide("300ms");
 					$(".bd>ul").eq($(this).index()).toggle("400ms");
 				});
 				
@@ -38,10 +38,11 @@
 			);
 		</script>
 	<body>
+		<h1 style="text-align: center; margin-top: 20px;">模仿京东选项卡</h1>
 		<div class="tabox">
 		      <div class="hd">
 		        <ul>
-		          <li class="on" id="tyf">疯狂抢购</li>
+		          <li class="on">疯狂抢购</li>
 		          <li class=" ">猜您喜欢</li>
 		          <li class=" ">热卖商品</li>
 		          <li class=" ">热评商品</li>
@@ -49,22 +50,23 @@
 		      </div>
 		      <div class="bd">
 		        <ul class="lh">
-		          <img src="https://s1.ax1x.com/2022/06/17/XLPfRf.png"  href="../index.html">
+		          <a href="../index.html"><img  src="https://s1.ax1x.com/2022/06/17/XLPfRf.png"></a>
 		        </ul>
 		        <ul class="lh" style="display: none;">
-		          <img src="https://s1.ax1x.com/2022/06/17/XLPfRf.png" href="../index.html">
+		           <a href="../index.html"><img src="https://s1.ax1x.com/2022/06/17/XLPfRf.png"></a>
 		        </ul>
 		        <ul class="lh" style="display: none;">
-		          <img src="https://s1.ax1x.com/2022/06/17/XLPfRf.png" href="../index.html">
+		           <a href="../index.html"><img src="https://s1.ax1x.com/2022/06/17/XLPfRf.png"></a>
 		        </ul>
 		        <ul class="lh" style="display: none;">
-		          <img src="https://s1.ax1x.com/2022/06/17/XLPfRf.png" href="../index.html">
+		           <a href="../index.html"><img src="https://s1.ax1x.com/2022/06/17/XLPfRf.png"></a>
 		        </ul>
 		        <ul class="lh" style="display: none;">
-		          <img src="https://s1.ax1x.com/2022/06/17/XLPfRf.png" href="../index.html">
+		           <a href="../index.html"><img src="https://s1.ax1x.com/2022/06/17/XLPfRf.png"></a>
 		        </ul>
 		      </div>
 		    </div>
-		<h1 style="text-align:center; background-color: #a6a6a6"><a href="../index.html">去主页，Go！</a></h1>
+			
+		<h1 style="text-align:center;margin-top:300px ; "><button style="font-size: 40px;"><a href="../index.html">去主页，Go！</a></button></h1>
 	</body>
 </html>
