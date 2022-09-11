@@ -4,10 +4,12 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
 		<title>ErrKiller'Zone</title>
 		<!-- Bootstrap -->
 		<link rel="stylesheet" href="css/bootstrap.min.css">
 		<script src="js/jquery-3.6.0.min.js"></script>
+		<!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
 		<script src="js/bootstrap.min.js" type="text/javascript"></script>
 		<!-- 动效 -->
 		<!-- <script src="js/anime.min.js"></script> -->
@@ -61,7 +63,7 @@
 				</div>
 				<p id="ti" class="navbar-text" title="当前时间"></p>
 				<div id="test1"></div>
-				<p id="weekNumber" class="navbar-text" title="当前周"></p>
+				<p id="weekNumber" class="navbar-text"  title="当前周"　 startDate="2022/9/5" startWeekNum="1"></p>
 				<div id="navbar" class="navbar-collapse collapse">
 					<ul class="nav navbar-nav">
 						<li>
@@ -89,9 +91,9 @@
 			<div class="row clearfix" id="leftShow">
 				<div class="col-md-4 column">
 					<div class="jumbotron">
-						<h2 class="ml2" id="leftShow_word">8月倒计时</h2>
+						<h2 class="ml2" id="leftShow_word">7月倒计时</h2>
 						<br>
-						<div id="leftShow_time" endTime="2022/9/1 00:00:00" class="ft ft-dark"></div>
+						<div id="leftShow_time" endTime="2022/8/1 00:00:00" class="ft ft-dark"></div>
 						<div id="leftShow_message"></div>
 
 					</div>
@@ -108,9 +110,9 @@
 				</div>
 				<div class="col-md-4 column" id="rightShow">
 					<div class="jumbotron">
-						<h2 class="ml2" id="rightShow_word">7天倒计时</h2>
+						<h2 class="ml2" id="rightShow_word">高数基础回溯+语法长难句</h2>
 						<br>
-						<div id="rightShow_time" endTime="2022/8/27 23:59:59"  class="ft ft-darkdark"></div>
+						<div id="rightShow_time" endTime="2022/7/23 18:34:00"  class="ft ft-darkdark"></div>
 						<div id="rightShow_message"></div>
 					</div>
 				</div>
@@ -151,5 +153,4 @@
 </html>
 <!-- link js-->
 <script src="js/index.js"></script>
-
 
