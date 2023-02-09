@@ -1,6 +1,6 @@
 {
 	name:"time_db"
-	[
+	list:[
 		{
 			key:"key",
 			value:"value"
