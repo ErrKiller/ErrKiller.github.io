@@ -1,5 +1,5 @@
 {
-	name:"time_db"
+	desc:"time_db"
 	list:[
 		{
 			key:"key",
