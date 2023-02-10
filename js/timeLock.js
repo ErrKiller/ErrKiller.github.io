@@ -2,7 +2,7 @@ $(function() {
 
 	/* 定义一个公共密钥 */
 	const publicPwd = "U2FsdGVkX18tDyJeshG3zHdbbjl6MpuyYsT0malh7Dk=";
-	const dbUrl = "https://errkiller.github.io/static/data.json";
+	const dbUrl = "../static/data.json";
 	/* 时间输入 */
 	new Rolldate({
 		el: '#timeInput',
