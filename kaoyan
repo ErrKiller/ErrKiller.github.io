@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>考研倒计时</title>
+		<link rel="shortcut icon" href="img/favicon.ico">
+		<!-- Custom CSS -->
+		<style>body {background-color: #626262;color: #fff;font-family: "Helvetica Neue", Arial, sans-serif;text-align: center;line-height: 1.6;}.container {max-width: 600px;margin: 0 auto;padding: 30px;}.countdown {font-size: 4rem;letter-spacing: 0.2rem;margin-bottom: 20px;}.countdown-item {position: relative;display: inline-block;color: #ffbe85;padding: 0 10px;}.flip-animation {animation: flip 1s;color: #00e770;animation-fill-mode: both;transform-origin: top center;}@keyframes flip {0% {transform: translateY(0) perspective(400px) rotateX(0);}50% {transform: translateY(-100%) perspective(400px) rotateX(90deg);}51% {transform: translateY(100%) perspective(400px) rotateX(-90deg);}100% {transform: translateY(0) perspective(400px) rotateX(0);}}.quote {font-size: 1.8rem;margin-top: 30px;}.quote-author {font-size: 1.2rem;font-style: italic;}@media screen and (max-width: 600px) {.countdown-item {font-size: 2.5rem;}.quote {font-size: 1rem;}}</style></head>
+	<body>
+		<div class="container">
+			<!--定义结束时间-->
+			<h1 id="deadlineTime" deadline="2023/12/24 00:00:00">2023考研倒计时</h1>
+			<div class="countdown">
+				<div class="countdown-item">
+					<div class="flip-animation" id="days">00</div>
+					天
+				</div>
+				<div class="countdown-item">
+					<div class="flip-animation" id="hours">00</div>
+					时
+				</div>
+				<div class="countdown-item">
+					<div class="flip-animation" id="minutes">00</div>
+					分
+				</div>
+				<div class="countdown-item">
+					<div class="flip-animation" id="seconds">00</div>
+					秒
+				</div>
+			</div>
+			<div class="quote" id="quote">
+				<!-- 励志名人名言将在此处显示并每10秒更换 -->
+			</div>
+		</div>
+		<!-- Custom JS -->
+		<script>const element=document.getElementById("deadlineTime");const time=element.getAttribute("deadline");const deadline=new Date(time).getTime();const quotes=[{text:"成功来自于积累，而不是等待。",author:"华罗庚"},{text:"相信自己，你能做到。",author:"奥黛丽·赫本"},{text:"坚持下去，成功就在前方。",author:"李嘉诚"},{text:"困难只是暂时的，勇气却是永恒的。",author:"罗曼·罗兰"},{text:"不要忘记，你的梦想就在前方。",author:"林肯"},{text:"机会永远留给有准备的人。",author:"爱迪生"},{text:"努力，因为你值得更好的未来。",author:"马云"},{text:"拥有信心，你就赢得了一切。",author:"戴尔·卡耐基"},{text:"永远相信自己，你是无敌的。",author:"狄更斯"},{text:"成功不是终点，而是一个新的起点。",author:"肖邦"},{text:"只有不断努力，才能使人变得更优秀。",author:"李娜"},{text:"不要让别人的意见左右你的选择。",author:"史蒂夫·乔布斯"},{text:"成功的关键是找到自己的优势并充分发挥。",author:"比尔·盖茨"},{text:"做自己热爱的事情，不要随波逐流。",author:"乔治·艾略特"},{text:"每一次尝试都是向成功迈进的一步。",author:"迈克尔·乔丹"}];let prevDays="00";let prevHours="00";let prevMinutes="00";let prevSeconds="00";function updateCountdown(){const now=new Date().getTime();const distance=deadline-now;if(distance<0){clearInterval(countdownInterval);return}const days=Math.floor(distance/(1000*60*60*24));const hours=Math.floor((distance%(1000*60*60*24))/(1000*60*60));const minutes=Math.floor((distance%(1000*60*60))/(1000*60));const seconds=Math.floor((distance%(1000*60))/1000);if(prevDays!==formatNumber(days)){updateFlipAnimation("days",days);prevDays=formatNumber(days)}if(prevHours!==formatNumber(hours)){updateFlipAnimation("hours",hours);prevHours=formatNumber(hours)}if(prevMinutes!==formatNumber(minutes)){updateFlipAnimation("minutes",minutes);prevMinutes=formatNumber(minutes)}if(prevSeconds!==formatNumber(seconds)){updateFlipAnimation("seconds",seconds);prevSeconds=formatNumber(seconds)}}function formatNumber(number){return number<10?"0"+number:String(number)}function updateFlipAnimation(elementId,value){const flipElement=document.getElementById(elementId);flipElement.innerHTML=`<div class="flip-animation">${formatNumber(value)}</div>`}function updateQuote(){const quoteContainer=document.getElementById("quote");const randomIndex=Math.floor(Math.random()*quotes.length);const{text,author}=quotes[randomIndex];quoteContainer.innerHTML=`"${text}"<br>-${author}`}updateCountdown();updateQuote();const countdownInterval=setInterval(updateCountdown,1000);const quoteInterval=setInterval(updateQuote,10000);</script>
+	</body>
+</html>
