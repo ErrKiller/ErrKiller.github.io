@@ -4,100 +4,82 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel="stylesheet" href="../css/bootstrap.min.css">
-		<script src="../js/jquery-3.6.0.min.js"></script>
-		<script src="../js/bootstrap.min.js" type="text/javascript"></script>
-		<link rel="stylesheet" type="text/css" href="../css/vpplayer.css">
-		<script src="../js/vpplayer.js"></script>
-		<meta charset="utf-8">
-		<title>音乐解析||ErrKiller</title>
+		<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+		<title>ErrKiller'Zone|关于</title>
+		<link rel="shortcut icon" href="../img/favicon.ico"> <!-- <script src="../js/jquery-3.6.0.min.js"></script> -->
+		<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-m/jquery/3.6.0/jquery.min.js"
+			type="application/javascript"> </script>
+		<!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+		<link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.css" rel="stylesheet">
+		<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" type="application/javascript">
+		</script>
 		<style>
-body {
-	background: url("https://s1.ax1x.com/2022/05/03/OABOVe.jpg") no-repeat center;
-	background-repeat: no-repeat;
-	background-size: cover;
-	background-position: center 0;
-	background-repeat: no-repeat;
-	background-attachment: fixed;
-	-webkit-background-size: cover;
-	-o-background-size: cover;
-	-moz-background-size: cover;
-	-ms-background-size: cover;
-}
-.container h1,
-h2,
-h3 {
-	text-align: center;
-}
-#player {
-	margin-bottom: 200px;
-}
-#tips a {
-	text-decoration: none;
-	color: #ffff7f;
-}
-#resShow{
-	width: 80%;
-	margin: 0 auto;
-}
-#songMess{
-	 height:50%;
-	 width: 70%;
-	 margin: 0 auto;
-}
-#player{
-	width: 100%;
-	margin: 0 auto;
-}
+			body {
+				overflow: hidden;
+				/* vw和vh相对的当前浏览器的视口 ，例如当前视口尺寸为375px 那么100vw = 375px，与父元素的大小无关 */
+				width: 100vw;
+				height: 100vh;
+			}
 		</style>
 	</head>
-	<body>
-		<div class="container" id="show">
-<div class="row clearfix">
-	<div class="col-md-12 column">
-		<h2 id="tips">By Errkiller</a></h2>
-	</div>
-</div>
-<div class="row clearfix" id="resShow">
-	<div class="col-md-12 column">	
-<div id="songMess">
-</div>
-<div class="col-md-12 column">
-	<div id="player"></div>
-	<div id="songComment">
-	</div>
-</div>
-		</div>
-	</div>
-</div>
-		</div>
+	<body id="showDT">
 		<div class="container">
-<div class="row clearfix">
-	<div class="col-md-12 column">
-		<h1 style="font-size:30px;"><a
-	style="background-color: #000000;color: #efef00;text-decoration: none;" id="modal-92659"
-	href="#modal-container-92659" data-toggle="modal">免责声明</a></h1>
-		<div class="modal fade" id="modal-container-92659" role="dialog" aria-labelledby="myModalLabel"
-aria-hidden="true">
-<div class="modal-dialog" style="background-color: #ffffff;text-align: center;">
-     <h1 style="text-align: center;color: #ff2163;">免责声明</h1>
-							<p>本站MP3文件来自各网站接口，只是调用音频播放</p>
-							<p>本站只提供数据查询服务，不提供任何音频存储和修改</p>
-							<p>音频仅供学习试听，访客下载后请自觉销毁，不得传播</p>
-							<p>数字时代，请尊重作者版权，文明试听学习交流</p>
-							<p class="text-center bg-light text-dark" style="margin-top: 20px;"><a title="Copyright © ErrKiller. All Rights Reserved"
-										href="../index.html" style="text-decoration:none;font-size: 20px;color: #00aaff;">Copyright ©
-										ErrKiller. All Rights Reserved</a></p>
-</div>
+			<div class="row clearfix">
+				<div class="col-md-6 column" style="color: #ffffff;">
+					<h1> 关于 </h1>
+					<hr />
+					<p> ErrKiller ,一位不断奔跑的追梦者 </p>
+					<hr />
+					<div>
+						<h3>早成者未必有成，晚达者未必不达。不可以年少而自恃，不可以年老而自弃。</h3>
+						<p style="margin-top:20px;">Copyright © <a href="../index.html"
+								style="text-decoration: none;">ErrKiller</a>. All Rights Reserved.</p>
+						<p id="showStartTime"> </p>
+					</div>
+				</div>
+			</div>
 		</div>
-	</div>
-</div>
-		</div>
-		<footer style="margin-top: 50px;">
-<p class="text-center bg-light text-dark"><a title="Copyright © ErrKiller. All Rights Reserved"
-		href="../index.html" style="text-decoration:none;font-size: 20px;color: #ffffff;">Copyright ©ErrKiller. All Rights Reserved</a></p>
-		</footer>
 	</body>
-<script src="../js/DownById.js"></script>
 </html>
-<!-- analyse --><script type="text/javascript" src="../js/webAnalyse.js"></script>
+<script type="text/javascript">
+	let fun = function(str) {
+		let start = new Date(str).getTime();
+		let now = new Date().getTime();
+		/*总的秒数*/
+		let total = (now - start) / 1000;
+		/*年*/
+		let year = Math.floor((total / 3600 / 24) / 365);
+		/* //月 */
+		let month = Math.floor((total - year * 365 * 24 * 3600) / 3600 / 24 / 30);
+		/* //日 */
+		let day = Math.floor((total - year * 365 * 24 * 3600 - month * 30 * 24 * 3600) / 3600 / 24);
+		/* //时 */
+		let h = Math.floor((total - year * 365 * 24 * 3600 - month * 30 * 24 * 3600 - day * 24 * 3600) / 3600);
+		let m = Math.floor((total - year * 365 * 24 * 3600 - month * 30 * 24 * 3600 - day * 24 * 3600 - h * 3600) /
+			60);
+		let s = Math.floor((total - year * 365 * 24 * 3600 - month * 30 * 24 * 3600 - day * 24 * 3600 - h * 3600 - m *
+			60));
+		return `${year}年${month}月${day}日${h}时${m}分${s}秒`;
+	};
+	/* // 起始时间：2022‎年‎3‎月‎25‎日，‏‎22:14:48。2022-3-25 22:14 */
+	setInterval(function() {
+		$("#showStartTime").html(`网站已运行:${fun("2022-3-25 22:14")}`);
+	}, 1000);
+</script>
+
+<!-- analyse -->
+<script type="text/javascript" src="../js/webAnalyse.js"></script>
+
+<!-- 动态背景 -->
+<script src="https://cdn.bootcdn.net/ajax/libs/three.js/0.156.1/three.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/vanta/0.5.24/vanta.halo.min.js"></script>
+<script>
+	VANTA.HALO({
+	  el: "#showDT",
+	  mouseControls: true,
+	  touchControls: true,
+	  gyroControls: false,
+	  minHeight: 200.00,
+	  minWidth: 200.00
+	})
+</script>
