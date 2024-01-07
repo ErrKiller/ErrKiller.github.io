@@ -7,11 +7,12 @@ $(function(){
 	}
 	switch (url) {
 		case "errkiller.github.io": {
-			let flag=confirm("为了获得更好的体验，本站已启动高速站点，是否切换到高速站点？");
+		/*	let flag=confirm("为了获得更好的体验，本站已启动高速站点，是否切换到高速站点？");
 			if(flag==true){
-			//	window.location.href="https://errkiller.pages.dev";
-			//	return;
+				window.location.href="https://errkiller.pages.dev";
+				return;
 			}
+                 */
 			//百度统计
 			(function() {
 				var hm = document.createElement("script");
