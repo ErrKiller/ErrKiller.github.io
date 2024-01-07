@@ -33,7 +33,7 @@ $(function(){
 			break;
 		}
 		default:{
-			console.log("none");
+		//	console.log("none");
 			}
 	}
 });
