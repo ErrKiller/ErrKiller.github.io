@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Errkiller'Zone</title>
+		<link rel="shortcut icon" href="img/favicon.ico">
+		<!-- Custom CSS -->
+		<style>
+			body {
+				background-color: #626262;
+				color: #fff;
+				font-family: "Helvetica Neue", Arial, sans-serif;
+				text-align: center;
+				line-height: 1.6
+			}
+
+			.container {
+				max-width: 600px;
+				margin: 0 auto;
+				padding: 30px
+			}
+
+			.countdown {
+				font-size: 4rem;
+				letter-spacing: 0.2rem;
+				margin-bottom: 20px
+			}
+
+			.countdown-item {
+				position: relative;
+				display: inline-block;
+				color: #ffbe85;
+				padding: 0 10px
+			}
+
+			.flip-animation {
+				animation: flip 1s;
+				color: #00e770;
+				animation-fill-mode: both;
+				transform-origin: top center
+			}
+
+			@keyframes flip {
+				0% {
+					transform: translateY(0)perspective(400px)rotateX(0)
+				}
+
+				50% {
+					transform: translateY(-100%)perspective(400px)rotateX(90deg)
+				}
+
+				51% {
+					transform: translateY(100%)perspective(400px)rotateX(-90deg)
+				}
+
+				100% {
+					transform: translateY(0)perspective(400px)rotateX(0)
+				}
+			}
+
+			.quote {
+				font-size: 1.8rem;
+				margin-top: 30px;
+				color: #bd4aff;
+			}
+
+			.quote-author {
+				font-size: 1.2rem;
+				font-style: italic
+			}
+
+			@media screen and(max-width:600px) {
+				.countdown-item {
+					font-size: 2.5rem
+				}
+
+				.quote {
+					font-size: 1rem
+				}
+			}
+
+			#center-button {
+				display: block;
+				margin: 30px auto;
+				padding: 10px 20px;
+				background-color: #1E90FF;
+				color: #fff;
+				font-size: 1.2rem;
+				border: none;
+				border-radius: 5px;
+				cursor: pointer;
+				display: none
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<!--定义结束时间-->
+			<h1 id="deadlineTime"></h1>
+			<div class="countdown">
+				<div class="countdown-item">
+					<div class="flip-animation" id="days">00</div>
+					天
+				</div>
+				<div class="countdown-item">
+					<div class="flip-animation" id="hours">00</div>
+					时
+				</div>
+				<div class="countdown-item">
+					<div class="flip-animation" id="minutes">00</div>
+					分
+				</div>
+				<div class="countdown-item">
+					<div class="flip-animation" id="seconds">00</div>
+					秒
+				</div>
+			</div>
+			<div class="quote" id="quote">
+				<!-- 励志名人名言将在此处显示并每10秒更换 -->
+			</div>
+			<p style="font-size: 12px;">备注：该时间为当年考研初试时间，统一截止日期为当年12月23日 00:00:00</p>
+			<button id="center-button" onclick="redirectToPage()">去主页</button>
+		</div>
+		<!-- Custom JS -->
+		<script>
+			const element = document.getElementById("deadlineTime");
+			const time = element.getAttribute("deadline");
+			const currentYear = new Date().getFullYear();  
+			const deadline = new Date(`${currentYear}/12/23 00:00:00`).getTime();
+			const quotes = [
+				'想一下明年这个时候大家都在发拟录取了 自己辛苦了一年却失败了的那种感觉。',
+				'天天喊着时间不够，你真的挤时间了吗？',
+				'别等别人考上，你没考上，你在那里哭。',
+				'天天刷手机羡慕别人，想改变命运却又不努力？真的看不起这样的你。',
+				'每天玩手机几个小时？配得上考研究生吗。',
+				'家里条件不好，那还不努力？',
+				'做题遇到不会的立刻放弃，看答案就完事儿？考研当天你也可以放弃。',
+				'怕被别人看不起？你这么不努力，铁定会被看不起。',
+				'如果你不是冲着考研究生，劝你早点放弃。',
+				'身无饥寒，父母无愧于你，人无长进，何以待父母。',
+				'你除了这一生，还有别的人生吗？你要当几十万分之一的分母吗？你现在的活法有意义吗？想清楚以后，就给我往山顶上爬！',
+				'手机好玩儿吗？沉溺于玩吧，反正你也考不上研究生！没人会为你的未来买单呀！',
+				'少点以为，多点作为！你不喜欢学习，可这社会只要成绩！你必须拼尽全力才能说自己运气不好！觉得自己晚了的时候恰恰是最早的时候！',
+				'比“真·颓废”更可怕的是“伪·尽力而为”',
+				'失败不可怕，可怕的是你相信这句话！',
+				"想玩手机就玩，大不了别人一战上岸，你多考几年呗。",
+				"说好两耳不稳窗外事，还沉浸在上一段感情中无法自拔!",
+				"说好的早起学习，一觉睡到大中午!",
+				"家庭条件不好，还不拼尽全力改变现状。",
+				"收藏了无数经验贴，从不开始行动!",
+				"遇到难题就跳过，从不想方法解决!",
+				"怎么你嚷嚷那么久的考研，还没见你行动?!",
+				"你背不下去的单词，总有人已经背了3遍。",
+				"吃不了学习的苦，总要吃生活的苦。",
+				"大不了别人拿录取通知书，你又错过秋招又要二战。",
+				"二战的人都在起早贪黑，而你还想多睡一会儿。",
+				"一天学3、5个小时，也好意思说自己很累?",
+				"每天还在追喜欢的电视剧/综艺!学习2小时就忍不住玩手机!每天定的计划一拖再拖!",
+				"背单词三天打鱼两天晒网，妄想考试都识?!",
+				"看到别人休息就沾沾自喜，只会和差的比。",
+				"能刷100遍视频课，也不做自己做1遍题。",
+				"看不起自己的学校，又不敢冲一个好学校。",
+				"一边发誓必须上岸，一边找借口再拖2天。",
+				"不甘心草草结婚生子，过完一辈子，又不敢好好努力拼一把。",
+				"没有富二代的命，又没有富一代的努力。",
+				"说要躺平佛系，又不甘心平庸的人生。",
+				"自己专业就业情况，心里真的没点逼数吗?",
+				"你讨厌亲戚的冷嘲热讽，也没见你改变现状啊!",
+				"实习时公司hr说:985/211优先，你都忘吗?",
+				"没事，继续躺着吧。不就是又辜负爸妈一年的期待;不就是亲戚问考到哪里，支支吾吾说不出话。",
+			 "人家在写上岸经验贴，你在写失败教训!",
+				"毕业聚餐，考上的考上，工作的工作，你好意思吗?",
+				"自嘲打工人，没考上研有更好的平台打工吗?",
+				"别人自嘲学渣，你是真的又渣又懒。",
+				"又想工作，又想考研，耽误你一年赚钱又不会饿死!",
+				"上岸率那么低，你比别人多努力了吗?",
+				"你的努力，配得上你的野心吗?",
+				"想要过舒服的人生，可是你不够资格。",
+				"虽然你不努力，但你一直焦虑啊!",
+				"学校混的风生水起，不抵简历写上985。",
+				"刷10遍题不总结，你感动自己有什么用。",
+			 "别人在假装偷懒，只有你假装努力。",
+				"你一年蓬头垢面，考上自然熠熠发光。",
+				"你现在吃的苦，配得上那么好的学校吗?",
+				"这么大的人，学习还要别人督促，你不嫌丢人吗?",
+				"你想给另一半的安全感，就靠每天混沌度日吗?"
+			];
+			let prevDays = "00";
+			let prevHours = "00";
+			let prevMinutes = "00";
+			let prevSeconds = "00";
+			//
+			document.getElementById("deadlineTime").innerHTML = `${currentYear}年考研倒计时`;
+			//更新时间
+			function updateCountdown() {
+				const now = new Date().getTime();
+				const distance = deadline - now;
+				if (distance < 0) {
+					document.getElementById("quote").innerHTML = `倒计时结束！`;
+					clearInterval(countdownInterval);
+					return;
+				}
+				const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+				const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+				const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+				const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+				if (prevDays !== formatNumber(days)) {
+					updateFlipAnimation("days", days);
+					prevDays = formatNumber(days)
+				}
+				if (prevHours !== formatNumber(hours)) {
+					updateFlipAnimation("hours", hours);
+					prevHours = formatNumber(hours)
+				}
+				if (prevMinutes !== formatNumber(minutes)) {
+					updateFlipAnimation("minutes", minutes);
+					prevMinutes = formatNumber(minutes)
+				}
+				if (prevSeconds !== formatNumber(seconds)) {
+					updateFlipAnimation("seconds", seconds);
+					prevSeconds = formatNumber(seconds)
+				}
+			}
+
+			function formatNumber(number) {
+				return number < 10 ? "0" + number : String(number)
+			}
+
+			function updateFlipAnimation(elementId, value) {
+				const flipElement = document.getElementById(elementId);
+				flipElement.innerHTML = `<div class="flip-animation">${formatNumber(value)}</div>`
+			}
+
+			function updateQuote() {
+				const quoteContainer = document.getElementById("quote");
+				const randomIndex = Math.floor(Math.random() * quotes.length);
+				const text = quotes[randomIndex];
+				quoteContainer.innerHTML = `" ${text} "`;
+			}
+
+			function redirectToPage() {
+				window.location.href = "../index.html"
+			}
+			/*
+			显示转跳按键
+			*/
+			setTimeout(() => {
+				const buttonElement = document.getElementById("center-button");
+				buttonElement.style.display = 'block';
+			}, 5000);
+			updateCountdown();
+			updateQuote();
+			const countdownInterval = setInterval(updateCountdown, 1000);
+			const quoteInterval = setInterval(updateQuote, 10000);
+		</script>
+	</body>
+</html>
