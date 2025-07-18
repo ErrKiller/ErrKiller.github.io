@@ -177,6 +177,9 @@
             <button id="toggle-stopwatch" class="px-6 py-3 bg-dark hover:bg-dark/80 rounded-full text-sm font-medium transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/20">
                 <i class="fa fa-hourglass-half mr-2"></i>秒表
             </button>
+            <button id="toggle-fullscreen" class="px-6 py-3 bg-secondary hover:bg-secondary/80 rounded-full text-sm font-medium transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-secondary/50">
+                <i class="fa fa-expand mr-2"></i>全屏
+            </button>
         </div>
         
         <!-- 倒计时区域 -->
@@ -365,6 +368,76 @@
         let lastLapTime = 0; // 上次记次时间
         let startTime = null; // 开始时间戳
         let pausedTime = 0; // 暂停时的累计时间
+        
+        // 全屏切换功能
+        function toggleFullscreen() {
+            const fullscreenButton = document.getElementById('toggle-fullscreen');
+            const icon = fullscreenButton.querySelector('i');
+            
+            if (!document.fullscreenElement && 
+                !document.mozFullScreenElement && 
+                !document.webkitFullscreenElement && 
+                !document.msFullscreenElement) {
+                
+                // 进入全屏
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen();
+                } else if (document.documentElement.msRequestFullscreen) {
+                    document.documentElement.msRequestFullscreen();
+                } else if (document.documentElement.mozRequestFullScreen) {
+                    document.documentElement.mozRequestFullScreen();
+                } else if (document.documentElement.webkitRequestFullscreen) {
+                    document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+                }
+                
+                // 更新按钮图标
+                icon.classList.remove('fa-expand');
+                icon.classList.add('fa-compress');
+                fullscreenButton.innerHTML = '<i class="fa fa-compress mr-2"></i>退出全屏';
+            } else {
+                // 退出全屏
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                }
+                
+                // 更新按钮图标
+                icon.classList.remove('fa-compress');
+                icon.classList.add('fa-expand');
+                fullscreenButton.innerHTML = '<i class="fa fa-expand mr-2"></i>全屏';
+            }
+        }
+        
+        // 监听全屏状态变化
+        document.addEventListener('fullscreenchange', updateFullscreenButton);
+        document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
+        document.addEventListener('mozfullscreenchange', updateFullscreenButton);
+        document.addEventListener('MSFullscreenChange', updateFullscreenButton);
+        
+        function updateFullscreenButton() {
+            const fullscreenButton = document.getElementById('toggle-fullscreen');
+            const icon = fullscreenButton.querySelector('i');
+            
+            if (document.fullscreenElement || 
+                document.mozFullScreenElement || 
+                document.webkitFullscreenElement || 
+                document.msFullscreenElement) {
+                // 当前是全屏状态
+                icon.classList.remove('fa-expand');
+                icon.classList.add('fa-compress');
+                fullscreenButton.innerHTML = '<i class="fa fa-compress mr-2"></i>退出全屏';
+            } else {
+                // 当前不是全屏状态
+                icon.classList.remove('fa-compress');
+                icon.classList.add('fa-expand');
+                fullscreenButton.innerHTML = '<i class="fa fa-expand mr-2"></i>全屏';
+            }
+        }
         
         // 显示/隐藏倒计时面板
         document.getElementById('toggle-timer').addEventListener('click', () => {
@@ -780,8 +853,10 @@
             
             // 每秒更新一次时间
             setInterval(updateTime, 1000);
+            
+            // 初始化全屏按钮
+            document.getElementById('toggle-fullscreen').addEventListener('click', toggleFullscreen);
         });
     </script>
 </body>
-</html>
-    
+</html>    
