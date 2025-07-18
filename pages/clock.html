@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>极简时钟</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#722ED1',
+                        dark: '#1E1E20',
+                        light: '#F5F7FA',
+                        muted: '#86909C',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .bg-blur {
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+            }
+            .glass-effect {
+                background: rgba(30, 30, 32, 0.7);
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            .float-in {
+                animation: floatIn 0.5s ease-out forwards;
+            }
+            .float-out {
+                animation: floatOut 0.5s ease-in forwards;
+            }
+        }
+    </style>
+    
+    <style>
+        body {
+            background: radial-gradient(circle at center, #2D2D30 0%, #1E1E20 100%);
+            overflow-x: hidden;
+        }
+        
+        /* 平滑滚动 */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* 数字时钟字体 */
+        .clock-font {
+            font-variant-numeric: tabular-nums;
+        }
+        
+        /* 时间数字动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(1.1); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .time-digit-changed {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        /* 日期变换动画 */
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .date-change {
+            animation: slideIn 0.5s ease-out forwards;
+        }
+        
+        /* 粒子背景效果 */
+        .particle {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
+        /* 倒计时动画 */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        .countdown-active {
+            animation: pulse 2s infinite;
+        }
+        
+        /* 倒计时结束动画 */
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 10px rgba(22, 93, 255, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(22, 93, 255, 0.6); }
+        }
+        
+        .countdown-ended {
+            animation: glow 1.5s infinite;
+            border-color: rgba(22, 93, 255, 0.6);
+        }
+        
+        /* 倒计时卡片动画 */
+        @keyframes floatIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes floatOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(20px); }
+        }
+        
+        /* 记次列表动画 */
+        .lap-item {
+            transition: all 0.3s ease;
+        }
+        
+        .lap-item-enter {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        
+        .lap-item-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 300ms, transform 300ms;
+        }
+    </style>
+</head>
+<body class="font-inter text-white min-h-screen flex flex-col items-center justify-center p-4">
+    <!-- 主要内容区 -->
+    <div class="max-w-4xl w-full relative z-10">
+        <!-- 时间显示 -->
+        <div class="mb-8 text-center">
+            <h1 class="text-[clamp(2rem,15vw,8rem)] font-light leading-tight clock-font" id="time-display">
+                <span id="time-hours" class="time-digit">12</span>:
+                <span id="time-minutes" class="time-digit">34</span>:
+                <span id="time-seconds" class="time-digit">56</span>
+                <span class="text-[clamp(1rem,5vw,2rem)] ml-2 text-gray-400" id="ampm">PM</span>
+            </h1>
+        </div>
+        
+        <!-- 日期显示 -->
+        <div class="mb-12 text-center">
+            <h2 class="text-[clamp(1.5rem,8vw,3rem)] font-light" id="date-display">
+                <span class="date-change" id="day">星期三</span>
+                <span class="date-change ml-2" id="date">2025年7月18日</span>
+            </h2>
+        </div>
+        
+        <!-- 功能切换 -->
+        <div class="flex justify-center mb-6 gap-4">
+            <button id="toggle-timer" class="px-6 py-3 bg-primary hover:bg-primary/80 rounded-full text-sm font-medium transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/50">
+                <i class="fa fa-clock-o mr-2"></i>倒计时
+            </button>
+            <button id="toggle-stopwatch" class="px-6 py-3 bg-dark hover:bg-dark/80 rounded-full text-sm font-medium transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/20">
+                <i class="fa fa-hourglass-half mr-2"></i>秒表
+            </button>
+        </div>
+        
+        <!-- 倒计时区域 -->
+        <div id="timer-container" class="mb-8 p-6 md:p-8 rounded-2xl glass-effect hidden float-in">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-medium">倒计时</h3>
+                <button id="close-timer" class="text-gray-400 hover:text-white">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="flex flex-col md:flex-row gap-4 justify-center items-center mb-8">
+                <div class="flex flex-col items-center">
+                    <input type="number" id="timer-hours" min="0" max="23" placeholder="时" class="bg-dark/50 text-center w-16 h-16 rounded-lg text-2xl focus:outline-none focus:ring-2 focus:ring-primary">
+                    <label for="timer-hours" class="text-sm text-gray-400 mt-2">小时</label>
+                </div>
+                <div class="flex flex-col items-center">
+                    <input type="number" id="timer-minutes" min="0" max="59" placeholder="分" class="bg-dark/50 text-center w-16 h-16 rounded-lg text-2xl focus:outline-none focus:ring-2 focus:ring-primary">
+                    <label for="timer-minutes" class="text-sm text-gray-400 mt-2">分钟</label>
+                </div>
+                <div class="flex flex-col items-center">
+                    <input type="number" id="timer-seconds" min="0" max="59" placeholder="秒" class="bg-dark/50 text-center w-16 h-16 rounded-lg text-2xl focus:outline-none focus:ring-2 focus:ring-primary">
+                    <label for="timer-seconds" class="text-sm text-gray-400 mt-2">秒钟</label>
+                </div>
+            </div>
+            
+            <div class="flex gap-4 justify-center">
+                <button id="start-timer" class="px-6 py-3 bg-primary hover:bg-primary/80 rounded-full text-sm font-medium transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/50">
+                    <i class="fa fa-play mr-2"></i>开始
+                </button>
+                <button id="pause-timer" class="px-6 py-3 bg-dark hover:bg-dark/80 rounded-full text-sm font-medium transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/20" disabled>
+                    <i class="fa fa-pause mr-2"></i>暂停
+                </button>
+                <button id="reset-timer" class="px-6 py-3 bg-dark hover:bg-dark/80 rounded-full text-sm font-medium transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/20" disabled>
+                    <i class="fa fa-refresh mr-2"></i>重置
+                </button>
+            </div>
+            
+            <!-- 倒计时结束提示 -->
+            <div id="countdown-ended" class="mt-8 hidden">
+                <div class="p-4 rounded-lg countdown-ended">
+                    <i class="fa fa-bell text-primary mr-2"></i>
+                    <span class="font-medium">倒计时结束!</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 秒表区域 -->
+        <div id="stopwatch-container" class="mb-8 p-6 md:p-8 rounded-2xl glass-effect hidden float-in">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-medium">秒表</h3>
+                <button id="close-stopwatch" class="text-gray-400 hover:text-white">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="flex flex-col md:flex-row gap-4 justify-center items-center mb-8">
+                <div class="flex flex-col items-center">
+                    <input type="text" id="stopwatch-hours" value="00" readonly class="bg-dark/50 text-center w-16 h-16 rounded-lg text-2xl focus:outline-none focus:ring-2 focus:ring-primary">
+                    <label for="stopwatch-hours" class="text-sm text-gray-400 mt-2">小时</label>
+                </div>
+                <div class="flex flex-col items-center">
+                    <input type="text" id="stopwatch-minutes" value="00" readonly class="bg-dark/50 text-center w-16 h-16 rounded-lg text-2xl focus:outline-none focus:ring-2 focus:ring-primary">
+                    <label for="stopwatch-minutes" class="text-sm text-gray-400 mt-2">分钟</label>
+                </div>
+                <div class="flex flex-col items-center">
+                    <input type="text" id="stopwatch-seconds" value="00" readonly class="bg-dark/50 text-center w-16 h-16 rounded-lg text-2xl focus:outline-none focus:ring-2 focus:ring-primary">
+                    <label for="stopwatch-seconds" class="text-sm text-gray-400 mt-2">秒钟</label>
+                </div>
+                <div class="flex flex-col items-center">
+                    <input type="text" id="stopwatch-milliseconds" value="00" readonly class="bg-dark/50 text-center w-16 h-16 rounded-lg text-2xl focus:outline-none focus:ring-2 focus:ring-primary">
+                    <label for="stopwatch-milliseconds" class="text-sm text-gray-400 mt-2">毫秒</label>
+                </div>
+            </div>
+            
+            <div class="flex gap-4 justify-center mb-8">
+                <button id="start-stopwatch" class="px-6 py-3 bg-primary hover:bg-primary/80 rounded-full text-sm font-medium transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/50">
+                    <i class="fa fa-play mr-2"></i>开始
+                </button>
+                <button id="lap-stopwatch" class="px-6 py-3 bg-secondary hover:bg-secondary/80 rounded-full text-sm font-medium transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-secondary/50" disabled>
+                    <i class="fa fa-flag mr-2"></i>记次
+                </button>
+                <button id="reset-stopwatch" class="px-6 py-3 bg-dark hover:bg-dark/80 rounded-full text-sm font-medium transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/20" disabled>
+                    <i class="fa fa-refresh mr-2"></i>重置
+                </button>
+            </div>
+            
+            <!-- 记次列表 -->
+            <div class="mt-4 max-h-64 overflow-y-auto bg-dark/30 rounded-lg p-4">
+                <div class="flex justify-between text-gray-400 text-sm mb-2 pb-2 border-b border-gray-700">
+                    <span>序号</span>
+                    <span>时间</span>
+                    <span>总时间</span>
+                </div>
+                <div id="lap-list" class="space-y-2">
+                    <!-- 记次记录将在这里动态添加 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 存储当前时间值，用于比较变化
+        let currentHours = '';
+        let currentMinutes = '';
+        let currentSeconds = '';
+        let currentAmPm = '';
+        
+        // 更新时间显示
+        function updateTime() {
+            const now = new Date();
+            
+            // 获取时间部分
+            let hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+            
+            // 12小时制转换
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // 0 应该显示为 12
+            
+            // 格式化时间
+            const formattedHours = hours.toString().padStart(2, '0');
+            const formattedMinutes = minutes.toString().padStart(2, '0');
+            const formattedSeconds = seconds.toString().padStart(2, '0');
+            
+            // 只对变化的数字应用动画
+            if (formattedHours !== currentHours) {
+                document.getElementById('time-hours').textContent = formattedHours;
+                document.getElementById('time-hours').classList.add('time-digit-changed');
+                setTimeout(() => {
+                    document.getElementById('time-hours').classList.remove('time-digit-changed');
+                }, 500);
+                currentHours = formattedHours;
+            }
+            
+            if (formattedMinutes !== currentMinutes) {
+                document.getElementById('time-minutes').textContent = formattedMinutes;
+                document.getElementById('time-minutes').classList.add('time-digit-changed');
+                setTimeout(() => {
+                    document.getElementById('time-minutes').classList.remove('time-digit-changed');
+                }, 500);
+                currentMinutes = formattedMinutes;
+            }
+            
+            if (formattedSeconds !== currentSeconds) {
+                document.getElementById('time-seconds').textContent = formattedSeconds;
+                document.getElementById('time-seconds').classList.add('time-digit-changed');
+                setTimeout(() => {
+                    document.getElementById('time-seconds').classList.remove('time-digit-changed');
+                }, 500);
+                currentSeconds = formattedSeconds;
+            }
+            
+            if (ampm !== currentAmPm) {
+                document.getElementById('ampm').textContent = ampm;
+                currentAmPm = ampm;
+            }
+            
+            // 更新日期显示
+            const days = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+            const day = days[now.getDay()];
+            
+            const year = now.getFullYear();
+            const month = now.getMonth() + 1;
+            const date = now.getDate();
+            
+            document.getElementById('day').textContent = day;
+            document.getElementById('date').textContent = `${year}年${month}月${date}日`;
+        }
+        
+        // 倒计时功能
+        let countdownTimer = null;
+        let totalSeconds = 0;
+        let isPaused = false;
+        
+        // 秒表功能
+        let stopwatchTimer = null;
+        let stopwatchHours = 0;
+        let stopwatchMinutes = 0;
+        let stopwatchSeconds = 0;
+        let stopwatchMilliseconds = 0;
+        let isStopwatchPaused = true;
+        let lapTimes = []; // 存储所有记次时间
+        let lastLapTime = 0; // 上次记次时间
+        let startTime = null; // 开始时间戳
+        let pausedTime = 0; // 暂停时的累计时间
+        
+        // 显示/隐藏倒计时面板
+        document.getElementById('toggle-timer').addEventListener('click', () => {
+            // 隐藏秒表面板
+            document.getElementById('stopwatch-container').classList.add('hidden');
+            
+            const timerContainer = document.getElementById('timer-container');
+            
+            if (timerContainer.classList.contains('hidden')) {
+                timerContainer.classList.remove('hidden');
+                timerContainer.classList.add('float-in');
+                timerContainer.classList.remove('float-out');
+                
+                // 切换按钮样式
+                document.getElementById('toggle-timer').classList.remove('bg-dark');
+                document.getElementById('toggle-timer').classList.add('bg-primary');
+                document.getElementById('toggle-stopwatch').classList.remove('bg-primary');
+                document.getElementById('toggle-stopwatch').classList.add('bg-dark');
+            } else {
+                timerContainer.classList.remove('float-in');
+                timerContainer.classList.add('float-out');
+                setTimeout(() => {
+                    timerContainer.classList.add('hidden');
+                    
+                    // 重置按钮样式
+                    document.getElementById('toggle-timer').classList.remove('bg-primary');
+                    document.getElementById('toggle-timer').classList.add('bg-dark');
+                }, 500);
+            }
+        });
+        
+        // 显示/隐藏秒表面板
+        document.getElementById('toggle-stopwatch').addEventListener('click', () => {
+            // 隐藏倒计时面板
+            document.getElementById('timer-container').classList.add('hidden');
+            
+            const stopwatchContainer = document.getElementById('stopwatch-container');
+            
+            if (stopwatchContainer.classList.contains('hidden')) {
+                stopwatchContainer.classList.remove('hidden');
+                stopwatchContainer.classList.add('float-in');
+                stopwatchContainer.classList.remove('float-out');
+                
+                // 切换按钮样式
+                document.getElementById('toggle-stopwatch').classList.remove('bg-dark');
+                document.getElementById('toggle-stopwatch').classList.add('bg-primary');
+                document.getElementById('toggle-timer').classList.remove('bg-primary');
+                document.getElementById('toggle-timer').classList.add('bg-dark');
+            } else {
+                stopwatchContainer.classList.remove('float-in');
+                stopwatchContainer.classList.add('float-out');
+                setTimeout(() => {
+                    stopwatchContainer.classList.add('hidden');
+                    
+                    // 重置按钮样式
+                    document.getElementById('toggle-stopwatch').classList.remove('bg-primary');
+                    document.getElementById('toggle-stopwatch').classList.add('bg-dark');
+                }, 500);
+            }
+        });
+        
+        // 关闭倒计时面板
+        document.getElementById('close-timer').addEventListener('click', () => {
+            const timerContainer = document.getElementById('timer-container');
+            timerContainer.classList.remove('float-in');
+            timerContainer.classList.add('float-out');
+            setTimeout(() => {
+                timerContainer.classList.add('hidden');
+                
+                // 重置按钮样式
+                document.getElementById('toggle-timer').classList.remove('bg-primary');
+                document.getElementById('toggle-timer').classList.add('bg-dark');
+            }, 500);
+        });
+        
+        // 关闭秒表面板
+        document.getElementById('close-stopwatch').addEventListener('click', () => {
+            const stopwatchContainer = document.getElementById('stopwatch-container');
+            stopwatchContainer.classList.remove('float-in');
+            stopwatchContainer.classList.add('float-out');
+            setTimeout(() => {
+                stopwatchContainer.classList.add('hidden');
+                
+                // 重置按钮样式
+                document.getElementById('toggle-stopwatch').classList.remove('bg-primary');
+                document.getElementById('toggle-stopwatch').classList.add('bg-dark');
+            }, 500);
+        });
+        
+        // 开始倒计时
+        document.getElementById('start-timer').addEventListener('click', () => {
+            // 获取输入值
+            const hoursInput = document.getElementById('timer-hours');
+            const minutesInput = document.getElementById('timer-minutes');
+            const secondsInput = document.getElementById('timer-seconds');
+            
+            const hours = parseInt(hoursInput.value) || 0;
+            const minutes = parseInt(minutesInput.value) || 0;
+            const seconds = parseInt(secondsInput.value) || 0;
+            
+            if (hours === 0 && minutes === 0 && seconds === 0) {
+                alert('请设置倒计时时间');
+                return;
+            }
+            
+            totalSeconds = hours * 3600 + minutes * 60 + seconds;
+            
+            // 隐藏结束提示
+            document.getElementById('countdown-ended').classList.add('hidden');
+            
+            // 更新按钮状态
+            document.getElementById('start-timer').disabled = true;
+            document.getElementById('pause-timer').disabled = false;
+            document.getElementById('reset-timer').disabled = false;
+            
+            // 禁用输入框
+            hoursInput.disabled = true;
+            minutesInput.disabled = true;
+            secondsInput.disabled = true;
+            
+            // 开始倒计时
+            updateCountdownDisplay();
+            countdownTimer = setInterval(updateCountdown, 1000);
+        });
+        
+        // 暂停倒计时
+        document.getElementById('pause-timer').addEventListener('click', () => {
+            if (isPaused) {
+                // 继续倒计时
+                countdownTimer = setInterval(updateCountdown, 1000);
+                document.getElementById('pause-timer').innerHTML = '<i class="fa fa-pause mr-2"></i>暂停';
+            } else {
+                // 暂停倒计时
+                clearInterval(countdownTimer);
+                document.getElementById('pause-timer').innerHTML = '<i class="fa fa-play mr-2"></i>继续';
+            }
+            isPaused = !isPaused;
+        });
+        
+        // 重置倒计时
+        document.getElementById('reset-timer').addEventListener('click', () => {
+            clearInterval(countdownTimer);
+            
+            // 重置UI
+            document.getElementById('countdown-ended').classList.add('hidden');
+            
+            // 重置按钮状态
+            document.getElementById('start-timer').disabled = false;
+            document.getElementById('pause-timer').disabled = true;
+            document.getElementById('reset-timer').disabled = true;
+            document.getElementById('pause-timer').innerHTML = '<i class="fa fa-pause mr-2"></i>暂停';
+            
+            // 重置输入框
+            const hoursInput = document.getElementById('timer-hours');
+            const minutesInput = document.getElementById('timer-minutes');
+            const secondsInput = document.getElementById('timer-seconds');
+            
+            hoursInput.disabled = false;
+            minutesInput.disabled = false;
+            secondsInput.disabled = false;
+            
+            // 清空输入框
+            hoursInput.value = '';
+            minutesInput.value = '';
+            secondsInput.value = '';
+            
+            isPaused = false;
+        });
+        
+        // 更新倒计时显示
+        function updateCountdown() {
+            if (totalSeconds <= 0) {
+                clearInterval(countdownTimer);
+                document.getElementById('countdown-ended').classList.remove('hidden');
+                
+                // 重置按钮状态
+                document.getElementById('start-timer').disabled = false;
+                document.getElementById('pause-timer').disabled = true;
+                document.getElementById('reset-timer').disabled = true;
+                
+                // 重置输入框
+                const hoursInput = document.getElementById('timer-hours');
+                const minutesInput = document.getElementById('timer-minutes');
+                const secondsInput = document.getElementById('timer-seconds');
+                
+                hoursInput.disabled = false;
+                minutesInput.disabled = false;
+                secondsInput.disabled = false;
+                
+                // 播放提示音
+                playAlertSound();
+                
+                return;
+            }
+            
+            totalSeconds--;
+            updateCountdownDisplay();
+        }
+        
+        // 更新倒计时显示（直接更新输入框）
+        function updateCountdownDisplay() {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            
+            document.getElementById('timer-hours').value = hours.toString().padStart(2, '0');
+            document.getElementById('timer-minutes').value = minutes.toString().padStart(2, '0');
+            document.getElementById('timer-seconds').value = seconds.toString().padStart(2, '0');
+        }
+        
+        // 开始秒表
+        document.getElementById('start-stopwatch').addEventListener('click', () => {
+            if (isStopwatchPaused) {
+                // 开始或继续秒表
+                if (!startTime) {
+                    startTime = Date.now();
+                } else {
+                    // 如果是暂停后继续，更新开始时间
+                    startTime = Date.now() - pausedTime;
+                }
+                
+                stopwatchTimer = setInterval(updateStopwatch, 10);
+                document.getElementById('start-stopwatch').innerHTML = '<i class="fa fa-pause mr-2"></i>暂停';
+                document.getElementById('lap-stopwatch').disabled = false;
+                document.getElementById('reset-stopwatch').disabled = false;
+                document.getElementById('lap-stopwatch').innerHTML = '<i class="fa fa-flag mr-2"></i>记次';
+            } else {
+                // 暂停秒表
+                clearInterval(stopwatchTimer);
+                pausedTime = Date.now() - startTime;
+                document.getElementById('start-stopwatch').innerHTML = '<i class="fa fa-play mr-2"></i>继续';
+                document.getElementById('lap-stopwatch').innerHTML = '<i class="fa fa-plus mr-2"></i>添加';
+            }
+            isStopwatchPaused = !isStopwatchPaused;
+        });
+        
+        // 秒表记次
+        document.getElementById('lap-stopwatch').addEventListener('click', () => {
+            addLapTime();
+        });
+        
+        // 添加记次时间
+        function addLapTime() {
+            const now = Date.now();
+            const elapsedTime = now - startTime;
+            
+            // 计算当前时间
+            const totalMilliseconds = elapsedTime;
+            const totalSeconds = Math.floor(totalMilliseconds / 1000);
+            const currentHours = Math.floor(totalSeconds / 3600);
+            const currentMinutes = Math.floor((totalSeconds % 3600) / 60);
+            const currentSeconds = totalSeconds % 60;
+            const currentMilliseconds = Math.floor((totalMilliseconds % 1000) / 10);
+            
+            // 格式化当前时间
+            const formattedCurrentTime = `${currentHours.toString().padStart(2, '0')}:${currentMinutes.toString().padStart(2, '0')}:${currentSeconds.toString().padStart(2, '0')}.${currentMilliseconds.toString().padStart(2, '0')}`;
+            
+            // 计算当前记次时间
+            let lapTime;
+            if (lapTimes.length === 0) {
+                lapTime = formattedCurrentTime;
+            } else {
+                // 计算与上次记次的差值
+                const lastLap = lapTimes[0].totalTime;
+                const lastLapParts = lastLap.split(':');
+                const lastLapHours = parseInt(lastLapParts[0]);
+                const lastLapMinutes = parseInt(lastLapParts[1]);
+                const lastLapSeconds = parseInt(lastLapParts[2].split('.')[0]);
+                const lastLapMilliseconds = parseInt(lastLapParts[2].split('.')[1]);
+                
+                const lastLapTotalMs = (lastLapHours * 3600 + lastLapMinutes * 60 + lastLapSeconds) * 100 + lastLapMilliseconds;
+                const currentTotalMs = (currentHours * 3600 + currentMinutes * 60 + currentSeconds) * 100 + currentMilliseconds;
+                
+                const lapMs = currentTotalMs - lastLapTotalMs;
+                const lapS = Math.floor(lapMs / 100);
+                const lapH = Math.floor(lapS / 3600);
+                const lapM = Math.floor((lapS % 3600) / 60);
+                const lapSec = lapS % 60;
+                const lapMsRemainder = lapMs % 100;
+                
+                lapTime = `${lapH.toString().padStart(2, '0')}:${lapM.toString().padStart(2, '0')}:${lapSec.toString().padStart(2, '0')}.${lapMsRemainder.toString().padStart(2, '0')}`;
+            }
+            
+            // 添加到记次列表
+            lapTimes.unshift({
+                lapNumber: lapTimes.length + 1,
+                lapTime: lapTime,
+                totalTime: formattedCurrentTime
+            });
+            
+            // 更新记次列表UI
+            updateLapList();
+        }
+        
+        // 更新记次列表UI
+        function updateLapList() {
+            const lapList = document.getElementById('lap-list');
+            lapList.innerHTML = '';
+            
+            lapTimes.forEach((lap, index) => {
+                const lapItem = document.createElement('div');
+                lapItem.className = 'lap-item flex justify-between py-2 border-b border-gray-700 last:border-0';
+                lapItem.innerHTML = `
+                    <span class="text-gray-400">${lap.lapNumber}</span>
+                    <span class="text-white">${lap.lapTime}</span>
+                    <span class="text-gray-400">${lap.totalTime}</span>
+                `;
+                
+                // 添加动画效果
+                setTimeout(() => {
+                    lapItem.classList.add('lap-item-enter');
+                    setTimeout(() => {
+                        lapItem.classList.remove('lap-item-enter');
+                    }, 10);
+                }, index * 50);
+                
+                lapList.appendChild(lapItem);
+            });
+        }
+        
+        // 重置秒表
+        document.getElementById('reset-stopwatch').addEventListener('click', () => {
+            clearInterval(stopwatchTimer);
+            
+            // 重置时间
+            stopwatchHours = 0;
+            stopwatchMinutes = 0;
+            stopwatchSeconds = 0;
+            stopwatchMilliseconds = 0;
+            lapTimes = [];
+            startTime = null;
+            pausedTime = 0;
+            
+            // 更新显示
+            document.getElementById('stopwatch-hours').value = '00';
+            document.getElementById('stopwatch-minutes').value = '00';
+            document.getElementById('stopwatch-seconds').value = '00';
+            document.getElementById('stopwatch-milliseconds').value = '00';
+            
+            // 清空记次列表
+            document.getElementById('lap-list').innerHTML = '';
+            
+            // 重置按钮状态
+            document.getElementById('start-stopwatch').innerHTML = '<i class="fa fa-play mr-2"></i>开始';
+            document.getElementById('start-stopwatch').disabled = false;
+            document.getElementById('lap-stopwatch').disabled = true;
+            document.getElementById('reset-stopwatch').disabled = true;
+            
+            isStopwatchPaused = true;
+        });
+        
+        // 更新秒表
+        function updateStopwatch() {
+            const now = Date.now();
+            const elapsedTime = now - startTime;
+            
+            // 计算时间
+            const totalMilliseconds = elapsedTime;
+            const totalSeconds = Math.floor(totalMilliseconds / 1000);
+            stopwatchHours = Math.floor(totalSeconds / 3600);
+            stopwatchMinutes = Math.floor((totalSeconds % 3600) / 60);
+            stopwatchSeconds = totalSeconds % 60;
+            stopwatchMilliseconds = Math.floor((totalMilliseconds % 1000) / 10);
+            
+            // 更新显示
+            document.getElementById('stopwatch-hours').value = stopwatchHours.toString().padStart(2, '0');
+            document.getElementById('stopwatch-minutes').value = stopwatchMinutes.toString().padStart(2, '0');
+            document.getElementById('stopwatch-seconds').value = stopwatchSeconds.toString().padStart(2, '0');
+            document.getElementById('stopwatch-milliseconds').value = stopwatchMilliseconds.toString().padStart(2, '0');
+        }
+        
+        // 播放提示音 - 更友好的提示音
+        function playAlertSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                oscillator.type = 'sine';
+                
+                // 创建更友好的提示音
+                const notes = [440, 523, 659]; // C, E, G 和弦
+                const duration = 0.3;
+                
+                oscillator.frequency.setValueAtTime(notes[0], audioCtx.currentTime);
+                oscillator.frequency.setValueAtTime(notes[1], audioCtx.currentTime + duration);
+                oscillator.frequency.setValueAtTime(notes[2], audioCtx.currentTime + duration * 2);
+                
+                gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.4, audioCtx.currentTime + 0.1);
+                gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + duration * 3);
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + duration * 3);
+            } catch (e) {
+                console.log("无法播放提示音:", e);
+                // 如果无法播放音频，使用视觉反馈
+                const endedElement = document.getElementById('countdown-ended');
+                endedElement.classList.add('bg-primary/30');
+                setTimeout(() => {
+                    endedElement.classList.remove('bg-primary/30');
+                }, 1000);
+            }
+        }
+        
+        // 页面加载完成后初始化
+        window.addEventListener('DOMContentLoaded', () => {
+            // 立即更新一次时间
+            updateTime();
+            
+            // 每秒更新一次时间
+            setInterval(updateTime, 1000);
+        });
+    </script>
+</body>
+</html>
+    
