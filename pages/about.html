@@ -1,85 +1,398 @@
 <!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-		<title>ErrKiller'Zone|关于</title>
-		<link rel="shortcut icon" href="../img/favicon.ico"> <!-- <script src="../js/jquery-3.6.0.min.js"></script> -->
-		<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-m/jquery/3.6.0/jquery.min.js"
-			type="application/javascript"> </script>
-		<!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
-		<link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.css" rel="stylesheet">
-		<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" type="application/javascript">
-		</script>
-		<style>
-			body {
-				overflow: hidden;
-				/* vw和vh相对的当前浏览器的视口 ，例如当前视口尺寸为375px 那么100vw = 375px，与父元素的大小无关 */
-				width: 100vw;
-				height: 100vh;
-			}
-		</style>
-	</head>
-	<body id="showDT">
-		<div class="container">
-			<div class="row clearfix">
-				<div class="col-md-6 column" style="color: #ffffff;">
-					<h1> 关于 </h1>
-					<hr />
-					<p> For You </p>
-					<hr />
-					<div>
-						<h3>人生的容错率大到你难以想象，功利主义导向的思考方式往往使我们忘却了生命的本质是一场历程。无数人忽略了一个真相，很多事情其实根本没有意义。吃喝玩乐不是虚度光阴，吃苦耐劳也不一定值得歌颂。人生本就是不停的去感受去体验，爱你所爱。可是我们总爱去和别人比较，徒增自己的焦虑内耗。不一定要做世俗大家认为有意义的事，如果你想发呆，看日落数星星都有意义。你只是来体验生命的，不是用来演绎完美的，慢慢接受自已身上那些灰暗的部分，原谅自己的迟钝和平庸，允许自己出错，允许自己偶尔断电，带着缺憾拼命绽放，收获、感受然后放下。换成我们都能理解的话就是：在吃汉堡比赛里，输赢不重要，因为怎么样你都能吃到汉堡</h3>
-						<p style="margin-top:20px;">Copyright © <a href="../index.html"
-								style="text-decoration: none;">ErrKiller</a>. All Rights Reserved.</p>
-						<p id="showStartTime"> </p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</body>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ErrKiller'Zone|生命的旅程</title>
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <!-- Tailwind CSS v3 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            secondary: '#69b1ff',
+            accent: '#FF7D00',
+            dark: '#1D2939',
+            light: '#F9FAFB'
+          },
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .text-shadow {
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .text-shadow-lg {
+        text-shadow: 0 4px 8px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08);
+      }
+      .animate-float {
+        animation: float 6s ease-in-out infinite;
+      }
+      .animate-pulse-slow {
+        animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+      .backdrop-blur {
+        backdrop-filter: blur(8px);
+      }
+      .text-pop {
+        transition: all 0.3s ease-out;
+      }
+      .text-pop:hover {
+        transform: translateY(-3px);
+        text-shadow: 0 10px 20px rgba(22, 93, 255, 0.2);
+        color: #69b1ff;
+      }
+      .key-point {
+        font-size: 1.25rem;
+        font-weight: 500;
+        color: #69b1ff;
+        padding: 1.5rem 2rem;
+        margin: 3rem 0;
+        border-left: 4px solid #165DFF;
+        background-color: rgba(22, 93, 255, 0.05);
+        border-radius: 0 0.5rem 0.5rem 0;
+        transition: all 0.3s ease-out;
+        position: relative;
+      }
+      .key-point::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      }
+      .key-point::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      }
+      .key-point:hover {
+        transform: translateX(5px);
+        background-color: rgba(22, 93, 255, 0.1);
+      }
+      .prose p {
+        margin-bottom: 1.5rem;
+      }
+      .prose p:last-child {
+        margin-bottom: 0;
+      }
+      .color-beat {
+        transition: color 1.5s ease-out;
+      }
+      .base-color {
+        color: #e5e7eb !important;
+      }
+    }
+    
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+      100% { transform: translateY(0px); }
+    }
+  </style>
+</head>
+<body class="font-inter bg-dark text-light min-h-screen overflow-x-hidden">
+  <!-- 交互粒子背景 -->
+  <canvas id="particleCanvas" class="fixed inset-0 z-0"></canvas>
+
+  <!-- 主要内容 -->
+  <main class="relative z-10 container mx-auto px-4 pt-24 pb-20">
+    <div class="max-w-4xl mx-auto">
+      <div class="bg-dark/60 backdrop-blur p-8 md:p-12 rounded-2xl border border-white/10 shadow-xl transform transition-all duration-500 hover:shadow-2xl">
+        <h1 class="text-[clamp(2.5rem,5vw,4rem)] font-bold leading-tight mb-8 text-center text-white" id="title">生命的<span class="text-white">旅程</span></h1>
+        
+        <div class="prose prose-invert max-w-none space-y-6">
+          <p class="text-lg md:text-xl text-gray-200 leading-relaxed first-letter:text-4xl first-letter:text-primary first-letter:font-bold first-letter:mr-2 first-letter:float-left text-pop color-beat base-color" id="p1">
+            人生的容错率大到你难以想象，功利主义导向的思考方式往往使我们忘却了生命的本质是一场历程。无数人忽略了一个真相，很多事情其实根本没有意义。
+          </p>
+          
+          <p class="text-lg md:text-xl text-gray-200 leading-relaxed text-pop color-beat base-color" id="p2">
+            吃喝玩乐不是虚度光阴，吃苦耐劳也不一定值得歌颂。人生本就是不停的去感受去体验，爱你所爱。可是我们总爱去和别人比较，徒增自己的焦虑内耗。
+          </p>
+          
+          <p class="text-lg md:text-xl text-gray-200 leading-relaxed text-pop color-beat base-color" id="p3">
+            不一定要做世俗大家认为有意义的事，如果你想发呆，看日落数星星都有意义。
+          </p>
+          
+          <p class="text-lg md:text-xl text-gray-200 leading-relaxed text-pop color-beat base-color" id="p4">
+            你只是来体验生命的，不是用来演绎完美的，慢慢接受自已身上那些灰暗的部分，原谅自己的迟钝和平庸，允许自己出错，允许自己偶尔断电，带着缺憾拼命绽放，收获、感受然后放下。
+          </p>
+          
+          <p class="key-point color-beat base-color" id="p5">
+            换成我们都能理解的话就是：在吃汉堡比赛里，输赢不重要，因为怎么样你都能吃到汉堡。
+          </p>
+        </div>
+        
+        <div class="mt-12 pt-8 border-t border-white/10">
+          <p class="text-gray-400 text-center">Copyright © <a href="#" class="text-primary hover:underline">ErrKiller</a>. All Rights Reserved.</p>
+          <p id="showStartTime" class="text-gray-500 mt-2 text-center"></p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 时间计算 -->
+  <script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-m/jquery/3.6.0/jquery.min.js"></script>
+  
+  <script>
+    // 交互粒子背景
+    document.addEventListener('DOMContentLoaded', function() {
+      // 初始化Canvas
+      const canvas = document.getElementById('particleCanvas');
+      const ctx = canvas.getContext('2d');
+      
+      // 设置Canvas尺寸
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      
+      // 监听窗口大小变化
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas();
+      
+      // 粒子类
+      class Particle {
+        constructor() {
+          this.x = Math.random() * canvas.width;
+          this.y = Math.random() * canvas.height;
+          this.size = Math.random() * 3 + 1;
+          this.speedX = Math.random() * 3 - 1.5;
+          this.speedY = Math.random() * 3 - 1.5;
+          this.color = `rgba(${22 + Math.random() * 20}, ${93 + Math.random() * 60}, ${255 + Math.random() * 0}, ${Math.random() * 0.8 + 0.2})`;
+        }
+        
+        update() {
+          this.x += this.speedX;
+          this.y += this.speedY;
+          
+          if (this.size > 0.2) this.size -= 0.005;
+          
+          // 边界检测
+          if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+          if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+        }
+        
+        draw() {
+          ctx.fillStyle = this.color;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      
+      // 创建粒子数组
+      let particles = [];
+      const particleCount = 100;
+      
+      for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+      }
+      
+      // 添加鼠标交互
+      const mouse = {
+        x: null,
+        y: null,
+        radius: 150
+      };
+      
+      window.addEventListener('mousemove', function(e) {
+        mouse.x = e.x;
+        mouse.y = e.y;
+      });
+      
+      // 触摸设备支持
+      window.addEventListener('touchmove', function(e) {
+        if (e.touches.length > 0) {
+          mouse.x = e.touches[0].clientX;
+          mouse.y = e.touches[0].clientY;
+        }
+      }, { passive: true });
+      
+      // 点击创建新粒子
+      window.addEventListener('click', function(e) {
+        for (let i = 0; i < 10; i++) {
+          particles.push(new Particle());
+          particles[particles.length - 1].x = e.x;
+          particles[particles.length - 1].y = e.y;
+          particles[particles.length - 1].size = 5 + Math.random() * 5;
+        }
+      });
+      
+      // 触摸设备点击支持
+      window.addEventListener('touchstart', function(e) {
+        if (e.touches.length > 0) {
+          for (let i = 0; i < 10; i++) {
+            particles.push(new Particle());
+            particles[particles.length - 1].x = e.touches[0].clientX;
+            particles[particles.length - 1].y = e.touches[0].clientY;
+            particles[particles.length - 1].size = 5 + Math.random() * 5;
+          }
+        }
+      }, { passive: true });
+      
+      // 动画循环
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // 绘制背景渐变
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        gradient.addColorStop(0, '#0f172a');
+        gradient.addColorStop(1, '#1e293b');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // 更新并绘制所有粒子
+        let i = particles.length;
+        while (i--) {
+          particles[i].update();
+          particles[i].draw();
+          
+          // 如果粒子太小，移除它
+          if (particles[i].size <= 0.2) {
+            particles.splice(i, 1);
+          }
+        }
+        
+        // 添加新粒子以保持总数
+        while (particles.length < particleCount) {
+          particles.push(new Particle());
+        }
+        
+        // 绘制粒子间的连接线
+        connect();
+        
+        requestAnimationFrame(animate);
+      }
+      
+      // 连接粒子
+      function connect() {
+        let opacityValue = 1;
+        
+        for (let a = 0; a < particles.length; a++) {
+          for (let b = a; b < particles.length; b++) {
+            let distance = Math.pow(particles[a].x - particles[b].x, 2) + 
+                          Math.pow(particles[a].y - particles[b].y, 2);
+            
+            // 鼠标交互 - 当鼠标靠近时，连接线增强
+            let mouseDistance = Math.pow(particles[a].x - mouse.x, 2) + 
+                               Math.pow(particles[a].y - mouse.y, 2);
+            if (mouseDistance < 10000) {
+              particles[a].size += 0.1;
+              if (particles[a].size > 5) particles[a].size = 5;
+            }
+            
+            if (distance < 20000) {
+              opacityValue = 1 - (distance / 20000);
+              ctx.strokeStyle = `rgba(${22 + Math.random() * 20}, ${93 + Math.random() * 60}, ${255 + Math.random() * 0}, ${opacityValue})`;
+              ctx.lineWidth = 0.5;
+              ctx.beginPath();
+              ctx.moveTo(particles[a].x, particles[a].y);
+              ctx.lineTo(particles[b].x, particles[b].y);
+              ctx.stroke();
+            }
+          }
+        }
+      }
+      
+      // 开始动画
+      animate();
+      
+      // 随机颜色数组
+      const colors = [
+        '#69b1ff', // 蓝色
+        '#FF7D00', // 橙色
+        '#FF3D00', // 红色
+        '#00E5FF', // 青色
+        '#7C4DFF', // 紫色
+        '#00E676', // 绿色
+        '#FF4081', // 粉色
+        '#FFD700', // 金色
+        '#00BCD4', // 亮青色
+        '#9C27B0'  // 深紫色
+      ];
+      
+      // 基础颜色
+      const baseColor = '#e5e7eb';
+      
+      // 为段落设置心跳颜色效果
+      const paragraphs = document.querySelectorAll('.color-beat');
+      let currentIndex = 0;
+      
+      function heartBeatEffect() {
+        // 重置所有段落为基础颜色
+        paragraphs.forEach(paragraph => {
+          paragraph.classList.add('base-color');
+        });
+        
+        // 移除当前段落的基础颜色类
+        paragraphs[currentIndex].classList.remove('base-color');
+        
+        // 为当前段落设置随机颜色
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        paragraphs[currentIndex].style.color = randomColor;
+        
+        // 移动到下一个段落
+        currentIndex = (currentIndex + 1) % paragraphs.length;
+        
+        // 设置下一次心跳
+        setTimeout(heartBeatEffect, 2000); // 每2秒跳动一次
+      }
+      
+      // 开始心跳效果
+      heartBeatEffect();
+      
+      // 网站运行时间计算
+      let fun = function(str) {
+        let start = new Date(str).getTime();
+        let now = new Date().getTime();
+        let total = (now - start) / 1000;
+        let year = Math.floor((total / 3600 / 24) / 365);
+        let month = Math.floor((total - year * 365 * 24 * 3600) / 3600 / 24 / 30);
+        let day = Math.floor((total - year * 365 * 24 * 3600 - month * 30 * 24 * 3600) / 3600 / 24);
+        let h = Math.floor((total - year * 365 * 24 * 3600 - month * 30 * 24 * 3600 - day * 24 * 3600) / 3600);
+        let m = Math.floor((total - year * 365 * 24 * 3600 - month * 30 * 24 * 3600 - day * 24 * 3600 - h * 3600) / 60);
+        let s = Math.floor((total - year * 365 * 24 * 3600 - month * 30 * 24 * 3600 - day * 24 * 3600 - h * 3600 - m * 60));
+        return `${year}年${month}月${day}日${h}时${m}分${s}秒`;
+      };
+      
+      // 创建一个单独的函数来更新时间显示
+      function updateTime() {
+        const startTimeElement = document.getElementById('showStartTime');
+        if (startTimeElement) {
+          startTimeElement.textContent = `这段旅程已持续: ${fun("2022-3-25 22:14")}`;
+        }
+      }
+      
+      // 立即调用一次以显示初始值
+      updateTime();
+      
+      // 设置定时器每秒更新一次
+      setInterval(updateTime, 1000);
+    });
+  </script>
+</body>
 </html>
-<script type="text/javascript">
-	let fun = function(str) {
-		let start = new Date(str).getTime();
-		let now = new Date().getTime();
-		/*总的秒数*/
-		let total = (now - start) / 1000;
-		/*年*/
-		let year = Math.floor((total / 3600 / 24) / 365);
-		/* //月 */
-		let month = Math.floor((total - year * 365 * 24 * 3600) / 3600 / 24 / 30);
-		/* //日 */
-		let day = Math.floor((total - year * 365 * 24 * 3600 - month * 30 * 24 * 3600) / 3600 / 24);
-		/* //时 */
-		let h = Math.floor((total - year * 365 * 24 * 3600 - month * 30 * 24 * 3600 - day * 24 * 3600) / 3600);
-		let m = Math.floor((total - year * 365 * 24 * 3600 - month * 30 * 24 * 3600 - day * 24 * 3600 - h * 3600) /
-			60);
-		let s = Math.floor((total - year * 365 * 24 * 3600 - month * 30 * 24 * 3600 - day * 24 * 3600 - h * 3600 - m *
-			60));
-		return `${year}年${month}月${day}日${h}时${m}分${s}秒`;
-	};
-	/* // 起始时间：2022‎年‎3‎月‎25‎日，‏‎22:14:48。2022-3-25 22:14 */
-	setInterval(function() {
-		$("#showStartTime").html(`网站已运行:${fun("2022-3-25 22:14")}`);
-	}, 1000);
-</script>
-
-<!-- analyse -->
-<script type="text/javascript" src="../js/webAnalyse.js"></script>
-
-<!-- 动态背景 -->
-<script src="https://cdn.bootcdn.net/ajax/libs/three.js/0.156.1/three.min.js"></script>
-<script src="https://cdn.bootcdn.net/ajax/libs/vanta/0.5.24/vanta.halo.min.js"></script>
-<script>
-	VANTA.HALO({
-	  el: "#showDT",
-	  mouseControls: true,
-	  touchControls: true,
-	  gyroControls: false,
-	  minHeight: 200.00,
-	  minWidth: 200.00
-	})
-</script>
