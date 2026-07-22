@@ -1,998 +1,695 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProResume - 专业简历生成器</title>
-
-    <script crossorigin src="https://cdn.bootcdn.net/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
-    <script crossorigin src="https://cdn.bootcdn.net/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/babel-standalone/7.24.7/babel.min.js"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-    <link rel="preconnect" href="https://fonts.loli.net">
-    <link rel="preconnect" href="https://gstatic.loli.net" crossorigin>
-    <link href="https://fonts.loli.net/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;600;700&family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <style>
-        :root {
-            --space-xs: 4px; --space-sm: 8px; --space-md: 16px; --space-lg: 24px; --space-xl: 32px; --space-2xl: 48px; --space-3xl: 64px;
-            --font-body: 'Inter','Noto Sans SC',sans-serif; --font-serif: 'Noto Serif SC','Playfair Display',serif;
-            --text-xs: 11px; --text-sm: 13px; --text-base: 14px; --text-md: 16px; --text-lg: 20px; --text-xl: 24px; --text-2xl: 32px; --text-3xl: 40px;
-            --leading-tight: 1.25; --leading-normal: 1.5; --leading-relaxed: 1.75;
-            --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px; --radius-xl: 16px; --radius-full: 9999px;
-            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05); --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -2px rgba(0,0,0,0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1),0 4px 6px -4px rgba(0,0,0,0.1); --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1),0 8px 10px -6px rgba(0,0,0,0.1);
-            --transition-fast: 0.15s ease; --transition-base: 0.25s ease; --transition-slow: 0.4s cubic-bezier(0.4,0,0.2,1);
-            --z-dropdown: 100; --z-modal: 200; --z-toast: 300;
-            --a4-width: 210mm; --a4-height: 297mm; --a4-ratio: 1.414;
-        }
-
-        [data-theme="classic"] {
-            --color-primary: #1e3a5f; --color-primary-light: #2c5282; --color-primary-dark: #0f1f33; --color-accent: #3182ce; --color-accent-light: #4299e1;
-            --color-bg: #f7fafc; --color-surface: #ffffff; --color-surface-alt: #edf2f7; --color-text: #1a202c; --color-text-secondary: #4a5568; --color-text-muted: #718096;
-            --color-border: #e2e8f0; --color-border-light: #edf2f7; --color-success: #38a169; --color-warning: #d69e2e; --color-danger: #e53e3e;
-        }
-        [data-theme="warm"] {
-            --color-primary: #744210; --color-primary-light: #975a16; --color-primary-dark: #553c0a; --color-accent: #c05621; --color-accent-light: #dd6b20;
-            --color-bg: #fffaf0; --color-surface: #ffffff; --color-surface-alt: #fef5e7; --color-text: #1c1917; --color-text-secondary: #57534e; --color-text-muted: #a8a29e;
-            --color-border: #e7e5e4; --color-border-light: #fafaf9; --color-success: #65a30d; --color-warning: #ca8a04; --color-danger: #dc2626;
-        }
-        [data-theme="slate"] {
-            --color-primary: #0f172a; --color-primary-light: #1e293b; --color-primary-dark: #020617; --color-accent: #6366f1; --color-accent-light: #818cf8;
-            --color-bg: #f8fafc; --color-surface: #ffffff; --color-surface-alt: #f1f5f9; --color-text: #0f172a; --color-text-secondary: #475569; --color-text-muted: #94a3b8;
-            --color-border: #e2e8f0; --color-border-light: #f8fafc; --color-success: #10b981; --color-warning: #f59e0b; --color-danger: #ef4444;
-        }
-
-        *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html { font-size: 16px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-        body { font-family: var(--font-body); font-size: var(--text-base); line-height: var(--leading-normal); color: var(--color-text); background: var(--color-bg); min-height: 100vh; }
-
-        .app-container { display: flex; height: 100vh; overflow: hidden; }
-        .editor-panel { width: 420px; min-width: 420px; height: 100vh; overflow-y: auto; background: var(--color-surface); border-right: 1px solid var(--color-border); display: flex; flex-direction: column; }
-        .editor-header { padding: var(--space-lg) var(--space-xl); border-bottom: 1px solid var(--color-border); background: var(--color-surface); position: sticky; top: 0; z-index: 10; }
-        .editor-header h1 { font-size: var(--text-xl); font-weight: 700; color: var(--color-primary); letter-spacing: -0.02em; margin-bottom: var(--space-xs); }
-        .editor-header p { font-size: var(--text-sm); color: var(--color-text-muted); }
-        .editor-content { flex: 1; padding: var(--space-lg) var(--space-xl); padding-bottom: 120px; }
-        .preview-panel { flex: 1; display: flex; flex-direction: column; background: var(--color-bg); overflow: hidden; }
-        .preview-toolbar { display: flex; align-items: center; justify-content: space-between; padding: var(--space-md) var(--space-xl); background: var(--color-surface); border-bottom: 1px solid var(--color-border); gap: var(--space-md); flex-wrap: wrap; }
-        .preview-area { flex: 1; overflow: auto; padding: var(--space-xl); display: flex; justify-content: center; align-items: flex-start; }
-
-        .a4-paper { width: var(--a4-width); min-height: var(--a4-height); background: #fff; box-shadow: var(--shadow-xl); position: relative; transform-origin: top center; transition: transform var(--transition-slow); }
-
-        .btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-sm); padding: var(--space-sm) var(--space-md); border-radius: var(--radius-md); font-family: var(--font-body); font-size: var(--text-sm); font-weight: 500; cursor: pointer; border: none; transition: all var(--transition-fast); white-space: nowrap; }
-        .btn-primary { background: var(--color-primary); color: white; }
-        .btn-primary:hover { background: var(--color-primary-light); transform: translateY(-1px); box-shadow: var(--shadow-md); }
-        .btn-secondary { background: var(--color-surface-alt); color: var(--color-text); border: 1px solid var(--color-border); }
-        .btn-secondary:hover { background: var(--color-border-light); }
-        .btn-danger { background: var(--color-danger); color: white; }
-        .btn-danger:hover { opacity: 0.9; }
-        .btn-ghost { background: transparent; color: var(--color-text-secondary); }
-        .btn-ghost:hover { background: var(--color-surface-alt); color: var(--color-text); }
-        .btn-sm { padding: var(--space-xs) var(--space-sm); font-size: var(--text-xs); }
-        .btn-icon { width: 36px; height: 36px; padding: 0; border-radius: var(--radius-md); }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
-
-        .input-group { margin-bottom: var(--space-md); }
-        .input-group label { display: block; font-size: var(--text-sm); font-weight: 500; color: var(--color-text-secondary); margin-bottom: var(--space-xs); }
-        .input-group input,.input-group textarea,.input-group select { width: 100%; padding: var(--space-sm) var(--space-md); border: 1px solid var(--color-border); border-radius: var(--radius-md); font-family: var(--font-body); font-size: var(--text-sm); color: var(--color-text); background: var(--color-surface); transition: border-color var(--transition-fast),box-shadow var(--transition-fast); }
-        .input-group input:focus,.input-group textarea:focus,.input-group select:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
-        .input-group textarea { resize: vertical; min-height: 80px; line-height: var(--leading-relaxed); }
-
-        .section-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-lg); margin-bottom: var(--space-lg); }
-        .section-title { font-size: var(--text-md); font-weight: 600; color: var(--color-primary); margin-bottom: var(--space-md); padding-bottom: var(--space-sm); border-bottom: 2px solid var(--color-border); display: flex; align-items: center; gap: var(--space-sm); }
-        .item-card { background: var(--color-surface-alt); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-md); margin-bottom: var(--space-md); position: relative; }
-        .item-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm); }
-        .item-card-title { font-weight: 600; font-size: var(--text-sm); color: var(--color-text); }
-        .item-actions { display: flex; gap: var(--space-xs); }
-        .row { display: flex; gap: var(--space-md); margin-bottom: var(--space-md); }
-        .row .input-group { flex: 1; margin-bottom: 0; }
-        .toolbar-group { display: flex; align-items: center; gap: var(--space-sm); }
-        .toolbar-label { font-size: var(--text-sm); font-weight: 500; color: var(--color-text-secondary); white-space: nowrap; }
-        .select-styled { padding: var(--space-xs) var(--space-md); border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: var(--text-sm); background: var(--color-surface); color: var(--color-text); cursor: pointer; min-width: 140px; }
-        .select-styled:focus { outline: none; border-color: var(--color-accent); }
-        .color-swatch { width: 24px; height: 24px; border-radius: var(--radius-full); cursor: pointer; border: 2px solid transparent; transition: transform var(--transition-fast),border-color var(--transition-fast); }
-        .color-swatch:hover { transform: scale(1.15); }
-        .color-swatch.active { border-color: var(--color-text); transform: scale(1.15); }
-        .zoom-controls { display: flex; align-items: center; gap: var(--space-sm); }
-        .zoom-value { font-size: var(--text-sm); font-weight: 500; color: var(--color-text-secondary); min-width: 48px; text-align: center; }
-        .tabs { display: flex; gap: var(--space-xs); margin-bottom: var(--space-lg); border-bottom: 1px solid var(--color-border); padding-bottom: var(--space-sm); }
-        .tab { padding: var(--space-sm) var(--space-md); font-size: var(--text-sm); font-weight: 500; color: var(--color-text-muted); cursor: pointer; border: none; background: none; border-radius: var(--radius-md); transition: all var(--transition-fast); position: relative; }
-        .tab:hover { color: var(--color-text); background: var(--color-surface-alt); }
-        .tab.active { color: var(--color-primary); background: var(--color-surface-alt); }
-        .tab.active::after { content: ''; position: absolute; bottom: -9px; left: 20%; right: 20%; height: 2px; background: var(--color-primary); border-radius: 1px; }
-        .empty-state { text-align: center; padding: var(--space-3xl) var(--space-xl); color: var(--color-text-muted); }
-
-        /* Toggle switch */
-        .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--color-border-light); }
-        .toggle-row:last-child { border-bottom: none; }
-        .toggle-label { font-size: var(--text-sm); font-weight: 500; color: var(--color-text); display: flex; align-items: center; gap: 8px; }
-        .toggle-sublabel { font-size: 11px; color: var(--color-text-muted); margin-top: 2px; }
-        .toggle-switch { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
-        .toggle-switch input { opacity: 0; width: 0; height: 0; }
-        .toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: var(--color-border); border-radius: 22px; transition: 0.2s; }
-        .toggle-slider::before { position: absolute; content: ''; height: 16px; width: 16px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
-        .toggle-switch input:checked + .toggle-slider { background: var(--color-accent); }
-        .toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); }
-
-        .toast-container { position: fixed; bottom: var(--space-xl); right: var(--space-xl); z-index: var(--z-toast); display: flex; flex-direction: column; gap: var(--space-sm); }
-        .toast { padding: var(--space-md) var(--space-lg); border-radius: var(--radius-lg); font-size: var(--text-sm); font-weight: 500; color: white; box-shadow: var(--shadow-lg); animation: toastIn 0.3s ease; display: flex; align-items: center; gap: var(--space-sm); }
-        .toast-success { background: var(--color-success); } .toast-error { background: var(--color-danger); } .toast-info { background: var(--color-accent); }
-        @keyframes toastIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        .loading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: var(--z-modal); }
-        .loading-spinner { width: 48px; height: 48px; border: 3px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* Template: Classic */
-        .template-classic { display: flex; min-height: var(--a4-height); }
-        .template-classic .sidebar { width: 72mm; background: var(--resume-primary,#1e3a5f); color: white; padding: 32px 24px; flex-shrink: 0; }
-        .template-classic .sidebar .name { font-family: var(--font-serif); font-size: 28px; font-weight: 700; line-height: 1.2; margin-bottom: 4px; word-break: break-word; }
-        .template-classic .sidebar .title { font-size: 14px; opacity: 0.85; margin-bottom: 24px; font-weight: 400; }
-        .template-classic .sidebar-section { margin-bottom: 28px; }
-        .template-classic .sidebar-section-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.2); }
-        .template-classic .sidebar-item { font-size: 13px; margin-bottom: 10px; line-height: 1.5; opacity: 0.9; }
-        .template-classic .sidebar-item strong { display: block; font-weight: 600; opacity: 1; margin-bottom: 2px; }
-        .template-classic .skill-tag { display: inline-block; background: rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 4px; font-size: 12px; margin: 3px; }
-        .template-classic .main-content { flex: 1; padding: 32px 28px; background: #fff; }
-        .template-classic .main-section { margin-bottom: 28px; }
-        .template-classic .main-section-title { font-family: var(--font-serif); font-size: 18px; font-weight: 700; color: var(--resume-primary,#1e3a5f); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--resume-primary,#1e3a5f); }
-        .template-classic .experience-item { margin-bottom: 20px; }
-        .template-classic .experience-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
-        .template-classic .experience-title { font-weight: 600; font-size: 15px; color: var(--resume-text,#1a202c); }
-        .template-classic .experience-date { font-size: 12px; color: var(--resume-text-muted,#718096); white-space: nowrap; }
-        .template-classic .experience-company { font-size: 13px; color: var(--resume-text-secondary,#4a5568); margin-bottom: 6px; }
-        .template-classic .experience-desc { font-size: 13px; line-height: 1.7; color: var(--resume-text-secondary,#4a5568); }
-        .template-classic .experience-desc ul { padding-left: 18px; }
-        .template-classic .experience-desc li { margin-bottom: 4px; }
-        .template-classic .project-item { margin-bottom: 16px; }
-        .template-classic .project-name { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
-        .template-classic .project-desc { font-size: 13px; line-height: 1.6; color: var(--resume-text-secondary,#4a5568); }
-
-        /* Template: Modern */
-        .template-modern { min-height: var(--a4-height); background: #fff; }
-        .template-modern .header { background: var(--resume-primary,#1e3a5f); color: white; padding: 40px 48px; text-align: center; }
-        .template-modern .header .name { font-family: var(--font-serif); font-size: 36px; font-weight: 700; margin-bottom: 8px; letter-spacing: 1px; }
-        .template-modern .header .title { font-size: 16px; opacity: 0.9; margin-bottom: 20px; font-weight: 300; }
-        .template-modern .header .contact-row { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; font-size: 13px; opacity: 0.85; }
-        .template-modern .header .contact-item { display: flex; align-items: center; gap: 6px; }
-        .template-modern .body { padding: 32px 48px; }
-        .template-modern .section { margin-bottom: 28px; }
-        .template-modern .section-title { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--resume-primary,#1e3a5f); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--resume-primary,#1e3a5f); }
-        .template-modern .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
-        .template-modern .experience-item { margin-bottom: 20px; }
-        .template-modern .experience-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
-        .template-modern .experience-title { font-weight: 600; font-size: 15px; }
-        .template-modern .experience-date { font-size: 12px; color: var(--resume-text-muted,#718096); }
-        .template-modern .experience-company { font-size: 13px; color: var(--resume-text-secondary,#4a5568); margin-bottom: 6px; }
-        .template-modern .experience-desc { font-size: 13px; line-height: 1.7; color: var(--resume-text-secondary,#4a5568); }
-        .template-modern .experience-desc ul { padding-left: 18px; }
-        .template-modern .skills-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-        .template-modern .skill-pill { background: var(--resume-surface-alt,#edf2f7); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; color: var(--resume-text,#1a202c); }
-        .template-modern .project-item { margin-bottom: 16px; }
-        .template-modern .project-name { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
-        .template-modern .project-desc { font-size: 13px; line-height: 1.6; color: var(--resume-text-secondary,#4a5568); }
-
-        /* Template: Creative */
-        .template-creative { min-height: var(--a4-height); background: #fff; position: relative; overflow: hidden; }
-        .template-creative .accent-bar { position: absolute; top: 0; left: 0; width: 8mm; height: 100%; background: var(--resume-accent,#3182ce); }
-        .template-creative .top-section { display: flex; padding: 40px 48px 24px 64px; gap: 32px; align-items: center; }
-        .template-creative .avatar-placeholder { width: 80px; height: 80px; border-radius: 50%; background: var(--resume-primary,#1e3a5f); display: flex; align-items: center; justify-content: center; color: white; font-family: var(--font-serif); font-size: 28px; font-weight: 700; flex-shrink: 0; }
-        .template-creative .name-section { flex: 1; }
-        .template-creative .name { font-family: var(--font-serif); font-size: 32px; font-weight: 700; color: var(--resume-primary,#1e3a5f); margin-bottom: 4px; }
-        .template-creative .title { font-size: 15px; color: var(--resume-text-secondary,#4a5568); font-weight: 400; }
-        .template-creative .contact-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-        .template-creative .contact-pill { background: var(--resume-surface-alt,#edf2f7); padding: 4px 12px; border-radius: 16px; font-size: 11px; color: var(--resume-text-secondary,#4a5568); }
-        .template-creative .main-body { padding: 0 48px 40px 64px; }
-        .template-creative .creative-section { margin-bottom: 28px; }
-        .template-creative .creative-section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--resume-accent,#3182ce); margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
-        .template-creative .creative-section-title::before { content: ''; width: 24px; height: 3px; background: var(--resume-accent,#3182ce); border-radius: 2px; }
-        .template-creative .experience-item { margin-bottom: 18px; padding-left: 16px; border-left: 2px solid var(--resume-border,#e2e8f0); }
-        .template-creative .experience-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
-        .template-creative .experience-title { font-weight: 600; font-size: 15px; }
-        .template-creative .experience-date { font-size: 12px; color: var(--resume-text-muted,#718096); background: var(--resume-surface-alt,#edf2f7); padding: 2px 10px; border-radius: 12px; }
-        .template-creative .experience-company { font-size: 13px; color: var(--resume-text-secondary,#4a5568); margin-bottom: 6px; }
-        .template-creative .experience-desc { font-size: 13px; line-height: 1.7; color: var(--resume-text-secondary,#4a5568); }
-        .template-creative .experience-desc ul { padding-left: 18px; }
-        .template-creative .skills-row { display: flex; flex-wrap: wrap; gap: 10px; }
-        .template-creative .skill-item { display: flex; align-items: center; gap: 8px; background: var(--resume-surface-alt,#edf2f7); padding: 8px 14px; border-radius: 8px; }
-        .template-creative .skill-name { font-size: 13px; font-weight: 500; }
-        .template-creative .skill-bar { width: 60px; height: 4px; background: var(--resume-border,#e2e8f0); border-radius: 2px; overflow: hidden; }
-        .template-creative .skill-bar-fill { height: 100%; background: var(--resume-accent,#3182ce); border-radius: 2px; }
-        .template-creative .project-item { margin-bottom: 14px; }
-        .template-creative .project-name { font-weight: 600; font-size: 14px; margin-bottom: 3px; }
-        .template-creative .project-desc { font-size: 13px; line-height: 1.6; color: var(--resume-text-secondary,#4a5568); }
-        .template-creative .summary-text { font-size: 14px; line-height: 1.8; color: var(--resume-text-secondary,#4a5568); }
-
-        @media (max-width: 1200px) { .editor-panel { width: 360px; min-width: 360px; } }
-        @media (max-width: 900px) { .app-container { flex-direction: column; } .editor-panel { width: 100%; height: 50vh; min-width: auto; border-right: none; border-bottom: 1px solid var(--color-border); } .preview-panel { height: 50vh; } }
-        @media print { body * { visibility: hidden; } .a4-paper,.a4-paper * { visibility: visible; } .a4-paper { position: absolute; left: 0; top: 0; width: 210mm; box-shadow: none; margin: 0; } }
-    </style>
-<base target="_blank">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ProResume - 专业简历生成器</title>
+<link rel="preconnect" href="https://fonts.loli.net">
+<link href="https://fonts.loli.net/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js" crossorigin></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.24.7/babel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<style>
+:root{--s1:4px;--s2:8px;--s3:16px;--s4:24px;--s5:32px;--s6:48px;--s7:64px;--fb:'Inter','Noto Sans SC',sans-serif;--fs:'Noto Serif SC',serif;--t1:11px;--t2:13px;--t3:14px;--t4:16px;--t5:20px;--t6:24px;--t7:32px;--t8:40px;--r1:4px;--r2:8px;--r3:12px;--r4:16px;--sh:0 10px 15px -3px rgba(0,0,0,.1);--a4w:210mm;--a4h:297mm}
+[data-t="c"]{--cp:#1e3a5f;--ca:#3182ce;--cbg:#f7fafc;--cs:#fff;--csa:#edf2f7;--ct:#1a202c;--ct2:#4a5568;--ctm:#718096;--cbd:#e2e8f0;--cok:#38a169;--cda:#e53e3e}
+[data-t="w"]{--cp:#744210;--ca:#c05621;--cbg:#fffaf0;--cs:#fff;--csa:#fef5e7;--ct:#1c1917;--ct2:#57534e;--ctm:#a8a29e;--cbd:#e7e5e4;--cok:#65a30d;--cda:#dc2626}
+[data-t="s"]{--cp:#0f172a;--ca:#6366f1;--cbg:#f8fafc;--cs:#fff;--csa:#f1f5f9;--ct:#0f172a;--ct2:#475569;--ctm:#94a3b8;--cbd:#e2e8f0;--cok:#10b981;--cda:#ef4444}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--fb);font-size:var(--t3);line-height:1.5;color:var(--ct);background:var(--cbg);min-height:100vh;-webkit-font-smoothing:antialiased}
+.app{display:flex;height:100vh;overflow:hidden}
+.ep{width:420px;min-width:420px;height:100vh;overflow-y:auto;background:var(--cs);border-right:1px solid var(--cbd);display:flex;flex-direction:column}
+.ehd{padding:var(--s4) var(--s5);border-bottom:1px solid var(--cbd);position:sticky;top:0;z-index:10;background:var(--cs)}
+.ehd h1{font-size:var(--t6);font-weight:700;color:var(--cp);margin-bottom:var(--s1)}
+.ehd p{font-size:var(--t2);color:var(--ctm)}
+.ec{flex:1;padding:var(--s4) var(--s5) 120px}
+.pp{flex:1;display:flex;flex-direction:column;background:var(--cbg);overflow:hidden}
+.pt{display:flex;align-items:center;justify-content:space-between;padding:var(--s3) var(--s5);background:var(--cs);border-bottom:1px solid var(--cbd);gap:var(--s3);flex-wrap:wrap}
+.pa{flex:1;overflow:auto;padding:var(--s5);display:flex;justify-content:center;align-items:flex-start}
+.a4{width:var(--a4w);min-height:var(--a4h);background:#fff;box-shadow:var(--sh);position:relative;transform-origin:top center;transition:transform .4s cubic-bezier(.4,0,.2,1)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);padding:var(--s2) var(--s3);border-radius:var(--r2);font-family:var(--fb);font-size:var(--t2);font-weight:500;cursor:pointer;border:none;transition:all .15s;white-space:nowrap}
+.bp{background:var(--cp);color:#fff}.bp:hover{filter:brightness(1.15);transform:translateY(-1px);box-shadow:var(--sh)}
+.bs{background:var(--csa);color:var(--ct);border:1px solid var(--cbd)}.bs:hover{background:var(--cbd)}
+.bdg{background:var(--cda);color:#fff}
+.bg{background:transparent;color:var(--ct2)}.bg:hover{background:var(--csa);color:var(--ct)}
+.bsm{padding:var(--s1) var(--s2);font-size:var(--t1)}
+.bi{width:32px;height:32px;padding:0;border-radius:var(--r2)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+.ig{margin-bottom:var(--s3)}
+.ig label{display:block;font-size:var(--t2);font-weight:500;color:var(--ct2);margin-bottom:var(--s1)}
+.ig input,.ig textarea,.ig select{width:100%;padding:var(--s2) var(--s3);border:1px solid var(--cbd);border-radius:var(--r2);font-family:var(--fb);font-size:var(--t2);color:var(--ct);background:var(--cs);transition:border-color .15s,box-shadow .15s}
+.ig input:focus,.ig textarea:focus,.ig select:focus{outline:none;border-color:var(--ca);box-shadow:0 0 0 3px rgba(99,102,241,.1)}
+.ig textarea{resize:vertical;min-height:80px;line-height:1.75}
+.sc{background:var(--cs);border:1px solid var(--cbd);border-radius:var(--r3);padding:var(--s4);margin-bottom:var(--s4)}
+.st{font-size:var(--t4);font-weight:600;color:var(--cp);margin-bottom:var(--s3);padding-bottom:var(--s2);border-bottom:2px solid var(--cbd);display:flex;align-items:center;gap:var(--s2)}
+.ic{background:var(--csa);border:1px solid var(--cbd);border-radius:var(--r2);padding:var(--s3);margin-bottom:var(--s3);position:relative}
+.ich{display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--s2)}
+.ict{font-weight:600;font-size:var(--t2);color:var(--ct)}
+.ia{display:flex;gap:var(--s1)}
+.row{display:flex;gap:var(--s3);margin-bottom:var(--s3)}.row .ig{flex:1;margin-bottom:0}
+.tg{display:flex;align-items:center;gap:var(--s2)}
+.tl{font-size:var(--t2);font-weight:500;color:var(--ct2);white-space:nowrap}
+.sel{padding:var(--s1) var(--s3);border:1px solid var(--cbd);border-radius:var(--r2);font-size:var(--t2);background:var(--cs);color:var(--ct);cursor:pointer;min-width:140px}
+.cs{width:24px;height:24px;border-radius:9999px;cursor:pointer;border:2px solid transparent;transition:transform .15s,border-color .15s}
+.cs:hover{transform:scale(1.15)}.cs.on{border-color:var(--ct);transform:scale(1.15)}
+.zc{display:flex;align-items:center;gap:var(--s2)}
+.zv{font-size:var(--t2);font-weight:500;color:var(--ct2);min-width:48px;text-align:center}
+.tabs{display:flex;gap:var(--s1);margin-bottom:var(--s4);border-bottom:1px solid var(--cbd);padding-bottom:var(--s2);flex-wrap:wrap}
+.tab{padding:var(--s2) var(--s3);font-size:var(--t2);font-weight:500;color:var(--ctm);cursor:border:none;background:none;border-radius:var(--r2);transition:all .15s;position:relative;display:flex;align-items:center;gap:4px}
+.tab:hover{color:var(--ct);background:var(--csa)}.tab.on{color:var(--cp);background:var(--csa)}
+.tab.on::after{content:'';position:absolute;bottom:-9px;left:20%;right:20%;height:2px;background:var(--cp);border-radius:1px}
+.tr{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--cbd)}
+.tr:last-child{border-bottom:none}
+.trl{font-size:var(--t2);font-weight:500;color:var(--ct);display:flex;align-items:center;gap:8px}
+.trs{font-size:11px;color:var(--ctm);margin-top:2px}
+.tog{position:relative;width:40px;height:22px;flex-shrink:0}
+.tog input{opacity:0;width:0;height:0}
+.tsl{position:absolute;cursor:pointer;inset:0;background:var(--cbd);border-radius:22px;transition:.2s}
+.tsl::before{position:absolute;content:'';height:16px;width:16px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.tog input:checked + .tsl{background:var(--ca)}.tog input:checked + .tsl::before{transform:translateX(18px)}
+.toast-c{position:fixed;bottom:var(--s5);right:var(--s5);z-index:300;display:flex;flex-direction:column;gap:var(--s2)}
+.toast{padding:var(--s3) var(--s4);border-radius:var(--r3);font-size:var(--t2);font-weight:500;color:#fff;box-shadow:var(--sh);animation:tin .3s;display:flex;align-items:center;gap:var(--s2)}
+.tok{background:var(--cok)}.toe{background:var(--cda)}.toi{background:var(--ca)}
+@keyframes tin{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+.lo{position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:200}
+.ls{width:48px;height:48px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+/* Classic */
+.tc{display:flex;min-height:var(--a4h)}.tc .sb{width:72mm;background:var(--rp);color:#fff;padding:32px 24px;flex-shrink:0}
+.tc .sb .nm{font-family:var(--fs);font-size:28px;font-weight:700;line-height:1.2;margin-bottom:4px;word-break:break-word}
+.tc .sb .tt{font-size:14px;opacity:.85;margin-bottom:24px}
+.tc .ss{margin-bottom:28px}
+.tc .sst{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.2)}
+.tc .si{font-size:13px;margin-bottom:10px;line-height:1.5;opacity:.9}
+.tc .si strong{display:block;font-weight:600;opacity:1;margin-bottom:2px}
+.tc .sk{display:inline-block;background:rgba(255,255,255,.15);padding:4px 10px;border-radius:4px;font-size:12px;margin:3px}
+.tc .mc{flex:1;padding:32px 28px;background:#fff}
+.tc .ms{margin-bottom:28px}
+.tc .mst{font-family:var(--fs);font-size:18px;font-weight:700;color:var(--rp);margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--rp)}
+.tc .ei{margin-bottom:20px}
+.tc .eh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.tc .et{font-weight:600;font-size:15px}
+.tc .ed{font-size:12px;color:var(--rtm);white-space:nowrap}
+.tc .ec2{font-size:13px;color:var(--rt2);margin-bottom:6px}
+.tc .eds{font-size:13px;line-height:1.7;color:var(--rt2)}.tc .eds ul{padding-left:18px}
+.tc .pi{margin-bottom:16px}.tc .pn{font-weight:600;font-size:14px;margin-bottom:4px}
+.tc .pd{font-size:13px;line-height:1.6;color:var(--rt2)}
+.tc .sm{font-size:14px;line-height:1.8;color:var(--rt2)}
+/* Modern */
+.tm{min-height:var(--a4h);background:#fff}
+.tm .hd{background:var(--rp);color:#fff;padding:40px 48px;text-align:center}
+.tm .hd .nm{font-family:var(--fs);font-size:36px;font-weight:700;margin-bottom:8px;letter-spacing:1px}
+.tm .hd .tt{font-size:16px;opacity:.9;margin-bottom:20px;font-weight:300}
+.tm .hd .cr{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;font-size:13px;opacity:.85}
+.tm .hd .ci{display:flex;align-items:center;gap:6px}
+.tm .bd{padding:32px 48px}
+.tm .sc2{margin-bottom:28px}
+.tm .sct{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--rp);margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--rp)}
+.tm .tcc{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.tm .ei{margin-bottom:20px}
+.tm .eh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.tm .et{font-weight:600;font-size:15px}.tm .ed{font-size:12px;color:var(--rtm)}
+.tm .ec2{font-size:13px;color:var(--rt2);margin-bottom:6px}
+.tm .eds{font-size:13px;line-height:1.7;color:var(--rt2)}.tm .eds ul{padding-left:18px}
+.tm .sg{display:flex;flex-wrap:wrap;gap:8px}
+.tm .sp{background:var(--rsa);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500}
+.tm .pi{margin-bottom:16px}.tm .pn{font-weight:600;font-size:14px;margin-bottom:4px}
+.tm .pd{font-size:13px;line-height:1.6;color:var(--rt2)}
+.tm .sm{font-size:14px;line-height:1.8;color:var(--rt2)}
+.tm .lc{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px}
+.tm .lc>div{padding:8px 12px;background:var(--rsa);border-radius:6px}
+/* Creative */
+.tr2{min-height:var(--a4h);background:#fff;position:relative;overflow:hidden}
+.tr2 .ab{position:absolute;top:0;left:0;width:8mm;height:100%;background:var(--ra)}
+.tr2 .ts{display:flex;padding:40px 48px 24px 64px;gap:32px;align-items:center}
+.tr2 .av{width:80px;height:80px;border-radius:50%;background:var(--rp);display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--fs);font-size:28px;font-weight:700;flex-shrink:0}
+.tr2 .ns{flex:1}
+.tr2 .nm{font-family:var(--fs);font-size:32px;font-weight:700;color:var(--rp);margin-bottom:4px}
+.tr2 .tt{font-size:15px;color:var(--rt2)}
+.tr2 .cp2{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.tr2 .cp3{background:var(--rsa);padding:4px 12px;border-radius:16px;font-size:11px;color:var(--rt2)}
+.tr2 .mb{padding:0 48px 40px 64px}
+.tr2 .rs{margin-bottom:28px}
+.tr2 .rst{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--ra);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.tr2 .rst::before{content:'';width:24px;height:3px;background:var(--ra);border-radius:2px}
+.tr2 .ei{margin-bottom:18px;padding-left:16px;border-left:2px solid var(--rb)}
+.tr2 .eh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.tr2 .et{font-weight:600;font-size:15px}
+.tr2 .ed{font-size:12px;color:var(--rtm);background:var(--rsa);padding:2px 10px;border-radius:12px}
+.tr2 .ec2{font-size:13px;color:var(--rt2);margin-bottom:6px}
+.tr2 .eds{font-size:13px;line-height:1.7;color:var(--rt2)}.tr2 .eds ul{padding-left:18px}
+.tr2 .sr{display:flex;flex-wrap:wrap;gap:10px}
+.tr2 .si2{display:flex;align-items:center;gap:8px;background:var(--rsa);padding:8px 14px;border-radius:8px}
+.tr2 .sn{font-size:13px;font-weight:500}
+.tr2 .sb2{width:60px;height:4px;background:var(--rb);border-radius:2px;overflow:hidden}
+.tr2 .sbf{height:100%;background:var(--ra);border-radius:2px}
+.tr2 .pi{margin-bottom:14px}.tr2 .pn{font-weight:600;font-size:14px;margin-bottom:3px}
+.tr2 .pd{font-size:13px;line-height:1.6;color:var(--rt2)}
+.tr2 .sm{font-size:14px;line-height:1.8;color:var(--rt2)}
+@media (max-width:1200px){.ep{width:360px;min-width:360px}}
+@media (max-width:900px){.app{flex-direction:column}.ep{width:100%;height:50vh;min-width:auto;border-right:none;border-bottom:1px solid var(--cbd)}.pp{height:50vh}}
+@media print{
+  @page{size:A4;margin:0}
+  /* === 关键：强制保留所有颜色和背景（浏览器默认会省墨去掉背景） === */
+  *,*::before,*::after{
+    -webkit-print-color-adjust:exact !important;
+    print-color-adjust:exact !important;
+    color-adjust:exact !important;
+  }
+  body *{visibility:hidden}
+  .pa,.pa>div{visibility:visible!important}
+  .pa{position:static!important;overflow:visible!important;padding:0!important;height:auto!important;display:block!important}
+  .pa>div{transform:none!important;transform-origin:top left!important}
+  .a4,.a4 *{visibility:visible}
+  .a4{position:absolute;left:0;top:0;width:210mm;min-height:297mm;box-shadow:none;margin:0;transform:none!important;background:#fff}
+  .pt,.ep,.toast-c,.lo{display:none!important}
+}
+</style>
 </head>
 <body>
-    <div id="root"></div>
+<div id="root"></div>
+<script type="text/babel">
+const{useState,useEffect,useRef,useCallback,useMemo}=React;
+const uid=()=>Math.random().toString(36).slice(2,9);
 
-    <script type="text/babel">
-        const { useState, useEffect, useRef, useCallback } = React;
+// Compact icons
+const I=({c})=><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{c}</svg>;
+const Ic={
+U:()=><I c={<><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></>}/>,
+M:()=><I c={<><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L3 8"/></>}/>,
+P:()=><I c={<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>}/>,
+L:()=><I c={<><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></>}/>,
+W:()=><I c={<><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></>}/>,
+B:()=><I c={<><rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></>}/>,
+G:()=><I c={<><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></>}/>,
+Cd:()=><I c={<><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></>}/>,
+F:()=><I c={<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>}/>,
+Pl:()=><I c={<><path d="M5 12h14"/><path d="M12 5v14"/></>}/>,
+T:()=><I c={<><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></>}/>,
+Dl:()=><I c={<><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></>}/>,
+Ul:()=><I c={<><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></>}/>,
+Ft:()=><I c={<><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></>}/>,
+Pa:()=><I c={<><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.01 17.461 2 12 2z"/></>}/>,
+La:()=><I c={<><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></>}/>,
+Zi:()=><I c={<><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/><line x1="11" x2="11" y1="8" y2="14"/><line x1="8" x2="14" y1="11" y2="11"/></>}/>,
+Zo:()=><I c={<><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/><line x1="8" x2="14" y1="11" y2="11"/></>}/>,
+Sv:()=><I c={<><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></>}/>,
+Rc:()=><I c={<><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></>}/>,
+Ch:()=><I c={<path d="M20 6 9 17l-5-5"/>}/>,
+Al:()=><I c={<><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></>}/>,
+Sl:()=><I c={<><line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="1" x2="7" y1="14" y2="14"/><line x1="9" x2="15" y1="8" y2="8"/><line x1="17" x2="23" y1="16" y2="16"/></>}/>,
+St:()=><I c={<><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></>}/>,
+Gl:()=><I c={<><circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></>}/>,
+Aw:()=><I c={<><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></>}/>,
+Pr:()=><I c={<><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></>}/>
+};
 
-        const Icons = {
-            User: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
-            Mail: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L3 8"/></svg>,
-            Phone: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>,
-            MapPin: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>,
-            Link: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>,
-            Briefcase: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>,
-            GraduationCap: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>,
-            Code: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>,
-            Folder: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>,
-            Plus: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>,
-            Trash: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>,
-            Download: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>,
-            Upload: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>,
-            FileText: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>,
-            Palette: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.01 17.461 2 12 2z"/></svg>,
-            Layout: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>,
-            ZoomIn: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/><line x1="11" x2="11" y1="8" y2="14"/><line x1="8" x2="14" y1="11" y2="11"/></svg>,
-            ZoomOut: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/><line x1="8" x2="14" y1="11" y2="11"/></svg>,
-            Save: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>,
-            RotateCcw: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>,
-            Check: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>,
-            AlertCircle: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>,
-            Eye: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>,
-            EyeOff: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7c.78 0 1.53-.09 2.24-.26"/><line x1="1" x2="23" y1="1" y2="23"/></svg>,
-            Sliders: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="1" x2="7" y1="14" y2="14"/><line x1="9" x2="15" y1="8" y2="8"/><line x1="17" x2="23" y1="16" y2="16"/></svg>,
-        };
+// Default data
+const defaultData={
+  personal:{name:'张明远',title:'高级前端工程师',email:'zhangmingyuan@example.com',phone:'138-0000-8888',location:'北京市朝阳区',website:'https://zhangmingyuan.dev',gender:'男',birth:'1994-05-12',ethnicity:'汉族',political:'群众',marital:'未婚',summary:'8年前端开发经验，专注于React生态系统和现代Web技术。曾主导多个大型SaaS平台的前端架构设计与实现，擅长性能优化、组件化开发和工程化建设。热衷于开源社区贡献，GitHub累计获得5000+ Stars。'},
+  advantages:'1. 扎实的工程能力：8年前端开发经验，主导过日均千万级PV的核心交易链路架构设计\n2. 突出的性能优化能力：曾将首屏加载时间从3.2s降至1.1s，构建时间缩短60%\n3. 良好的团队协作：建立前端监控体系，推动TypeScript在团队内全面落地\n4. 开源贡献者：GitHub 5000+ Stars，FastUI组件库被10+业务线复用',
+  jobStatus:'在职-考虑新机会',
+  intention:{position:'高级前端工程师 / 前端架构师',salary:'25-40K·15薪',location:'北京',type:'全职',industry:'互联网/IT'},
+  experience:[
+    {id:uid(),type:'工作',company:'字节跳动',title:'高级前端工程师',location:'北京',startDate:'2021-03',endDate:'至今',description:'负责抖音电商核心交易链路前端架构，服务日均千万级PV\n设计并实现基于微前端的模块化架构，将构建时间缩短60%\n主导前端性能优化专项，首屏加载时间从3.2s降至1.1s\n建立前端监控体系，错误发现率提升85%'},
+    {id:uid(),type:'工作',company:'阿里巴巴',title:'前端工程师',location:'杭州',startDate:'2018-07',endDate:'2021-02',description:'参与淘宝商家后台系统开发，负责订单管理模块\n开发通用组件库，被10+业务线复用，减少重复代码30%\n推动TypeScript在团队内的全面应用，类型覆盖率提升至95%'},
+    {id:uid(),type:'工作',company:'美团',title:'前端开发工程师',location:'北京',startDate:'2016-07',endDate:'2018-06',description:'负责美团外卖H5页面开发与维护\n实现基于Vue的移动端组件库，支持20+业务场景\n优化页面渲染性能，帧率提升40%'},
+    {id:uid(),type:'实习',company:'腾讯',title:'前端实习生',location:'深圳',startDate:'2015-07',endDate:'2015-09',description:'参与QQ邮箱Web版开发，负责邮件列表模块\n使用React重构核心组件，提升开发效率'}
+  ],
+  education:[
+    {id:uid(),school:'清华大学',degree:'本科',field:'计算机科学与技术',startDate:'2012-09',endDate:'2016-06',description:'GPA 3.8/4.0，连续三年获得国家奖学金\nACM程序设计竞赛省级一等奖\n优秀毕业生，校学生会技术部部长'}
+  ],
+  projects:[
+    {id:uid(),name:'ProResume 简历生成器',description:'基于React的在线简历生成工具，支持多模板、实时预览和PDF导出。采用纯前端技术栈，无需后端服务。',link:'https://github.com/example/proresume',tech:'React, html2canvas, jsPDF'},
+    {id:uid(),name:'FastUI 组件库',description:'企业级React组件库，包含50+高质量组件，支持暗色模式和主题定制。在内部10+项目中使用。',link:'https://fastui.dev',tech:'React, TypeScript, Storybook'}
+  ],
+  trainings:[],
+  languages:[
+    {id:uid(),name:'英语',level:'CET-6',score:'528'}
+  ],
+  skills:[
+    {id:uid(),name:'React / Next.js',level:'95'},{id:uid(),name:'TypeScript',level:'90'},
+    {id:uid(),name:'Node.js',level:'85'},{id:uid(),name:'Webpack / Vite',level:'88'},
+    {id:uid(),name:'GraphQL',level:'80'},{id:uid(),name:'Docker / K8s',level:'75'},
+    {id:uid(),name:'Python',level:'70'},{id:uid(),name:'Figma',level:'85'}
+  ],
+  certificates:[
+    {id:uid(),name:'软件设计师（中级）',date:'2022-05',desc:'工信部认证'},
+    {id:uid(),name:'PMP项目管理专业人士',date:'2021-11',desc:'PMI国际认证'}
+  ],
+  studentLeadership:[
+    {id:uid(),position:'学生会主席',org:'清华大学学生会',startDate:'2014-09',endDate:'2015-06',description:'主持学生会全面工作，主导组织校园十佳歌手、科技文化节等大型活动\n带领团队完成校园服务号从0到1开发，服务全校2万余名师生'},
+    {id:uid(),position:'技术部部长',org:'计算机系学生会',startDate:'2013-09',endDate:'2014-06',description:'组织系内技术分享会、ACM校赛等活动\n维护系内技术博客，发表技术文章20+篇'}
+  ],
+  visibility:{
+    personal:{name:true,title:true,email:true,phone:true,location:true,website:true,gender:true,birth:true,ethnicity:false,political:false,marital:false,summary:true},
+    advantages:true,jobStatus:true,intention:true,
+    education:true,experience:true,projects:true,trainings:true,
+    languages:true,skills:true,certificates:true,studentLeadership:true
+  }
+};
 
-        // Use template literals for multiline descriptions to avoid Babel parsing issues
-        const defaultData = {
-            personal: {
-                name: "张明远", title: "高级前端工程师", email: "zhangmingyuan@example.com", phone: "138-0000-8888",
-                location: "北京市朝阳区", website: "https://zhangmingyuan.dev",
-                summary: "拥有8年前端开发经验，专注于React生态系统和现代Web技术。曾主导多个大型SaaS平台的前端架构设计与实现，擅长性能优化、组件化开发和工程化建设。热衷于开源社区贡献，GitHub累计获得5000+ Stars。"
-            },
-            education: [
-                { id: "edu-1", school: "清华大学", degree: "计算机科学与技术", field: "软件工程", startDate: "2012-09", endDate: "2016-06", description: "GPA 3.8/4.0，获得国家奖学金，ACM程序设计竞赛省级一等奖" }
-            ],
-            experience: [
-                { id: "exp-1", company: "字节跳动", title: "高级前端工程师", location: "北京", startDate: "2021-03", endDate: "至今", description: "负责抖音电商核心交易链路前端架构，服务日均千万级PV\n设计并实现基于微前端的模块化架构，将构建时间缩短60%\n主导前端性能优化专项，首屏加载时间从3.2s降至1.1s\n建立前端监控体系，错误发现率提升85%" },
-                { id: "exp-2", company: "阿里巴巴", title: "前端工程师", location: "杭州", startDate: "2018-07", endDate: "2021-02", description: "参与淘宝商家后台系统开发，负责订单管理模块\n开发通用组件库，被10+业务线复用，减少重复代码30%\n推动TypeScript在团队内的全面应用，类型覆盖率提升至95%" },
-                { id: "exp-3", company: "美团", title: "前端开发工程师", location: "北京", startDate: "2016-07", endDate: "2018-06", description: "负责美团外卖H5页面开发与维护\n实现基于Vue的移动端组件库，支持20+业务场景\n优化页面渲染性能，帧率提升40%" }
-            ],
-            skills: [
-                { id: "sk-1", name: "React / Next.js", level: "95" }, { id: "sk-2", name: "TypeScript", level: "90" },
-                { id: "sk-3", name: "Node.js", level: "85" }, { id: "sk-4", name: "Webpack / Vite", level: "88" },
-                { id: "sk-5", name: "GraphQL", level: "80" }, { id: "sk-6", name: "Docker / K8s", level: "75" },
-                { id: "sk-7", name: "Python", level: "70" }, { id: "sk-8", name: "Figma", level: "85" }
-            ],
-            projects: [
-                { id: "proj-1", name: "ProResume 简历生成器", description: "基于React的在线简历生成工具，支持多模板、实时预览和PDF导出。采用纯前端技术栈，无需后端服务。", link: "https://github.com/example/proresume", tech: "React, html2canvas, jsPDF" },
-                { id: "proj-2", name: "FastUI 组件库", description: "企业级React组件库，包含50+高质量组件，支持暗色模式和主题定制。在内部10+项目中使用。", link: "https://fastui.dev", tech: "React, TypeScript, Storybook" }
-            ],
-            visibility: {
-                personal: { name: true, title: true, email: true, phone: true, location: true, website: true, summary: true },
-                education: true, experience: true, skills: true, projects: true
-            }
-        };
+// Storage
+const KEY='proresume_v4';
+const load=()=>{try{const s=localStorage.getItem(KEY);return s?JSON.parse(s):defaultData}catch{return defaultData}};
+const save=d=>{try{localStorage.setItem(KEY,JSON.stringify(d))}catch{}};
 
-        const generateId = () => Math.random().toString(36).substr(2, 9);
-        const STORAGE_KEY = 'proresume_data_v3';
+// Theme
+const themes={c:{primary:'#1e3a5f',accent:'#3182ce',surfaceAlt:'#edf2f7',text:'#1a202c',textSecondary:'#4a5568',textMuted:'#718096',border:'#e2e8f0'},w:{primary:'#744210',accent:'#c05621',surfaceAlt:'#fef5e7',text:'#1c1917',textSecondary:'#57534e',textMuted:'#a8a29e',border:'#e7e5e4'},s:{primary:'#0f172a',accent:'#6366f1',surfaceAlt:'#f1f5f9',text:'#0f172a',textSecondary:'#475569',textMuted:'#94a3b8',border:'#e2e8f0'}};
 
-        const loadData = () => {
-            try { const saved = localStorage.getItem(STORAGE_KEY); if (saved) return JSON.parse(saved); } catch (e) { console.error('Failed to load data:', e); }
-            return defaultData;
-        };
-        const saveData = (data) => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) { console.error('Failed to save data:', e); } };
+// Toast
+const TC=React.createContext();
+function TP({children}){
+  const[t,setT]=useState([]);
+  const show=useCallback((m,type='info')=>{const id=uid();setT(p=>[...p,{id,m,type}]);setTimeout(()=>setT(p=>p.filter(x=>x.id!==id)),3000)},[]);
+  return<TC.Provider value={{show}}>{children}<div className="toast-c">{t.map(x=><div key={x.id} className={`toast ${x.type==='success'?'tok':x.type==='error'?'toe':'toi'}`}>{x.type==='success'?<Ic.Ch/>:x.type==='error'?<Ic.Al/>:null}{x.message}</div>)}</div></TC.Provider>
+}
+const useT=()=>React.useContext(TC);
 
-        const ToastContext = React.createContext();
-        function ToastProvider({ children }) {
-            const [toasts, setToasts] = useState([]);
-            const showToast = useCallback((message, type = 'info') => {
-                const id = generateId();
-                setToasts(prev => [...prev, { id, message, type }]);
-                setTimeout(() => { setToasts(prev => prev.filter(t => t.id !== id)); }, 3000);
-            }, []);
-            return (
-                <ToastContext.Provider value={{ showToast }}>
-                    {children}
-                    <div className="toast-container">
-                        {toasts.map(toast => (
-                            <div key={toast.id} className={`toast toast-${toast.type}`}>
-                                {toast.type === 'success' && <Icons.Check />}
-                                {toast.type === 'error' && <Icons.AlertCircle />}
-                                {toast.message}
-                            </div>
-                        ))}
-                    </div>
-                </ToastContext.Provider>
-            );
+// Toggle
+function TS({checked,onChange,label,sub}){
+  return<div className="tr"><div><div className="trl">{label}</div>{sub&&<div className="trs">{sub}</div>}</div><label className="tog"><input type="checkbox" checked={checked} onChange={e=>onChange(e.target.checked)}/><span className="tsl"></span></label></div>
+}
+
+// Generic list form
+function ListForm({title,icon,items,onChange,fields,defaults,addText,addMsg,rmMsg,addOnEmpty}){
+  const{show}=useT();
+  const add=()=>{const n={id:uid(),...defaults};onChange([...items,n]);show(addMsg||'已添加','success')};
+  const rm=id=>{onChange(items.filter(x=>x.id!==id));show(rmMsg||'已删除','info')};
+  const up=(id,k,v)=>onChange(items.map(x=>x.id===id?{...x,[k]:v}:x));
+  const inp=(f,item)=>{
+    const v=item[f.key]||'';
+    if(f.type==='textarea')return<textarea value={v} onChange={e=>up(item.id,f.key,e.target.value)} rows={f.rows||3} placeholder={f.ph||''}/>;
+    if(f.type==='select')return<select value={v} onChange={e=>up(item.id,f.key,e.target.value)}><option value="">请选择</option>{f.options.map(o=><option key={o} value={o}>{o}</option>)}</select>;
+    if(f.type==='range')return<><input type="range" min="0" max="100" value={v||'0'} onChange={e=>up(item.id,f.key,e.target.value)} style={{width:'100%',marginTop:8}}/><span style={{fontSize:11,color:'var(--ctm)',marginLeft:8}}>{v}%</span></>;
+    if(f.type==='month')return<input type="month" value={v} onChange={e=>up(item.id,f.key,e.target.value)} placeholder={f.ph||''}/>;
+    return<input value={v} onChange={e=>up(item.id,f.key,e.target.value)} placeholder={f.ph||''} type={f.type||'text'}/>;
+  };
+  const wrap=(f,item,noLabel)=>noLabel?inp(f,item):<><label>{f.label}</label>{inp(f,item)}</>;
+  return<div className="sc">
+    <div className="st">{icon}{title}</div>
+    {items.length===0&&addOnEmpty&&<div style={{textAlign:'center',padding:'20px',color:'var(--ctm)',fontSize:'var(--t2)'}}>{addOnEmpty}</div>}
+    {items.map((item,idx)=><div key={item.id} className="ic">
+      <div className="ich"><span className="ict">{title} #{idx+1}</span><div className="ia"><button className="btn bg bsm bi" onClick={()=>rm(item.id)} title="删除"><Ic.T/></button></div></div>
+      {fields.map((f,i)=>{
+        if(f.row)return<div key={i} className="row">{f.row.map(g=><div key={g.key} className="ig" style={g.noLabel?{visibility:'hidden'}:{}}>{wrap(g,item,g.noLabel)}</div>)}</div>;
+        if(f.months)return<div key={i} className="ig"><label>{f.label}</label><div className="row" style={{marginBottom:0}}>{f.months.map(m=><div key={m.key} className="ig" style={{marginBottom:0}}>{inp({...m,type:'month'},item)}</div>)}</div></div>;
+        return<div key={i} className="ig" style={f.noLabel?{visibility:'hidden'}:{}}>{wrap(f,item,f.noLabel)}</div>;
+      })}
+    </div>)}
+    <button className="btn bs" style={{width:'100%'}} onClick={add}><Ic.Pl/>{addText||'添加'}</button>
+  </div>
+}
+
+// Section forms
+function PersonalForm({data,onChange}){
+  const h=k=>e=>onChange({...data,[k]:e.target.value});
+  return<div className="sc">
+    <div className="st"><Ic.U/>基本信息</div>
+    <div className="row"><div className="ig"><label>姓名</label><input value={data.name} onChange={h('name')} placeholder="您的姓名"/></div><div className="ig"><label>性别</label><select value={data.gender} onChange={h('gender')}><option value="男">男</option><option value="女">女</option></select></div></div>
+    <div className="row"><div className="ig"><label>出生年月</label><input type="month" value={data.birth} onChange={h('birth')}/></div><div className="ig"><label>民族</label><input value={data.ethnicity} onChange={h('ethnicity')} placeholder="如：汉族"/></div></div>
+    <div className="row"><div className="ig"><label>政治面貌</label><select value={data.political} onChange={h('political')}><option value="群众">群众</option><option value="共青团员">共青团员</option><option value="中共党员">中共党员</option><option value="民主党派">民主党派</option><option value="无党派人士">无党派人士</option></select></div><div className="ig"><label>婚姻状况</label><select value={data.marital} onChange={h('marital')}><option value="未婚">未婚</option><option value="已婚">已婚</option><option value="离异">离异</option><option value="保密">保密</option></select></div></div>
+    <div className="row"><div className="ig"><label>联系电话</label><input value={data.phone} onChange={h('phone')} placeholder="138-0000-0000"/></div><div className="ig"><label>电子邮箱</label><input value={data.email} onChange={h('email')} placeholder="example@email.com"/></div></div>
+    <div className="row"><div className="ig"><label>现居地</label><input value={data.location} onChange={h('location')} placeholder="城市/地区"/></div><div className="ig"><label>个人网站</label><input value={data.website} onChange={h('website')} placeholder="https://..."/></div></div>
+    <div className="ig"><label>目标职位</label><input value={data.title} onChange={h('title')} placeholder="期望岗位"/></div>
+    <div className="ig"><label>个人简介</label><textarea value={data.summary} onChange={h('summary')} rows={5} placeholder="简要介绍您的专业背景和核心优势..."/></div>
+  </div>
+}
+
+function JobForm({jobStatus,intention,advantages,onJobStatusChange,onIntentionChange,onAdvChange}){
+  const hi=k=>e=>onIntentionChange({...intention,[k]:e.target.value});
+  return<>
+    <div className="sc"><div className="st"><Ic.B/>求职状态</div>
+      <div className="ig"><label>当前状态</label><select value={jobStatus} onChange={e=>onJobStatusChange(e.target.value)}><option>在职-考虑新机会</option><option>在职-不看机会</option><option>在职-月内到岗</option><option>离职-随时到岗</option><option>应届毕业生</option><option>在校-考虑机会</option></select></div>
+    </div>
+    <div className="sc"><div className="st"><Ic.L/>求职意向</div>
+      <div className="row"><div className="ig"><label>期望职位</label><input value={intention.position} onChange={hi('position')} placeholder="如：高级前端工程师"/></div><div className="ig"><label>期望薪资</label><input value={intention.salary} onChange={hi('salary')} placeholder="如：25-40K·15薪"/></div></div>
+      <div className="row"><div className="ig"><label>期望地点</label><input value={intention.location} onChange={hi('location')} placeholder="如：北京"/></div><div className="ig"><label>工作类型</label><select value={intention.type} onChange={hi('type')}><option>全职</option><option>兼职</option><option>实习</option><option>自由职业</option></select></div></div>
+      <div className="ig"><label>期望行业</label><input value={intention.industry} onChange={hi('industry')} placeholder="如：互联网/IT"/></div>
+    </div>
+    <div className="sc"><div className="st"><Ic.St/>个人优势</div>
+      <div className="ig"><label>核心竞争力</label><textarea value={advantages} onChange={e=>onAdvChange(e.target.value)} rows={6} placeholder="突出您的专业能力、项目经验、个人特质等核心优势..."/></div>
+    </div>
+  </>
+}
+
+function VP({visibility,counts,onChange}){
+  const v=visibility||{},vp=v.personal||{};
+  const u=(k,val)=>onChange({...v,[k]:val});
+  const up=(k,val)=>onChange({...v,personal:{...vp,[k]:val}});
+  return<div className="sc"><div className="st"><Ic.Sl/>显示设置</div>
+    <div style={{fontWeight:600,fontSize:'var(--t2)',color:'var(--cp)',margin:'8px 0'}}>基本信息</div>
+    {[['name','姓名'],['title','目标职位'],['gender','性别'],['birth','出生日期'],['ethnicity','民族'],['political','政治面貌'],['marital','婚姻状况'],['email','邮箱'],['phone','电话'],['location','现居地'],['website','个人网站'],['summary','个人简介']].map(([k,l])=><TS key={k} label={l} checked={vp[k]!==false} onChange={x=>up(k,x)}/>)}
+    <div style={{fontWeight:600,fontSize:'var(--t2)',color:'var(--cp)',margin:'16px 0 8px'}}>内容板块</div>
+    {[['advantages','个人优势'],['jobStatus','求职状态'],['intention','求职意向'],['experience','工作/实习经历'],['education','教育经历'],['projects','项目经历'],['trainings','培训经历'],['languages','语言能力'],['skills','专业技能'],['certificates','获得证书'],['studentLeadership','学生干部经历']].map(([k,l])=><TS key={k} label={l} sub={counts[k]!==undefined?`${counts[k]} 条`:''} checked={v[k]!==false} onChange={x=>u(k,x)}/>)}
+  </div>
+}
+
+// Resume Preview
+function Preview({data,template,theme}){
+  const{personal:p,advantages:a,jobStatus:js,intention:it,experience:ex,education:ed,projects:pj,trainings:tr,languages:lg,skills:sk,certificates:ce,studentLeadership:sl,visibility:vi}=data;
+  const v=vi||{},vp=v.personal||{};
+  const tc=themes[theme]||themes.c;
+  const sv={'--rp':tc.primary,'--ra':tc.accent,'--rsa':tc.surfaceAlt,'--rt':tc.text,'--rt2':tc.textSecondary,'--rtm':tc.textMuted,'--rb':tc.border};
+  // 保留换行和空白 - 使用 whiteSpace:pre-wrap 同时保留换行符和连续空格/缩进
+  const desc=t=>t?t.split('\n').map((l,i)=><div key={i} style={{whiteSpace:'pre-wrap',wordBreak:'break-word'}}>{l||' '}</div>):null;
+  const adv=t=>t?t.split('\n').map((l,i)=><div key={i} style={{whiteSpace:'pre-wrap',marginBottom:6,wordBreak:'break-word'}}>{l||' '}</div>):null;
+
+  const contactItems=()=>{
+    const r=[];
+    if(vp.email&&p.email)r.push(<span key="e" className="ci"><Ic.M/>{p.email}</span>);
+    if(vp.phone&&p.phone)r.push(<span key="p" className="ci"><Ic.P/>{p.phone}</span>);
+    if(vp.location&&p.location)r.push(<span key="l" className="ci"><Ic.L/>{p.location}</span>);
+    if(vp.website&&p.website)r.push(<span key="w" className="ci"><Ic.W/>{p.website}</span>);
+    return r;
+  };
+
+  // Experience section (work + internship)
+  const expSection=cls=>(v.experience!==false&&ex.length>0?<div className={cls.ei_section}><div className={cls.ei_title}>工作/实习经历</div>{ex.map(e=><div key={e.id} className={cls.ei}><div className={cls.eh}><span className={cls.et}>{e.title} {e.type==='实习'&&<span style={{fontSize:11,color:'var(--ca)',marginLeft:6}}>[实习]</span>}</span><span className={cls.ed}>{e.startDate} - {e.endDate}</span></div><div className={cls.ec2}>{e.company} · {e.location}</div><div className={cls.eds}>{desc(e.description)}</div></div>)}</div>:null);
+
+  // Classic
+  if(template==='classic'){
+    return<div className="a4 tc" style={sv}>
+      <div className="sb">
+        {vp.name&&p.name&&<div className="nm">{p.name}</div>}
+        {vp.title&&p.title&&<div className="tt">{p.title}</div>}
+        {(vp.email||vp.phone||vp.location||vp.website)&&<div className="ss"><div className="sst">联系方式</div>
+          {vp.email&&p.email&&<div className="si"><strong>邮箱</strong>{p.email}</div>}
+          {vp.phone&&p.phone&&<div className="si"><strong>电话</strong>{p.phone}</div>}
+          {vp.location&&p.location&&<div className="si"><strong>现居地</strong>{p.location}</div>}
+          {vp.website&&p.website&&<div className="si"><strong>个人网站</strong>{p.website}</div>}
+        </div>}
+        {v.jobStatus!==false&&js&&<div className="ss"><div className="sst">求职状态</div><div className="si">{js}</div></div>}
+        {v.intention!==false&&(it.position||it.salary||it.location)&&<div className="ss"><div className="sst">求职意向</div>
+          {it.position&&<div className="si"><strong>期望职位</strong>{it.position}</div>}
+          {it.salary&&<div className="si"><strong>期望薪资</strong>{it.salary}</div>}
+          {it.location&&<div className="si"><strong>期望地点</strong>{it.location}</div>}
+          {it.type&&<div className="si"><strong>工作类型</strong>{it.type}</div>}
+          {it.industry&&<div className="si"><strong>期望行业</strong>{it.industry}</div>}
+        </div>}
+        {v.skills!==false&&sk.length>0&&<div className="ss"><div className="sst">专业技能</div><div>{sk.map(s=><span key={s.id} className="sk">{s.name}</span>)}</div></div>}
+        {v.languages!==false&&lg.length>0&&<div className="ss"><div className="sst">语言能力</div>{lg.map(l=><div key={l.id} className="si"><strong>{l.name}</strong>{l.level}{l.score?` (${l.score})`:''}</div>)}</div>}
+        {v.certificates!==false&&ce.length>0&&<div className="ss"><div className="sst">获得证书</div>{ce.map(c=><div key={c.id} className="si"><strong>{c.name}</strong>{c.date}{c.desc?` · ${c.desc}`:''}</div>)}</div>}
+        {v.education!==false&&ed.length>0&&<div className="ss"><div className="sst">教育背景</div>{ed.map(e=><div key={e.id} className="si"><strong>{e.school}</strong>{e.degree} · {e.field}<br/><span style={{opacity:.7}}>{e.startDate} - {e.endDate}</span></div>)}</div>}
+      </div>
+      <div className="mc">
+        {v.advantages!==false&&a&&<div className="ms"><div className="mst">个人优势</div><div className="sm">{adv(a)}</div></div>}
+        {vp.summary&&p.summary&&<div className="ms"><div className="mst">个人简介</div><div className="sm" style={{whiteSpace:'pre-wrap',wordBreak:'break-word'}}>{p.summary}</div></div>}
+        {expSection({ei:'ei',ei_section:'ms',ei_title:'mst',eh:'eh',et:'et',ed:'ed',ec2:'ec2',eds:'eds'})}
+        {v.projects!==false&&pj.length>0&&<div className="ms"><div className="mst">项目经历</div>{pj.map(p2=><div key={p2.id} className="pi"><div className="pn">{p2.name}{p2.tech&&<span style={{fontSize:12,color:'var(--rtm)',fontWeight:400,marginLeft:8}}>| {p2.tech}</span>}</div><div className="pd" style={{whiteSpace:'pre-wrap',wordBreak:'break-word'}}>{p2.description}</div></div>)}</div>}
+        {v.studentLeadership!==false&&sl.length>0&&<div className="ms"><div className="mst">学生干部经历</div>{sl.map(s=><div key={s.id} className="ei"><div className="eh"><span className="et">{s.position}</span><span className="ed">{s.startDate} - {s.endDate}</span></div><div className="ec2">{s.org}</div><div className="eds">{desc(s.description)}</div></div>)}</div>}
+        {v.trainings!==false&&tr.length>0&&<div className="ms"><div className="mst">培训经历</div>{tr.map(t2=><div key={t2.id} className="ei"><div className="eh"><span className="et">{t2.name}</span><span className="ed">{t2.startDate} - {t2.endDate}</span></div><div className="ec2">{t2.org}</div>{t2.description&&<div className="eds">{desc(t2.description)}</div>}</div>)}</div>}
+      </div>
+    </div>
+  }
+
+  // Modern
+  if(template==='modern'){
+    return<div className="a4 tm" style={sv}>
+      <div className="hd">
+        {vp.name&&p.name&&<div className="nm">{p.name}</div>}
+        {vp.title&&p.title&&<div className="tt">{p.title}</div>}
+        <div className="cr">{contactItems()}</div>
+      </div>
+      <div className="bd">
+        {v.advantages!==false&&a&&<div className="sc2"><div className="sct">个人优势</div><div className="sm">{adv(a)}</div></div>}
+        {v.intention!==false&&(it.position||it.salary||it.location)&&<div className="sc2"><div className="sct">求职意向</div><div className="lc">{it.position&&<div><strong>职位：</strong>{it.position}</div>}{it.salary&&<div><strong>薪资：</strong>{it.salary}</div>}{it.location&&<div><strong>地点：</strong>{it.location}</div>}{it.type&&<div><strong>类型：</strong>{it.type}</div>}{it.industry&&<div><strong>行业：</strong>{it.industry}</div>}{v.jobStatus!==false&&js&&<div><strong>状态：</strong>{js}</div>}</div></div>}
+        {vp.summary&&p.summary&&<div className="sc2"><div className="sct">个人简介</div><div className="sm" style={{whiteSpace:'pre-wrap',wordBreak:'break-word'}}>{p.summary}</div></div>}
+        <div className="tcc">
+          <div>
+            {expSection({ei:'ei',ei_section:'sc2',ei_title:'sct',eh:'eh',et:'et',ed:'ed',ec2:'ec2',eds:'eds'})}
+            {v.projects!==false&&pj.length>0&&<div className="sc2"><div className="sct">项目经历</div>{pj.map(p2=><div key={p2.id} className="pi"><div className="pn">{p2.name}</div><div className="pd" style={{whiteSpace:'pre-wrap',wordBreak:'break-word'}}>{p2.description}</div></div>)}</div>}
+            {v.studentLeadership!==false&&sl.length>0&&<div className="sc2"><div className="sct">学生干部经历</div>{sl.map(s=><div key={s.id} className="ei"><div className="eh"><span className="et">{s.position}</span><span className="ed">{s.startDate} - {s.endDate}</span></div><div className="ec2">{s.org}</div><div className="eds">{desc(s.description)}</div></div>)}</div>}
+            {v.trainings!==false&&tr.length>0&&<div className="sc2"><div className="sct">培训经历</div>{tr.map(t2=><div key={t2.id} className="ei"><div className="eh"><span className="et">{t2.name}</span><span className="ed">{t2.startDate} - {t2.endDate}</span></div><div className="ec2">{t2.org}</div>{t2.description&&<div className="eds">{desc(t2.description)}</div>}</div>)}</div>}
+          </div>
+          <div>
+            {v.education!==false&&ed.length>0&&<div className="sc2"><div className="sct">教育背景</div>{ed.map(e=><div key={e.id} className="ei"><div className="et">{e.school}</div><div className="ec2">{e.degree} · {e.field}</div><div className="ed">{e.startDate} - {e.endDate}</div></div>)}</div>}
+            {v.skills!==false&&sk.length>0&&<div className="sc2"><div className="sct">专业技能</div><div className="sg">{sk.map(s=><span key={s.id} className="sp">{s.name}</span>)}</div></div>}
+            {v.languages!==false&&lg.length>0&&<div className="sc2"><div className="sct">语言能力</div>{lg.map(l=><div key={l.id} style={{marginBottom:6,fontSize:13}}><strong>{l.name}</strong> · {l.level}{l.score?` (${l.score})`:''}</div>)}</div>}
+            {v.certificates!==false&&ce.length>0&&<div className="sc2"><div className="sct">获得证书</div>{ce.map(c=><div key={c.id} style={{marginBottom:6,fontSize:13}}><strong>{c.name}</strong> · {c.date}</div>)}</div>}
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  // Creative
+  return<div className="a4 tr2" style={sv}>
+    <div className="ab"></div>
+    <div className="ts">
+      {vp.name&&p.name&&<div className="av">{p.name.charAt(0)}</div>}
+      <div className="ns">
+        {vp.name&&p.name&&<div className="nm">{p.name}</div>}
+        {vp.title&&p.title&&<div className="tt">{p.title}</div>}
+        <div className="cp2">
+          {vp.email&&p.email&&<span className="cp3">{p.email}</span>}
+          {vp.phone&&p.phone&&<span className="cp3">{p.phone}</span>}
+          {vp.location&&p.location&&<span className="cp3">{p.location}</span>}
+          {vp.website&&p.website&&<span className="cp3">{p.website}</span>}
+        </div>
+      </div>
+    </div>
+    <div className="mb">
+      {v.advantages!==false&&a&&<div className="rs"><div className="rst">个人优势</div><div className="sm">{adv(a)}</div></div>}
+      {v.intention!==false&&(it.position||it.salary||it.location)&&<div className="rs"><div className="rst">求职意向</div><div style={{fontSize:13,lineHeight:1.8}}>{[it.position&&`职位：${it.position}`,it.salary&&`薪资：${it.salary}`,it.location&&`地点：${it.location}`,it.type&&`类型：${it.type}`,v.jobStatus!==false&&js&&`状态：${js}`].filter(Boolean).join('  ·  ')}</div></div>}
+      {vp.summary&&p.summary&&<div className="rs"><div className="rst">个人简介</div><div className="sm" style={{whiteSpace:'pre-wrap',wordBreak:'break-word'}}>{p.summary}</div></div>}
+      {expSection({ei:'ei',ei_section:'rs',ei_title:'rst',eh:'eh',et:'et',ed:'ed',ec2:'ec2',eds:'eds'})}
+      {v.projects!==false&&pj.length>0&&<div className="rs"><div className="rst">项目经历</div>{pj.map(p2=><div key={p2.id} className="pi"><div className="pn">{p2.name}</div><div className="pd" style={{whiteSpace:'pre-wrap',wordBreak:'break-word'}}>{p2.description}</div></div>)}</div>}
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:32}}>
+        <div>
+          {v.education!==false&&ed.length>0&&<div className="rs"><div className="rst">教育背景</div>{ed.map(e=><div key={e.id} className="ei" style={{borderLeft:'none',paddingLeft:0,marginBottom:12}}><div className="et">{e.school}</div><div className="ec2">{e.degree} · {e.field}</div><div className="ed" style={{background:'none',padding:0,marginTop:4}}>{e.startDate} - {e.endDate}</div></div>)}</div>}
+          {v.studentLeadership!==false&&sl.length>0&&<div className="rs"><div className="rst">学生干部经历</div>{sl.map(s=><div key={s.id} className="pi"><div className="pn">{s.position}</div><div className="pd" style={{marginBottom:2}}>{s.org} · {s.startDate} - {s.endDate}</div><div className="pd">{desc(s.description)}</div></div>)}</div>}
+          {v.trainings!==false&&tr.length>0&&<div className="rs"><div className="rst">培训经历</div>{tr.map(t2=><div key={t2.id} className="pi"><div className="pn">{t2.name}</div><div className="pd" style={{marginBottom:2}}>{t2.org} · {t2.startDate} - {t2.endDate}</div></div>)}</div>}
+        </div>
+        <div>
+          {v.skills!==false&&sk.length>0&&<div className="rs"><div className="rst">专业技能</div><div className="sr">{sk.map(s=><div key={s.id} className="si2"><span className="sn">{s.name}</span><div className="sb2"><div className="sbf" style={{width:s.level+'%'}}></div></div></div>)}</div></div>}
+          {v.languages!==false&&lg.length>0&&<div className="rs"><div className="rst">语言能力</div>{lg.map(l=><div key={l.id} style={{marginBottom:8,fontSize:13}}><strong>{l.name}</strong> · {l.level}{l.score?` (${l.score})`:''}</div>)}</div>}
+          {v.certificates!==false&&ce.length>0&&<div className="rs"><div className="rst">获得证书</div>{ce.map(c=><div key={c.id} style={{marginBottom:8,fontSize:13}}><strong>{c.name}</strong><br/><span style={{color:'var(--rtm)'}}>{c.date}{c.desc?` · ${c.desc}`:''}</span></div>)}</div>}
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+// Main App
+function App(){
+  const[data,setData]=useState(load);
+  const[template,setTemplate]=useState(()=>localStorage.getItem('proresume_tpl')||'classic');
+  const[theme,setTheme]=useState(()=>localStorage.getItem('proresume_thm')||'c');
+  const[tab,setTab]=useState('personal');
+  const[zoom,setZoom]=useState(()=>parseFloat(localStorage.getItem('proresume_zm'))||0.75);
+  const[exp,setExp]=useState(false);
+  const ref=useRef();
+  const{show}=useT();
+
+  useEffect(()=>save(data),[data]);
+  useEffect(()=>localStorage.setItem('proresume_tpl',template),[template]);
+  useEffect(()=>localStorage.setItem('proresume_thm',theme),[theme]);
+  useEffect(()=>localStorage.setItem('proresume_zm',zoom),[zoom]);
+  useEffect(()=>document.body.setAttribute('data-t',theme),[theme]);
+
+  const up=k=>v=>setData(p=>({...p,[k]:v}));
+  const counts={
+    advantages:data.advantages?1:0,jobStatus:data.jobStatus?1:0,intention:(data.intention.position||data.intention.salary)?1:0,
+    experience:data.experience.length,education:data.education.length,projects:data.projects.length,
+    trainings:data.trainings.length,languages:data.languages.length,skills:data.skills.length,
+    certificates:data.certificates.length,studentLeadership:data.studentLeadership.length
+  };
+
+  const exportPDF=async()=>{
+    if(!ref.current)return;
+    setExp(true);
+    try{
+      const wrapperEl=ref.current;
+      const el=wrapperEl.querySelector('.a4');
+      if(!el){show('预览区域未找到','error');return}
+
+      // === 关键：临时按100%布局导出，避免缩放导致格式错乱 ===
+      const origWrapperTransform=wrapperEl.style.transform;
+      const origWrapperTransformOrigin=wrapperEl.style.transformOrigin;
+      const origA4Transform=el.style.transform;
+      wrapperEl.style.transform='scale(1)';
+      wrapperEl.style.transformOrigin='top center';
+      el.style.transform='none';
+      el.style.width='var(--a4w)';
+      el.style.minHeight='var(--a4h)';
+      await new Promise(r=>setTimeout(r,350));
+
+      // === 关键：html2canvas 渲染（适中的scale即可，1.5倍足够清晰） ===
+      const canvas=await html2canvas(el,{
+        scale:1.5,            // 1.5倍比2倍节省约44%像素，体积更小，清晰度仍足够
+        useCORS:true,
+        allowTaint:true,
+        backgroundColor:'#fff', // 白色背景，JPEG友好
+        logging:false,
+        scrollX:0,
+        scrollY:-window.scrollY,
+        windowWidth:el.scrollWidth,
+        windowHeight:el.scrollHeight
+      });
+
+      // 恢复原始缩放
+      wrapperEl.style.transform=origWrapperTransform;
+      wrapperEl.style.transformOrigin=origWrapperTransformOrigin;
+      el.style.transform=origA4Transform;
+
+      // === 关键：切割canvas + JPEG格式，大幅降低PDF体积 ===
+      // 图片型 PDF 文字无法复制（天然特性）
+      const{jsPDF}=window.jspdf;
+      const pdf=new jsPDF('p','mm','a4');
+      const pdfW=210,pdfH=297; // A4 尺寸（mm）
+      const imgW=pdfW;
+      const imgH=(canvas.height*imgW)/canvas.width;
+      const pageHInPx=(canvas.width*pdfH)/imgW;
+      const totalPages=Math.ceil(canvas.height/pageHInPx);
+      const imgFormat='JPEG';   // JPEG 比 PNG 体积小 60-80%
+      const imgQuality=0.88;    // 质量与体积的甜点（0.85-0.92 最佳）
+
+      if(totalPages<=1){
+        const imgData=canvas.toDataURL('image/jpeg',imgQuality);
+        pdf.addImage(imgData,imgFormat,0,0,imgW,imgH);
+      }else{
+        // 多页：按页切割canvas，每页都是完整的横向切片
+        for(let i=0;i<totalPages;i++){
+          const sliceH=Math.min(pageHInPx,canvas.height-i*pageHInPx);
+          const pageCanvas=document.createElement('canvas');
+          pageCanvas.width=canvas.width;
+          pageCanvas.height=sliceH;
+          const ctx=pageCanvas.getContext('2d');
+          ctx.fillStyle='#ffffff';
+          ctx.fillRect(0,0,pageCanvas.width,pageCanvas.height);
+          ctx.drawImage(
+            canvas,
+            0,i*pageHInPx,canvas.width,sliceH, // 源区域
+            0,0,canvas.width,sliceH            // 目标区域
+          );
+          const pageImg=pageCanvas.toDataURL('image/jpeg',imgQuality);
+          const pageImgH=(sliceH*imgW)/canvas.width;
+          if(i>0)pdf.addPage();
+          pdf.addImage(pageImg,imgFormat,0,0,imgW,pageImgH);
         }
-        function useToast() { return React.useContext(ToastContext); }
+      }
 
-        // ============================================
-        // RESUME PREVIEW (respects visibility)
-        // ============================================
-        function ResumePreview({ data, template, theme }) {
-            const { personal, education, experience, skills, projects, visibility } = data;
-            const v = visibility || {};
-            const vp = v.personal || {};
+      pdf.save(`${data.personal.name||'resume'}_${new Date().toISOString().slice(0,10)}.pdf`);
+      show('PDF 导出成功！','success');
+    }catch(e){console.error(e);show('导出失败：'+e.message,'error')}
+    finally{setExp(false)}
+  };
 
-            const themeColors = {
-                classic: { primary: '#1e3a5f', accent: '#3182ce', surfaceAlt: '#edf2f7', text: '#1a202c', textSecondary: '#4a5568', textMuted: '#718096', border: '#e2e8f0' },
-                warm: { primary: '#744210', accent: '#c05621', surfaceAlt: '#fef5e7', text: '#1c1917', textSecondary: '#57534e', textMuted: '#a8a29e', border: '#e7e5e4' },
-                slate: { primary: '#0f172a', accent: '#6366f1', surfaceAlt: '#f1f5f9', text: '#0f172a', textSecondary: '#475569', textMuted: '#94a3b8', border: '#e2e8f0' }
-            };
-            const colors = themeColors[theme] || themeColors.classic;
-            const styleVars = { '--resume-primary': colors.primary, '--resume-accent': colors.accent, '--resume-surface-alt': colors.surfaceAlt, '--resume-text': colors.text, '--resume-text-secondary': colors.textSecondary, '--resume-text-muted': colors.textMuted, '--resume-border': colors.border };
+  const exportJSON=()=>{
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download=`resume_backup_${new Date().toISOString().slice(0,10)}.json`;a.click();
+    URL.revokeObjectURL(url);show('JSON 备份已下载','success');
+  };
 
-            const renderContactItems = () => {
-                const items = [];
-                if (vp.email && personal.email) items.push(<span key="email" className="contact-item"><Icons.Mail /> {personal.email}</span>);
-                if (vp.phone && personal.phone) items.push(<span key="phone" className="contact-item"><Icons.Phone /> {personal.phone}</span>);
-                if (vp.location && personal.location) items.push(<span key="location" className="contact-item"><Icons.MapPin /> {personal.location}</span>);
-                if (vp.website && personal.website) items.push(<span key="website" className="contact-item"><Icons.Link /> {personal.website}</span>);
-                return items;
-            };
+  const importJSON=e=>{
+    const f=e.target.files[0];if(!f)return;
+    const r=new FileReader();
+    r.onload=ev=>{
+      try{
+        const d=JSON.parse(ev.target.result);
+        if(d.personal&&d.experience&&d.education){setData(d);show('数据导入成功！','success')}
+        else show('文件格式不正确','error');
+      }catch(err){show('解析失败：'+err.message,'error')}
+    };
+    r.readAsText(f);e.target.value='';
+  };
 
-            const renderDescription = (text) => {
-                return text.split('\n').map((line, i) => <div key={i}>{line}</div>);
-            };
+  const reset=()=>{if(confirm('确定要重置为默认数据吗？当前数据将丢失。')){setData(defaultData);show('已重置为默认数据','info')}};
 
-            if (template === 'classic') {
-                return (
-                    <div className="a4-paper template-classic" style={styleVars}>
-                        <div className="sidebar">
-                            {vp.name && personal.name && <div className="name">{personal.name}</div>}
-                            {vp.title && personal.title && <div className="title">{personal.title}</div>}
+  const tabs=[
+    {id:'personal',l:'基本信息',i:<Ic.U/>},
+    {id:'job',l:'求职',i:<Ic.B/>},
+    {id:'experience',l:'工作/实习',i:<Ic.B/>},
+    {id:'education',l:'教育',i:<Ic.G/>},
+    {id:'projects',l:'项目',i:<Ic.F/>},
+    {id:'trainings',l:'培训',i:<Ic.G/>},
+    {id:'leadership',l:'学生干部',i:<Ic.St/>},
+    {id:'skills',l:'技能',i:<Ic.Cd/>}
+  ];
 
-                            {(vp.email || vp.phone || vp.location || vp.website) && (
-                                <div className="sidebar-section">
-                                    <div className="sidebar-section-title">联系方式</div>
-                                    {vp.email && personal.email && <div className="sidebar-item"><strong>邮箱</strong>{personal.email}</div>}
-                                    {vp.phone && personal.phone && <div className="sidebar-item"><strong>电话</strong>{personal.phone}</div>}
-                                    {vp.location && personal.location && <div className="sidebar-item"><strong>地址</strong>{personal.location}</div>}
-                                    {vp.website && personal.website && <div className="sidebar-item"><strong>网站</strong>{personal.website}</div>}
-                                </div>
-                            )}
+  const tpls=[{id:'classic',l:'经典分栏'},{id:'modern',l:'现代上下'},{id:'creative',l:'创意布局'}];
+  const ths=[{id:'c',l:'经典蓝',c:'#1e3a5f'},{id:'w',l:'暖棕',c:'#744210'},{id:'s',l:'现代灰',c:'#0f172a'}];
 
-                            {v.skills !== false && skills.length > 0 && (
-                                <div className="sidebar-section">
-                                    <div className="sidebar-section-title">专业技能</div>
-                                    <div>{skills.map(s => <span key={s.id} className="skill-tag">{s.name}</span>)}</div>
-                                </div>
-                            )}
+  return<div className="app">
+    <div className="ep">
+      <div className="ehd"><h1>ProResume</h1><p>专业简历生成器 · 所见即所得</p></div>
+      <div className="ec">
+        <div className="tabs">{tabs.map(t=><button key={t.id} className={`tab ${tab===t.id?'on':''}`} onClick={()=>setTab(t.id)}>{t.i}{t.l}</button>)}</div>
+        {tab==='personal'&&<><PersonalForm data={data.personal} onChange={up('personal')}/><VP visibility={data.visibility} counts={counts} onChange={up('visibility')}/></>}
+        {tab==='job'&&<JobForm jobStatus={data.jobStatus} intention={data.intention} advantages={data.advantages} onJobStatusChange={v=>setData(p=>({...p,jobStatus:v}))} onIntentionChange={v=>setData(p=>({...p,intention:v}))} onAdvChange={up('advantages')}/>}
+        {tab==='experience'&&<ListForm title="工作/实习经历" icon={<Ic.B/>} items={data.experience} onChange={up('experience')} defaults={{type:'工作'}} addMsg="已添加经历" addText="添加工作/实习经历" fields={[
+          {key:'type',label:'类型',type:'select',options:['工作','实习']},
+          {row:[{key:'company',label:'公司',ph:'公司名称'},{key:'title',label:'职位',ph:'职位名称'}]},
+          {key:'location',label:'工作地点',ph:'工作城市'},
+          {key:'dateRange',label:'起止时间',months:[{key:'startDate'},{key:'endDate',ph:'至今'}]},
+          {key:'description',label:'工作描述',type:'textarea',rows:5,ph:'每行描述用回车分隔'}
+        ]}/>}
+        {tab==='education'&&<ListForm title="教育经历" icon={<Ic.G/>} items={data.education} onChange={up('education')} addMsg="已添加教育" addText="添加教育经历" fields={[
+          {row:[{key:'school',label:'学校',ph:'学校名称'},{key:'degree',label:'学历',type:'select',options:['本科','硕士','博士','大专','高中','中专']}]},
+          {key:'field',label:'专业',ph:'所学专业'},
+          {key:'dateRange',label:'起止时间',months:[{key:'startDate'},{key:'endDate'}]},
+          {key:'description',label:'描述',type:'textarea',rows:2,ph:'主修课程、荣誉、GPA等'}
+        ]}/>}
+        {tab==='projects'&&<ListForm title="项目经历" icon={<Ic.F/>} items={data.projects} onChange={up('projects')} addMsg="已添加项目" addText="添加项目经历" fields={[
+          {row:[{key:'name',label:'项目名称',ph:'项目名'},{key:'link',label:'项目链接',ph:'https://...'}]},
+          {key:'tech',label:'技术栈',ph:'React, Node.js, ...'},
+          {key:'description',label:'项目描述',type:'textarea',rows:3,ph:'项目背景、您的角色和成果'}
+        ]}/>}
+        {tab==='trainings'&&<ListForm title="培训经历" icon={<Ic.G/>} items={data.trainings} onChange={up('trainings')} addMsg="已添加培训" addText="添加培训经历" addOnEmpty="暂无培训经历，可点击下方按钮添加" fields={[
+          {key:'name',label:'培训名称',ph:'培训课程/项目名称'},
+          {key:'org',label:'培训机构',ph:'培训机构名称'},
+          {key:'dateRange',label:'起止时间',months:[{key:'startDate'},{key:'endDate'}]},
+          {key:'description',label:'培训内容',type:'textarea',rows:3,ph:'培训内容、所获证书等'}
+        ]}/>}
+        {tab==='leadership'&&<ListForm title="学生干部经历" icon={<Ic.St/>} items={data.studentLeadership} onChange={up('studentLeadership')} addMsg="已添加干部经历" addText="添加学生干部经历" fields={[
+          {row:[{key:'position',label:'担任职务',ph:'如：学生会主席'},{key:'org',label:'组织名称',ph:'如：校学生会'}]},
+          {key:'dateRange',label:'起止时间',months:[{key:'startDate'},{key:'endDate'}]},
+          {key:'description',label:'工作描述',type:'textarea',rows:4,ph:'主要工作内容和成果'}
+        ]}/>}
+        {tab==='skills'&&<>
+          <ListForm title="专业技能" icon={<Ic.Cd/>} items={data.skills} onChange={up('skills')} addMsg="已添加技能" addText="添加技能" fields={[
+            {row:[{key:'name',label:'技能名称',ph:'如：React'},{key:'level',label:'熟练度',type:'range'}]}
+          ]}/>
+          <ListForm title="语言能力" icon={<Ic.Gl/>} items={data.languages} onChange={up('languages')} addMsg="已添加语言" addText="添加语言" fields={[
+            {row:[{key:'name',label:'语言',ph:'如：英语'},{key:'level',label:'等级',type:'select',options:['CET-4','CET-6','专业四级','专业八级','雅思','托福','PETS-3','PETS-5','入门','基础','熟练','精通','母语']}]},
+            {key:'score',label:'分数/备注',ph:'如：528 分（可选）'}
+          ]}/>
+          <ListForm title="获得证书" icon={<Ic.Aw/>} items={data.certificates} onChange={up('certificates')} addMsg="已添加证书" addText="添加证书" fields={[
+            {key:'name',label:'证书名称',ph:'如：软件设计师'},
+            {key:'date',label:'获得时间',type:'month'},
+            {key:'desc',label:'描述',ph:'发证机构、证书编号等（可选）'}
+          ]}/>
+        </>}
+        <div className="sc"><div className="st"><Ic.Sv/>数据管理</div>
+          <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+            <button className="btn bs" onClick={exportJSON}><Ic.Dl/>导出 JSON</button>
+            <label className="btn bs" style={{cursor:'pointer'}}><Ic.Ul/>导入 JSON<input type="file" accept=".json" onChange={importJSON} style={{display:'none'}}/></label>
+            <button className="btn bg" onClick={reset}><Ic.Rc/>重置数据</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div className="pp">
+      <div className="pt">
+        <div className="tg"><span className="tl"><Ic.La/>模板</span><select className="sel" value={template} onChange={e=>setTemplate(e.target.value)}>{tpls.map(t=><option key={t.id} value={t.id}>{t.l}</option>)}</select></div>
+        <div className="tg"><span className="tl"><Ic.Pa/>配色</span>{ths.map(t=><div key={t.id} className={`cs ${theme===t.id?'on':''}`} style={{background:t.c}} title={t.l} onClick={()=>setTheme(t.id)}/>)}</div>
+        <div className="tg"><span className="tl">缩放</span><div className="zc"><button className="btn bg bi" onClick={()=>setZoom(z=>Math.max(.3,z-.1))}><Ic.Zo/></button><span className="zv">{Math.round(zoom*100)}%</span><button className="btn bg bi" onClick={()=>setZoom(z=>Math.min(1.5,z+.1))}><Ic.Zi/></button></div></div>
+        <div className="tg" style={{gap:8}}>
+          <button className="btn bp" onClick={exportPDF} disabled={exp} title="导出图片型PDF，体积小，文字不可复制"><Ic.Ft/>{exp?'导出中...':'导出 PDF'}</button>
+          <button className="btn bs" onClick={()=>window.print()} title="调用浏览器打印，文字可复制+可搜索，矢量"><Ic.Pr/>打印</button>
+        </div>
+      </div>
+      <div className="pa"><div ref={ref} style={{transform:`scale(${zoom})`,transformOrigin:'top center'}}><Preview data={data} template={template} theme={theme}/></div></div>
+    </div>
+    {exp&&<div className="lo"><div className="ls"></div></div>}
+  </div>
+}
 
-                            {v.education !== false && education.length > 0 && (
-                                <div className="sidebar-section">
-                                    <div className="sidebar-section-title">教育背景</div>
-                                    {education.map(edu => (
-                                        <div key={edu.id} className="sidebar-item">
-                                            <strong>{edu.school}</strong>
-                                            {edu.degree} &middot; {edu.field}<br/>
-                                            <span style={{opacity: 0.7}}>{edu.startDate} - {edu.endDate}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="main-content">
-                            {vp.summary && personal.summary && (
-                                <div className="main-section">
-                                    <div className="main-section-title">个人简介</div>
-                                    <div className="experience-desc">{personal.summary}</div>
-                                </div>
-                            )}
-
-                            {v.experience !== false && experience.length > 0 && (
-                                <div className="main-section">
-                                    <div className="main-section-title">工作经历</div>
-                                    {experience.map(exp => (
-                                        <div key={exp.id} className="experience-item">
-                                            <div className="experience-header">
-                                                <span className="experience-title">{exp.title}</span>
-                                                <span className="experience-date">{exp.startDate} - {exp.endDate}</span>
-                                            </div>
-                                            <div className="experience-company">{exp.company} &middot; {exp.location}</div>
-                                            <div className="experience-desc">{renderDescription(exp.description)}</div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-
-                            {v.projects !== false && projects.length > 0 && (
-                                <div className="main-section">
-                                    <div className="main-section-title">项目经历</div>
-                                    {projects.map(proj => (
-                                        <div key={proj.id} className="project-item">
-                                            <div className="project-name">{proj.name}</div>
-                                            <div className="project-desc">{proj.description}</div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                );
-            }
-
-            if (template === 'modern') {
-                return (
-                    <div className="a4-paper template-modern" style={styleVars}>
-                        <div className="header">
-                            {vp.name && personal.name && <div className="name">{personal.name}</div>}
-                            {vp.title && personal.title && <div className="title">{personal.title}</div>}
-                            <div className="contact-row">{renderContactItems()}</div>
-                        </div>
-
-                        <div className="body">
-                            {vp.summary && personal.summary && (
-                                <div className="section">
-                                    <div className="section-title">个人简介</div>
-                                    <div className="experience-desc">{personal.summary}</div>
-                                </div>
-                            )}
-
-                            <div className="two-col">
-                                <div>
-                                    {v.experience !== false && experience.length > 0 && (
-                                        <div className="section">
-                                            <div className="section-title">工作经历</div>
-                                            {experience.map(exp => (
-                                                <div key={exp.id} className="experience-item">
-                                                    <div className="experience-header">
-                                                        <span className="experience-title">{exp.title}</span>
-                                                        <span className="experience-date">{exp.startDate} - {exp.endDate}</span>
-                                                    </div>
-                                                    <div className="experience-company">{exp.company} &middot; {exp.location}</div>
-                                                    <div className="experience-desc">{renderDescription(exp.description)}</div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div>
-                                    {v.education !== false && education.length > 0 && (
-                                        <div className="section">
-                                            <div className="section-title">教育背景</div>
-                                            {education.map(edu => (
-                                                <div key={edu.id} className="experience-item">
-                                                    <div className="experience-title">{edu.school}</div>
-                                                    <div className="experience-company">{edu.degree} &middot; {edu.field}</div>
-                                                    <div className="experience-date">{edu.startDate} - {edu.endDate}</div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-
-                                    {v.skills !== false && skills.length > 0 && (
-                                        <div className="section">
-                                            <div className="section-title">专业技能</div>
-                                            <div className="skills-grid">
-                                                {skills.map(s => <span key={s.id} className="skill-pill">{s.name}</span>)}
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {v.projects !== false && projects.length > 0 && (
-                                        <div className="section">
-                                            <div className="section-title">项目经历</div>
-                                            {projects.map(proj => (
-                                                <div key={proj.id} className="project-item">
-                                                    <div className="project-name">{proj.name}</div>
-                                                    <div className="project-desc">{proj.description}</div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                );
-            }
-
-            // Creative template
-            return (
-                <div className="a4-paper template-creative" style={styleVars}>
-                    <div className="accent-bar"></div>
-                    <div className="top-section">
-                        {vp.name && personal.name && (
-                            <div className="avatar-placeholder">{personal.name.charAt(0)}</div>
-                        )}
-                        <div className="name-section">
-                            {vp.name && personal.name && <div className="name">{personal.name}</div>}
-                            {vp.title && personal.title && <div className="title">{personal.title}</div>}
-                            <div className="contact-pills">
-                                {vp.email && personal.email && <span className="contact-pill">{personal.email}</span>}
-                                {vp.phone && personal.phone && <span className="contact-pill">{personal.phone}</span>}
-                                {vp.location && personal.location && <span className="contact-pill">{personal.location}</span>}
-                                {vp.website && personal.website && <span className="contact-pill">{personal.website}</span>}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="main-body">
-                        {vp.summary && personal.summary && (
-                            <div className="creative-section">
-                                <div className="creative-section-title">个人简介</div>
-                                <div className="summary-text">{personal.summary}</div>
-                            </div>
-                        )}
-
-                        {v.experience !== false && experience.length > 0 && (
-                            <div className="creative-section">
-                                <div className="creative-section-title">工作经历</div>
-                                {experience.map(exp => (
-                                    <div key={exp.id} className="experience-item">
-                                        <div className="experience-header">
-                                            <span className="experience-title">{exp.title}</span>
-                                            <span className="experience-date">{exp.startDate} - {exp.endDate}</span>
-                                        </div>
-                                        <div className="experience-company">{exp.company} &middot; {exp.location}</div>
-                                        <div className="experience-desc">{renderDescription(exp.description)}</div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-
-                        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px'}}>
-                            <div>
-                                {v.education !== false && education.length > 0 && (
-                                    <div className="creative-section">
-                                        <div className="creative-section-title">教育背景</div>
-                                        {education.map(edu => (
-                                            <div key={edu.id} className="experience-item" style={{borderLeft: 'none', paddingLeft: 0, marginBottom: 12}}>
-                                                <div className="experience-title">{edu.school}</div>
-                                                <div className="experience-company">{edu.degree} &middot; {edu.field}</div>
-                                                <div className="experience-date" style={{background: 'none', padding: 0, marginTop: 4}}>{edu.startDate} - {edu.endDate}</div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                                {v.projects !== false && projects.length > 0 && (
-                                    <div className="creative-section">
-                                        <div className="creative-section-title">项目经历</div>
-                                        {projects.map(proj => (
-                                            <div key={proj.id} className="project-item">
-                                                <div className="project-name">{proj.name}</div>
-                                                <div className="project-desc">{proj.description}</div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                            <div>
-                                {v.skills !== false && skills.length > 0 && (
-                                    <div className="creative-section">
-                                        <div className="creative-section-title">专业技能</div>
-                                        <div className="skills-row">
-                                            {skills.map(s => (
-                                                <div key={s.id} className="skill-item">
-                                                    <span className="skill-name">{s.name}</span>
-                                                    <div className="skill-bar"><div className="skill-bar-fill" style={{width: s.level + '%'}}></div></div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            );
-        }
-
-        // ============================================
-        // EDITOR COMPONENTS WITH VISIBILITY TOGGLES
-        // ============================================
-
-        function ToggleSwitch({ checked, onChange, label, sublabel }) {
-            return (
-                <div className="toggle-row">
-                    <div>
-                        <div className="toggle-label">{label}</div>
-                        {sublabel && <div className="toggle-sublabel">{sublabel}</div>}
-                    </div>
-                    <label className="toggle-switch">
-                        <input type="checkbox" checked={checked} onChange={e => onChange(e.target.checked)} />
-                        <span className="toggle-slider"></span>
-                    </label>
-                </div>
-            );
-        }
-
-        function VisibilityPanel({ visibility, dataCounts, onChange }) {
-            const v = visibility || {};
-            const vp = v.personal || {};
-            const dc = dataCounts || {};
-
-            const updatePersonal = (field, val) => {
-                onChange({ ...v, personal: { ...vp, [field]: val } });
-            };
-            const updateSection = (field, val) => {
-                onChange({ ...v, [field]: val });
-            };
-
-            return (
-                <div className="section-card">
-                    <div className="section-title"><Icons.Sliders /> 显示设置</div>
-                    <div style={{fontSize: 12, color: 'var(--color-text-muted)', marginBottom: 12}}>
-                        控制哪些内容会出现在简历中
-                    </div>
-
-                    <div style={{fontWeight: 600, fontSize: 13, color: 'var(--color-primary)', marginBottom: 8, marginTop: 4}}>个人信息字段</div>
-                    <ToggleSwitch label="姓名" checked={vp.name !== false} onChange={v => updatePersonal('name', v)} />
-                    <ToggleSwitch label="职位" checked={vp.title !== false} onChange={v => updatePersonal('title', v)} />
-                    <ToggleSwitch label="邮箱" checked={vp.email !== false} onChange={v => updatePersonal('email', v)} />
-                    <ToggleSwitch label="电话" checked={vp.phone !== false} onChange={v => updatePersonal('phone', v)} />
-                    <ToggleSwitch label="地址" checked={vp.location !== false} onChange={v => updatePersonal('location', v)} />
-                    <ToggleSwitch label="个人网站" checked={vp.website !== false} onChange={v => updatePersonal('website', v)} />
-                    <ToggleSwitch label="个人简介" checked={vp.summary !== false} onChange={v => updatePersonal('summary', v)} />
-
-                    <div style={{fontWeight: 600, fontSize: 13, color: 'var(--color-primary)', marginBottom: 8, marginTop: 16}}>内容板块</div>
-                    <ToggleSwitch label="教育经历" sublabel={`${dc.education || 0} 条`} checked={v.education !== false} onChange={v => updateSection('education', v)} />
-                    <ToggleSwitch label="工作经历" sublabel={`${dc.experience || 0} 条`} checked={v.experience !== false} onChange={v => updateSection('experience', v)} />
-                    <ToggleSwitch label="专业技能" sublabel={`${dc.skills || 0} 项`} checked={v.skills !== false} onChange={v => updateSection('skills', v)} />
-                    <ToggleSwitch label="项目经历" sublabel={`${dc.projects || 0} 条`} checked={v.projects !== false} onChange={v => updateSection('projects', v)} />
-                </div>
-            );
-        }
-
-        function PersonalForm({ data, onChange }) {
-            const handleChange = (field) => (e) => { onChange({ ...data, [field]: e.target.value }); };
-            return (
-                <div className="section-card">
-                    <div className="section-title"><Icons.User /> 个人信息</div>
-                    <div className="row">
-                        <div className="input-group"><label>姓名</label><input value={data.name} onChange={handleChange('name')} placeholder="您的姓名" /></div>
-                        <div className="input-group"><label>职位</label><input value={data.title} onChange={handleChange('title')} placeholder="目标职位" /></div>
-                    </div>
-                    <div className="row">
-                        <div className="input-group"><label>邮箱</label><input value={data.email} onChange={handleChange('email')} placeholder="example@email.com" /></div>
-                        <div className="input-group"><label>电话</label><input value={data.phone} onChange={handleChange('phone')} placeholder="138-0000-0000" /></div>
-                    </div>
-                    <div className="row">
-                        <div className="input-group"><label>地址</label><input value={data.location} onChange={handleChange('location')} placeholder="城市/地区" /></div>
-                        <div className="input-group"><label>个人网站</label><input value={data.website} onChange={handleChange('website')} placeholder="https://..." /></div>
-                    </div>
-                    <div className="input-group"><label>个人简介</label><textarea value={data.summary} onChange={handleChange('summary')} rows={5} placeholder="简要介绍您的专业背景和核心优势..." /></div>
-                </div>
-            );
-        }
-
-        function EducationForm({ data, onChange }) {
-            const { showToast } = useToast();
-            const add = () => { onChange([...data, { id: generateId(), school: '', degree: '', field: '', startDate: '', endDate: '', description: '' }]); showToast('已添加教育经历', 'success'); };
-            const remove = (id) => { onChange(data.filter(e => e.id !== id)); showToast('已删除', 'info'); };
-            const update = (id, field, value) => { onChange(data.map(e => e.id === id ? { ...e, [field]: value } : e)); };
-            return (
-                <div className="section-card">
-                    <div className="section-title"><Icons.GraduationCap /> 教育经历</div>
-                    {data.map((edu, idx) => (
-                        <div key={edu.id} className="item-card">
-                            <div className="item-card-header">
-                                <span className="item-card-title">教育 #{idx + 1}</span>
-                                <div className="item-actions">
-                                    <button className="btn btn-ghost btn-sm btn-icon" onClick={() => remove(edu.id)} title="删除"><Icons.Trash /></button>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="input-group"><label>学校</label><input value={edu.school} onChange={e => update(edu.id, 'school', e.target.value)} placeholder="学校名称" /></div>
-                                <div className="input-group"><label>专业</label><input value={edu.degree} onChange={e => update(edu.id, 'degree', e.target.value)} placeholder="学位/专业" /></div>
-                            </div>
-                            <div className="row">
-                                <div className="input-group"><label>领域</label><input value={edu.field} onChange={e => update(edu.id, 'field', e.target.value)} placeholder="专业方向" /></div>
-                                <div className="input-group"><label>起止时间</label>
-                                    <div className="row" style={{marginBottom: 0}}>
-                                        <input type="month" value={edu.startDate} onChange={e => update(edu.id, 'startDate', e.target.value)} />
-                                        <input type="month" value={edu.endDate} onChange={e => update(edu.id, 'endDate', e.target.value)} />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="input-group"><label>描述</label><textarea value={edu.description} onChange={e => update(edu.id, 'description', e.target.value)} rows={2} placeholder="荣誉、成绩、相关课程..." /></div>
-                        </div>
-                    ))}
-                    <button className="btn btn-secondary" style={{width: '100%'}} onClick={add}><Icons.Plus /> 添加教育经历</button>
-                </div>
-            );
-        }
-
-        function ExperienceForm({ data, onChange }) {
-            const { showToast } = useToast();
-            const add = () => { onChange([...data, { id: generateId(), company: '', title: '', location: '', startDate: '', endDate: '', description: '' }]); showToast('已添加工作经历', 'success'); };
-            const remove = (id) => { onChange(data.filter(e => e.id !== id)); showToast('已删除', 'info'); };
-            const update = (id, field, value) => { onChange(data.map(e => e.id === id ? { ...e, [field]: value } : e)); };
-            return (
-                <div className="section-card">
-                    <div className="section-title"><Icons.Briefcase /> 工作经历</div>
-                    {data.map((exp, idx) => (
-                        <div key={exp.id} className="item-card">
-                            <div className="item-card-header">
-                                <span className="item-card-title">工作 #{idx + 1}</span>
-                                <div className="item-actions">
-                                    <button className="btn btn-ghost btn-sm btn-icon" onClick={() => remove(exp.id)} title="删除"><Icons.Trash /></button>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="input-group"><label>公司</label><input value={exp.company} onChange={e => update(exp.id, 'company', e.target.value)} placeholder="公司名称" /></div>
-                                <div className="input-group"><label>职位</label><input value={exp.title} onChange={e => update(exp.id, 'title', e.target.value)} placeholder="职位名称" /></div>
-                            </div>
-                            <div className="row">
-                                <div className="input-group"><label>地点</label><input value={exp.location} onChange={e => update(exp.id, 'location', e.target.value)} placeholder="工作城市" /></div>
-                                <div className="input-group"><label>起止时间</label>
-                                    <div className="row" style={{marginBottom: 0}}>
-                                        <input type="month" value={exp.startDate} onChange={e => update(exp.id, 'startDate', e.target.value)} />
-                                        <input type="month" value={exp.endDate} onChange={e => update(exp.id, 'endDate', e.target.value)} placeholder="至今" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="input-group"><label>工作描述</label><textarea value={exp.description} onChange={e => update(exp.id, 'description', e.target.value)} rows={5} placeholder="每行描述用回车分隔，例如：负责抖音电商核心交易链路前端架构" /></div>
-                        </div>
-                    ))}
-                    <button className="btn btn-secondary" style={{width: '100%'}} onClick={add}><Icons.Plus /> 添加工作经历</button>
-                </div>
-            );
-        }
-
-        function SkillsForm({ data, onChange }) {
-            const { showToast } = useToast();
-            const add = () => { onChange([...data, { id: generateId(), name: '', level: '80' }]); showToast('已添加技能', 'success'); };
-            const remove = (id) => { onChange(data.filter(s => s.id !== id)); showToast('已删除', 'info'); };
-            const update = (id, field, value) => { onChange(data.map(s => s.id === id ? { ...s, [field]: value } : s)); };
-            return (
-                <div className="section-card">
-                    <div className="section-title"><Icons.Code /> 专业技能</div>
-                    {data.map((skill, idx) => (
-                        <div key={skill.id} className="item-card">
-                            <div className="item-card-header">
-                                <span className="item-card-title">技能 #{idx + 1}</span>
-                                <div className="item-actions">
-                                    <button className="btn btn-ghost btn-sm btn-icon" onClick={() => remove(skill.id)} title="删除"><Icons.Trash /></button>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="input-group"><label>技能名称</label><input value={skill.name} onChange={e => update(skill.id, 'name', e.target.value)} placeholder="例如：React" /></div>
-                                <div className="input-group"><label>熟练度 ({skill.level}%)</label>
-                                    <input type="range" min="0" max="100" value={skill.level} onChange={e => update(skill.id, 'level', e.target.value)} style={{width: '100%', marginTop: 8}} />
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                    <button className="btn btn-secondary" style={{width: '100%'}} onClick={add}><Icons.Plus /> 添加技能</button>
-                </div>
-            );
-        }
-
-        function ProjectsForm({ data, onChange }) {
-            const { showToast } = useToast();
-            const add = () => { onChange([...data, { id: generateId(), name: '', description: '', link: '', tech: '' }]); showToast('已添加项目', 'success'); };
-            const remove = (id) => { onChange(data.filter(p => p.id !== id)); showToast('已删除', 'info'); };
-            const update = (id, field, value) => { onChange(data.map(p => p.id === id ? { ...p, [field]: value } : p)); };
-            return (
-                <div className="section-card">
-                    <div className="section-title"><Icons.Folder /> 项目经历</div>
-                    {data.map((proj, idx) => (
-                        <div key={proj.id} className="item-card">
-                            <div className="item-card-header">
-                                <span className="item-card-title">项目 #{idx + 1}</span>
-                                <div className="item-actions">
-                                    <button className="btn btn-ghost btn-sm btn-icon" onClick={() => remove(proj.id)} title="删除"><Icons.Trash /></button>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="input-group"><label>项目名称</label><input value={proj.name} onChange={e => update(proj.id, 'name', e.target.value)} placeholder="项目名称" /></div>
-                                <div className="input-group"><label>项目链接</label><input value={proj.link} onChange={e => update(proj.id, 'link', e.target.value)} placeholder="https://..." /></div>
-                            </div>
-                            <div className="input-group"><label>技术栈</label><input value={proj.tech} onChange={e => update(proj.id, 'tech', e.target.value)} placeholder="React, Node.js, ..." /></div>
-                            <div className="input-group"><label>项目描述</label><textarea value={proj.description} onChange={e => update(proj.id, 'description', e.target.value)} rows={3} placeholder="描述项目背景、您的角色和成果..." /></div>
-                        </div>
-                    ))}
-                    <button className="btn btn-secondary" style={{width: '100%'}} onClick={add}><Icons.Plus /> 添加项目经历</button>
-                </div>
-            );
-        }
-
-        // ============================================
-        // MAIN APP
-        // ============================================
-        function App() {
-            const [data, setData] = useState(() => loadData());
-            const [template, setTemplate] = useState(() => localStorage.getItem('proresume_template') || 'classic');
-            const [theme, setTheme] = useState(() => localStorage.getItem('proresume_theme') || 'classic');
-            const [activeTab, setActiveTab] = useState('personal');
-            const [zoom, setZoom] = useState(() => { const saved = localStorage.getItem('proresume_zoom'); return saved ? parseFloat(saved) : 0.75; });
-            const [exporting, setExporting] = useState(false);
-            const previewRef = useRef(null);
-            const { showToast } = useToast();
-
-            useEffect(() => { saveData(data); }, [data]);
-            useEffect(() => { localStorage.setItem('proresume_template', template); }, [template]);
-            useEffect(() => { localStorage.setItem('proresume_theme', theme); }, [theme]);
-            useEffect(() => { localStorage.setItem('proresume_zoom', zoom.toString()); }, [zoom]);
-            useEffect(() => { document.body.setAttribute('data-theme', theme); }, [theme]);
-
-            const updatePersonal = (personal) => setData(prev => ({ ...prev, personal }));
-            const updateEducation = (education) => setData(prev => ({ ...prev, education }));
-            const updateExperience = (experience) => setData(prev => ({ ...prev, experience }));
-            const updateSkills = (skills) => setData(prev => ({ ...prev, skills }));
-            const updateProjects = (projects) => setData(prev => ({ ...prev, projects }));
-            const updateVisibility = (visibility) => setData(prev => ({ ...prev, visibility }));
-
-            const dataCounts = {
-                education: data.education.length,
-                experience: data.experience.length,
-                skills: data.skills.length,
-                projects: data.projects.length
-            };
-
-            const handleExportPDF = async () => {
-                if (!previewRef.current) return;
-                setExporting(true);
-                try {
-                    const element = previewRef.current.querySelector('.a4-paper');
-                    if (!element) { showToast('预览区域未找到', 'error'); return; }
-                    const originalTransform = element.style.transform;
-                    element.style.transform = 'none';
-                    const canvas = await html2canvas(element, { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff', logging: false, scrollX: 0, scrollY: -window.scrollY, windowWidth: element.scrollWidth, windowHeight: element.scrollHeight });
-                    element.style.transform = originalTransform;
-                    const { jsPDF } = window.jspdf;
-                    const pdf = new jsPDF('p', 'mm', 'a4');
-                    const imgData = canvas.toDataURL('image/png');
-                    const imgWidth = 210;
-                    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                    const pageHeight = 297;
-                    let heightLeft = imgHeight;
-                    let position = 0;
-                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                    heightLeft -= pageHeight;
-                    while (heightLeft > 0) { position = heightLeft - imgHeight; pdf.addPage(); pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight); heightLeft -= pageHeight; }
-                    pdf.save(`${data.personal.name || 'resume'}_${new Date().toISOString().slice(0,10)}.pdf`);
-                    showToast('PDF 导出成功！', 'success');
-                } catch (err) { console.error(err); showToast('导出失败：' + err.message, 'error'); }
-                finally { setExporting(false); }
-            };
-
-            const handleExportJSON = () => {
-                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url; a.download = `resume_backup_${new Date().toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(url);
-                showToast('JSON 备份已下载', 'success');
-            };
-
-            const handleImportJSON = (e) => {
-                const file = e.target.files[0]; if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    try {
-                        const imported = JSON.parse(event.target.result);
-                        if (imported.personal && imported.education && imported.experience && imported.skills && imported.projects) {
-                            setData(imported); showToast('数据导入成功！', 'success');
-                        } else { showToast('文件格式不正确', 'error'); }
-                    } catch (err) { showToast('解析失败：' + err.message, 'error'); }
-                };
-                reader.readAsText(file); e.target.value = '';
-            };
-
-            const handleReset = () => { if (confirm('确定要重置为默认数据吗？当前数据将丢失。')) { setData(defaultData); showToast('已重置为默认数据', 'info'); } };
-
-            const tabs = [
-                { id: 'personal', label: '个人信息', icon: <Icons.User /> },
-                { id: 'education', label: '教育经历', icon: <Icons.GraduationCap /> },
-                { id: 'experience', label: '工作经历', icon: <Icons.Briefcase /> },
-                { id: 'skills', label: '专业技能', icon: <Icons.Code /> },
-                { id: 'projects', label: '项目经历', icon: <Icons.Folder /> },
-            ];
-
-            const templates = [
-                { id: 'classic', label: '经典分栏' },
-                { id: 'modern', label: '现代上下' },
-                { id: 'creative', label: '创意布局' },
-            ];
-
-            const themes = [
-                { id: 'classic', label: '经典蓝', color: '#1e3a5f' },
-                { id: 'warm', label: '暖棕', color: '#744210' },
-                { id: 'slate', label: '现代灰', color: '#0f172a' },
-            ];
-
-            return (
-                <div className="app-container">
-                    <div className="editor-panel">
-                        <div className="editor-header">
-                            <h1>ProResume</h1>
-                            <p>专业简历生成器 &middot; 所见即所得</p>
-                        </div>
-                        <div className="editor-content">
-                            <div className="tabs">
-                                {tabs.map(tab => (
-                                    <button key={tab.id} className={`tab ${activeTab === tab.id ? 'active' : ''}`} onClick={() => setActiveTab(tab.id)}>
-                                        {tab.icon} {tab.label}
-                                    </button>
-                                ))}
-                            </div>
-
-                            {activeTab === 'personal' && (
-                                <>
-                                    <PersonalForm data={data.personal} onChange={updatePersonal} />
-                                    <VisibilityPanel visibility={data.visibility} dataCounts={dataCounts} onChange={updateVisibility} />
-                                </>
-                            )}
-                            {activeTab === 'education' && <EducationForm data={data.education} onChange={updateEducation} />}
-                            {activeTab === 'experience' && <ExperienceForm data={data.experience} onChange={updateExperience} />}
-                            {activeTab === 'skills' && <SkillsForm data={data.skills} onChange={updateSkills} />}
-                            {activeTab === 'projects' && <ProjectsForm data={data.projects} onChange={updateProjects} />}
-
-                            <div className="section-card">
-                                <div className="section-title"><Icons.Save /> 数据管理</div>
-                                <div style={{display: 'flex', gap: '8px', flexWrap: 'wrap'}}>
-                                    <button className="btn btn-secondary" onClick={handleExportJSON}><Icons.Download /> 导出 JSON</button>
-                                    <label className="btn btn-secondary" style={{cursor: 'pointer'}}>
-                                        <Icons.Upload /> 导入 JSON
-                                        <input type="file" accept=".json" onChange={handleImportJSON} style={{display: 'none'}} />
-                                    </label>
-                                    <button className="btn btn-ghost" onClick={handleReset}><Icons.RotateCcw /> 重置数据</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="preview-panel">
-                        <div className="preview-toolbar">
-                            <div className="toolbar-group">
-                                <span className="toolbar-label"><Icons.Layout /> 模板</span>
-                                <select className="select-styled" value={template} onChange={e => setTemplate(e.target.value)}>
-                                    {templates.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
-                                </select>
-                            </div>
-
-                            <div className="toolbar-group">
-                                <span className="toolbar-label"><Icons.Palette /> 配色</span>
-                                {themes.map(t => (
-                                    <div key={t.id} className={`color-swatch ${theme === t.id ? 'active' : ''}`} style={{background: t.color}} title={t.label} onClick={() => setTheme(t.id)} />
-                                ))}
-                            </div>
-
-                            <div className="toolbar-group">
-                                <span className="toolbar-label">缩放</span>
-                                <div className="zoom-controls">
-                                    <button className="btn btn-ghost btn-icon" onClick={() => setZoom(z => Math.max(0.3, z - 0.1))}><Icons.ZoomOut /></button>
-                                    <span className="zoom-value">{Math.round(zoom * 100)}%</span>
-                                    <button className="btn btn-ghost btn-icon" onClick={() => setZoom(z => Math.min(1.5, z + 0.1))}><Icons.ZoomIn /></button>
-                                </div>
-                            </div>
-
-                            <div className="toolbar-group">
-                                <button className="btn btn-primary" onClick={handleExportPDF} disabled={exporting}>
-                                    <Icons.FileText /> {exporting ? '导出中...' : '导出 PDF'}
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className="preview-area">
-                            <div ref={previewRef} style={{transform: `scale(${zoom})`, transformOrigin: 'top center'}}>
-                                <ResumePreview data={data} template={template} theme={theme} />
-                            </div>
-                        </div>
-                    </div>
-
-                    {exporting && (
-                        <div className="loading-overlay">
-                            <div className="loading-spinner"></div>
-                        </div>
-                    )}
-                </div>
-            );
-        }
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(
-            <ToastProvider>
-                <App />
-            </ToastProvider>
-        );
-    </script>
+ReactDOM.createRoot(document.getElementById('root')).render(<TP><App/></TP>);
+</script>
 </body>
 </html>
