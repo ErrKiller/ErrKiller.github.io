@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ErrKiller</title>
+    <title>ErrKiller · 现代庭院</title>
     <link rel="shortcut icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%232d2d2d'/%3E%3Cpath d='M30 30 L70 30 L70 70 L30 70 Z' fill='none' stroke='%23b3ffb3' stroke-width='6'/%3E%3Cpath d='M45 45 L55 45 L55 55 L45 55 Z' fill='%23b3ffb3'/%3E%3C/svg%3E" type="image/svg+xml">
     <!-- Font Awesome 6 (国内CDN) -->
     <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -211,12 +211,12 @@
         /* 节假日列表 */
         .holiday-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
             gap: 0.8rem 1.2rem;
         }
         .holiday-item {
             background: rgba(255,255,255,0.04);
-            padding: 0.5rem 1rem;
+            padding: 0.6rem 1rem;
             border-radius: 40px;
             display: flex;
             justify-content: space-between;
@@ -224,20 +224,33 @@
             border: 1px solid rgba(255,255,255,0.03);
             transition: 0.2s;
             color: #d1e2f5;
+            flex-wrap: wrap;
+            gap: 4px;
         }
         .holiday-item:hover {
             background: rgba(255,255,255,0.09);
             border-color: rgba(255,255,255,0.1);
         }
-        .holiday-item .name { font-weight: 500; }
-        .holiday-item .date { font-size: 0.85rem; opacity: 0.7; margin-right: 8px; }
+        .holiday-item .name {
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        .holiday-item .date-range {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-right: 4px;
+        }
         .holiday-item .countdown {
             font-size: 0.75rem;
             background: rgba(255,255,255,0.08);
-            padding: 0.1rem 0.6rem;
+            padding: 0.1rem 0.7rem;
             border-radius: 20px;
             color: #7fb0f0;
             white-space: nowrap;
+        }
+        .holiday-item .countdown.passed {
+            color: #6a7a8e;
+            opacity: 0.5;
         }
 
         /* 分割线 */
@@ -313,38 +326,6 @@
             white-space: nowrap;
             margin-left: 8px;
             flex-shrink: 0;
-        }
-
-        /* 历史卡片 */
-        .history-box {
-            background: rgba(18, 28, 42, 0.3);
-            backdrop-filter: blur(6px);
-            border-radius: 28px;
-            padding: 1.4rem 1.8rem;
-            border: 1px solid rgba(255,255,255,0.03);
-            color: #cbdcee;
-            font-weight: 400;
-            line-height: 1.7;
-            min-height: 100px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        .history-box .history-date {
-            font-size: 0.8rem;
-            color: rgba(255,255,255,0.3);
-            margin-bottom: 6px;
-        }
-        .history-box .history-item {
-            padding: 0.2rem 0;
-            display: flex;
-            align-items: baseline;
-            gap: 8px;
-        }
-        .history-box .history-item i {
-            color: #7fb0f0;
-            font-size: 0.6rem;
-            opacity: 0.6;
         }
 
         /* Footer */
@@ -456,14 +437,15 @@
         <div class="row mb-4">
             <div class="col-md-12">
                 <div class="glass-card">
-                    <h2><i class="fas fa-calendar-check" style="color:#ffb347;"></i> {{ currentYear }}年节假日一览</h2>
+                    <h2><i class="fas fa-calendar-check" style="color:#ffb347;"></i> {{ currentYear }}年法定节假日</h2>
                     <div v-if="holidayList.length === 0" class="card-sub">加载中...</div>
                     <div class="holiday-grid">
                         <div v-for="item in holidayList" :key="item.name" class="holiday-item">
                             <span class="name">{{ item.name }}</span>
-                            <span class="date">{{ item.date }}</span>
-                            <span class="countdown" v-if="item.days !== undefined">
-                                <i class="far fa-hourglass"></i> {{ item.days }}天
+                            <span class="date-range">{{ item.dateRange }}</span>
+                            <span class="countdown" :class="{ passed: item.days <= 0 }">
+                                <i class="far fa-hourglass"></i>
+                                {{ item.days > 0 ? item.days + '天' : '已过' }}
                             </span>
                         </div>
                     </div>
@@ -489,18 +471,9 @@
 
         <hr class="featurette-divider">
 
-        <!-- 历史 & 热搜 -->
+        <!-- 知乎热榜 (占满整行) -->
         <div class="row g-4">
-            <div class="col-md-6" v-show="historyList.length > 0">
-                <h2 class="section-title"><i class="fas fa-history me-2" style="-webkit-text-fill-color:initial; color:#7fb0f0;"></i>历史上的今天</h2>
-                <div class="history-box">
-                    <div class="history-date">{{ historyDate }}</div>
-                    <div v-for="(item, idx) in historyList" :key="idx" class="history-item">
-                        <i class="fas fa-circle"></i> {{ item }}
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6" v-show="hotList.length > 0">
+            <div class="col-md-12" v-show="hotList.length > 0">
                 <h2 class="section-title"><i class="fas fa-fire me-2" style="-webkit-text-fill-color:initial; color:#f6a86b;"></i>今日知乎热榜</h2>
                 <div class="hot-list">
                     <div v-for="(item, idx) in hotList" :key="idx" class="hot-item">
@@ -548,10 +521,6 @@
             // 图片
             const bingImage = ref('https://api.dujin.org/bing/1366.php');
 
-            // 历史
-            const historyList = ref([]);
-            const historyDate = ref('');
-
             // 热搜 (知乎)
             const hotList = ref([]);
 
@@ -594,7 +563,7 @@
                 currentTime.value = `${h}:${m}:${s}`;
                 currentWeek.value = calcWeek();
                 runTime.value = calcRunTime();
-                // 更新节假日倒计时 (每天更新一次即可)
+                // 每天更新一次节假日倒计时
                 updateHolidayCountdown();
             }
 
@@ -602,86 +571,123 @@
                 bingImage.value = 'https://picsum.photos/1366/768?random=' + Date.now();
             }
 
-            // 计算距离节日的天数
+            // 计算距离某天的天数 (只比较日期)
             function calcDaysToDate(dateStr) {
                 const target = new Date(dateStr);
                 const now = new Date();
-                // 重置时间为当天0点，只比较日期
                 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
                 const diffTime = target.getTime() - today.getTime();
-                if (diffTime < 0) return 0; // 已过期
+                if (diffTime < 0) return 0;
                 return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             }
 
+            // 更新节假日倒计时
             function updateHolidayCountdown() {
                 holidayList.value = holidayList.value.map(item => {
-                    if (item.date) {
-                        const days = calcDaysToDate(item.date);
+                    if (item.start) {
+                        const days = calcDaysToDate(item.start);
                         return { ...item, days };
                     }
                     return item;
                 });
             }
 
-            // 获取节假日
+            // 获取节假日 (新API: chinese-days)
             async function fetchHolidays() {
                 try {
-                    const resp = await axios.get('https://api.btstu.cn/jiejiari/api.php', { timeout: 5000 });
-                    if (resp.data && resp.data.code === 200 && resp.data.data && Array.isArray(resp.data.data) && resp
-                        .data.data.length > 0) {
-                        const list = resp.data.data.map(item => ({
-                            name: item.name || '节日',
-                            date: item.date || ''
-                        }));
-                        // 计算倒计时
-                        holidayList.value = list.map(item => {
-                            const days = item.date ? calcDaysToDate(item.date) : undefined;
-                            return { ...item, days };
-                        });
+                    const year = currentYear.value;
+                    const url = `https://cdn.jsdelivr.net/npm/chinese-days/dist/years/${year}.json`;
+                    const resp = await axios.get(url, { timeout: 8000 });
+
+                    if (resp.data && resp.data.holidays) {
+                        const holidays = resp.data.holidays; // { "2026-01-01": "New Year's Day,元旦,1", ... }
+                        const dateMap = {};
+
+                        // 解析数据: 提取日期和中文名
+                        for (const [date, value] of Object.entries(holidays)) {
+                            const parts = value.split(',');
+                            const name = parts[1] || parts[0]; // 取中文名，如果没有则取英文名
+                            if (!dateMap[name]) {
+                                dateMap[name] = [];
+                            }
+                            dateMap[name].push(date);
+                        }
+
+                        // 按名称分组，生成日期范围
+                        const result = [];
+                        for (const [name, dates] of Object.entries(dateMap)) {
+                            dates.sort();
+                            const start = dates[0];
+                            const end = dates[dates.length - 1];
+                            const totalDays = dates.length;
+                            let dateRange = start;
+                            if (start !== end) {
+                                // 格式化显示: MM-DD ~ MM-DD
+                                const fmt = (d) => {
+                                    const parts = d.split('-');
+                                    return `${parts[1]}-${parts[2]}`;
+                                };
+                                dateRange = `${fmt(start)} ~ ${fmt(end)} (${totalDays}天)`;
+                            } else {
+                                const fmt = (d) => {
+                                    const parts = d.split('-');
+                                    return `${parts[1]}-${parts[2]}`;
+                                };
+                                dateRange = fmt(start);
+                            }
+                            const days = calcDaysToDate(start);
+                            result.push({
+                                name: name,
+                                start: start,
+                                end: end,
+                                dateRange: dateRange,
+                                totalDays: totalDays,
+                                days: days
+                            });
+                        }
+
+                        // 按开始日期排序
+                        result.sort((a, b) => a.start.localeCompare(b.start));
+                        holidayList.value = result;
                         return;
                     }
                     throw new Error('no data');
                 } catch (e) {
                     // 备用数据 (2026年主要节假日)
                     const fallback = [
-                        { name: '元旦', date: '2026-01-01' },
-                        { name: '春节', date: '2026-02-17' },
-                        { name: '清明节', date: '2026-04-05' },
-                        { name: '劳动节', date: '2026-05-01' },
-                        { name: '端午节', date: '2026-06-19' },
-                        { name: '中秋节', date: '2026-10-04' },
-                        { name: '国庆节', date: '2026-10-01' }
+                        { name: '元旦', start: '2026-01-01', end: '2026-01-03', totalDays: 3 },
+                        { name: '春节', start: '2026-02-15', end: '2026-02-23', totalDays: 9 },
+                        { name: '清明', start: '2026-04-04', end: '2026-04-06', totalDays: 3 },
+                        { name: '劳动节', start: '2026-05-01', end: '2026-05-05', totalDays: 5 },
+                        { name: '端午', start: '2026-06-19', end: '2026-06-21', totalDays: 3 },
+                        { name: '中秋', start: '2026-09-25', end: '2026-09-27', totalDays: 3 },
+                        { name: '国庆节', start: '2026-10-01', end: '2026-10-07', totalDays: 7 }
                     ];
+                    // 格式化日期范围显示
+                    const fmt = (d) => {
+                        const parts = d.split('-');
+                        return `${parts[1]}-${parts[2]}`;
+                    };
                     holidayList.value = fallback.map(item => {
-                        const days = item.date ? calcDaysToDate(item.date) : undefined;
-                        return { ...item, days };
+                        let dateRange = fmt(item.start);
+                        if (item.start !== item.end) {
+                            dateRange = `${fmt(item.start)} ~ ${fmt(item.end)} (${item.totalDays}天)`;
+                        }
+                        const days = calcDaysToDate(item.start);
+                        return {
+                            ...item,
+                            dateRange: dateRange,
+                            days: days
+                        };
                     });
                 }
             }
 
-            // 获取历史上的今天 (新API)
-            async function fetchHistory() {
-                try {
-                    const resp = await axios.get('https://zj.v.api.aa1.cn/api/bk/?num=5&type=json', { timeout: 5000 });
-                    if (resp.data && resp.data.code === 200 && resp.data.content && resp.data.content.length > 0) {
-                        historyList.value = resp.data.content;
-                        historyDate.value = resp.data.day || '';
-                        return;
-                    }
-                    throw new Error('no data');
-                } catch (e) {
-                    // 接口不可用，隐藏板块 (保留空数组)
-                    historyList.value = [];
-                    historyDate.value = '';
-                }
-            }
-
-            // 获取知乎热榜 (新API)
+            // 获取知乎热榜
             async function fetchHot() {
                 try {
                     const resp = await axios.get('https://v.api.aa1.cn/api/zhihu-news/', { timeout: 5000 });
                     if (resp.data && resp.data.news && resp.data.news.length > 0) {
-                        // 取前6条
                         hotList.value = resp.data.news.slice(0, 6).map(item => ({
                             title: item.title || '未知',
                             hint: item.hint || ''
@@ -690,7 +696,6 @@
                     }
                     throw new Error('no data');
                 } catch (e) {
-                    // 接口不可用，隐藏板块
                     hotList.value = [];
                 }
             }
@@ -717,7 +722,6 @@
                 updateClock();
                 timerInterval = setInterval(updateClock, 1000);
                 fetchHolidays();
-                fetchHistory();
                 fetchHot();
             });
 
@@ -733,8 +737,6 @@
                 currentYear,
                 holidayList,
                 bingImage,
-                historyList,
-                historyDate,
                 hotList,
                 runTime,
                 onImageError,
