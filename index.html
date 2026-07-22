@@ -1,159 +1,751 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-	<title>ErrKiller'Zone</title>
-	<link rel="shortcut icon" href="img/favicon.ico">
-	<script src="../js/jquery-3.6.0.min.js"></script> 
-	 <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
-	<link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.css" rel="stylesheet">
-	<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"
-		type="text/javascript"></script>
-	</script> <!-- 动效 -->
-	<!-- <script src="js/anime.min.js"></script> -->
-	<!-- <script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/animejs/3.2.1/anime.min.js" type="application/javascript"></script> -->
-	<link rel="stylesheet" href="css/index.css"> <!-- count down -->
-	<script src="js/fancy_timer.js"></script>
-	<link href="css/fancy-timer.css" rel="stylesheet" type="text/css" media="screen" /> <!-- 自定义样式 -->
-	<style type="text/css">
-		body {
-			background-color: #5d5d5d;
-		}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ErrKiller</title>
+    <link rel="shortcut icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%232d2d2d'/%3E%3Cpath d='M30 30 L70 30 L70 70 L30 70 Z' fill='none' stroke='%23b3ffb3' stroke-width='6'/%3E%3Cpath d='M45 45 L55 45 L55 55 L45 55 Z' fill='%23b3ffb3'/%3E%3C/svg%3E" type="image/svg+xml">
+    <!-- Font Awesome 6 (国内CDN) -->
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #0b0e14;
+            background-image: radial-gradient(circle at 20% 30%, #1a2635, #070a0f 90%);
+            min-height: 100vh;
+            color: #eef2f6;
+            padding-top: 70px;
+            line-height: 1.6;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #1b2129; }
+        ::-webkit-scrollbar-thumb { background: #4f6f8f; border-radius: 12px; }
 
-		.jumbotron {
-			background-color: #666666;
-		}
+        /* ----- 导航 (玻璃) ----- */
+        .navbar-glass {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1030;
+            background: rgba(16, 24, 36, 0.72);
+            backdrop-filter: blur(14px) saturate(180%);
+            -webkit-backdrop-filter: blur(14px) saturate(180%);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            padding: 0.6rem 0;
+        }
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #d6e6ff !important;
+            text-decoration: none;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .navbar-brand i { color: #7bb3ff; }
+        .navbar-brand:hover { color: #a3d0ff; text-shadow: 0 0 16px rgba(80,160,255,0.3); }
 
-		#ti {
-			font-size: 15px;
-		}
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+        }
+        .nav-clock, .nav-week {
+            font-size: 0.9rem;
+            color: rgba(200, 218, 240, 0.7);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .nav-clock i, .nav-week i { color: #6a9fdb; }
 
-		#historyNow,
-		#popularSearch {
-			text-align: center;
-			color: #ffffff;
-		}
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+            flex-wrap: wrap;
+        }
+        .nav-menu .dropdown { position: relative; }
+        .nav-menu .dropdown-toggle {
+            background: transparent;
+            border: none;
+            color: rgba(220, 235, 255, 0.7);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .nav-menu .dropdown-toggle:hover {
+            background: rgba(255,255,255,0.07);
+            color: #fff;
+        }
+        .dropdown-menu-custom {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(22, 30, 44, 0.92);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 0.5rem 0;
+            min-width: 200px;
+            box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+            z-index: 1000;
+        }
+        .dropdown-menu-custom.show { display: block; }
+        .dropdown-menu-custom a {
+            display: block;
+            padding: 0.6rem 1.8rem;
+            color: #cfddee;
+            text-decoration: none;
+            font-weight: 450;
+            transition: 0.15s;
+        }
+        .dropdown-menu-custom a:hover {
+            background: rgba(70, 130, 200, 0.25);
+            color: #fff;
+        }
+        .dropdown-menu-custom .divider {
+            height: 1px;
+            background: rgba(255,255,255,0.06);
+            margin: 0.3rem 0;
+        }
+        .nav-link {
+            color: rgba(220, 235, 255, 0.7);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        .nav-link:hover { background: rgba(255,255,255,0.07); color: #fff; }
 
-		.jumbotron #rightShow_word {
-			color: #6ad400;
-		}
+        .navbar-toggler {
+            display: none;
+            background: transparent;
+            border: none;
+            color: #d6e6ff;
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 0.2rem 0.5rem;
+        }
+        @media (max-width: 992px) {
+            .navbar-toggler { display: block; }
+            .nav-menu {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                align-items: stretch;
+                padding: 1rem 0;
+                gap: 0.3rem;
+            }
+            .nav-menu.open { display: flex; }
+            .nav-menu .dropdown { width: 100%; }
+            .dropdown-menu-custom {
+                position: static;
+                box-shadow: none;
+                background: rgba(0,0,0,0.2);
+                border-radius: 16px;
+                margin-top: 4px;
+            }
+            .nav-left { order: 2; width: 100%; justify-content: space-between; }
+        }
 
-		.jumbotron #leftShow_word {
-			color: #f050f0;
-		}
-	</style>
+        /* ----- 卡片玻璃 ----- */
+        .glass-card {
+            background: rgba(28, 38, 52, 0.5);
+            backdrop-filter: blur(10px) saturate(160%);
+            -webkit-backdrop-filter: blur(10px) saturate(160%);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 36px;
+            padding: 2rem 1.5rem;
+            box-shadow: 0 20px 48px -12px rgba(0,0,0,0.6);
+            transition: transform 0.25s ease, box-shadow 0.3s, border-color 0.3s;
+            height: 100%;
+            min-height: 200px;
+        }
+        .glass-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 30px 56px -16px #000000cc;
+            border-color: rgba(255,255,255,0.15);
+        }
+        .glass-card h2 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #e0edff, #b2d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.3px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .glass-card h2 i { -webkit-text-fill-color: initial; }
+        .card-sub {
+            color: #b6cde3;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 6px;
+        }
+
+        /* 节假日列表 */
+        .holiday-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.8rem 1.2rem;
+        }
+        .holiday-item {
+            background: rgba(255,255,255,0.04);
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.03);
+            transition: 0.2s;
+            color: #d1e2f5;
+        }
+        .holiday-item:hover {
+            background: rgba(255,255,255,0.09);
+            border-color: rgba(255,255,255,0.1);
+        }
+        .holiday-item .name { font-weight: 500; }
+        .holiday-item .date { font-size: 0.85rem; opacity: 0.7; margin-right: 8px; }
+        .holiday-item .countdown {
+            font-size: 0.75rem;
+            background: rgba(255,255,255,0.08);
+            padding: 0.1rem 0.6rem;
+            border-radius: 20px;
+            color: #7fb0f0;
+            white-space: nowrap;
+        }
+
+        /* 分割线 */
+        .featurette-divider {
+            border: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(140,190,255,0.2), rgba(200,150,255,0.2), transparent);
+            margin: 3rem 0;
+        }
+
+        /* 图片 */
+        .featurette-image {
+            border-radius: 32px;
+            box-shadow: 0 16px 40px -8px #000000aa;
+            border: 1px solid rgba(255,255,255,0.03);
+            transition: 0.3s;
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+        .featurette-image:hover { transform: scale(1.01); }
+
+        /* 板块标题 */
+        .section-title {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.3px;
+            background: linear-gradient(135deg, #e0edff, #b2d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline-block;
+            margin-bottom: 1.4rem;
+            border-left: 4px solid #5b8cce;
+            padding-left: 16px;
+        }
+
+        /* 热搜列表 (知乎日报风格) */
+        .hot-list {
+            background: rgba(18, 28, 42, 0.4);
+            backdrop-filter: blur(6px);
+            border-radius: 28px;
+            padding: 1.2rem 1.8rem;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .hot-item {
+            padding: 0.6rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            color: #d1e2f5;
+            font-weight: 450;
+            transition: 0.15s;
+            line-height: 1.4;
+        }
+        .hot-item:last-child { border-bottom: 0; }
+        .hot-item i {
+            color: #6a9fdb;
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+        .hot-item .hot-title {
+            flex: 1;
+            cursor: default;
+        }
+        .hot-item .hot-title:hover {
+            color: #fff;
+        }
+        .hot-item .hot-meta {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.35);
+            white-space: nowrap;
+            margin-left: 8px;
+            flex-shrink: 0;
+        }
+
+        /* 历史卡片 */
+        .history-box {
+            background: rgba(18, 28, 42, 0.3);
+            backdrop-filter: blur(6px);
+            border-radius: 28px;
+            padding: 1.4rem 1.8rem;
+            border: 1px solid rgba(255,255,255,0.03);
+            color: #cbdcee;
+            font-weight: 400;
+            line-height: 1.7;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .history-box .history-date {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.3);
+            margin-bottom: 6px;
+        }
+        .history-box .history-item {
+            padding: 0.2rem 0;
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+        .history-box .history-item i {
+            color: #7fb0f0;
+            font-size: 0.6rem;
+            opacity: 0.6;
+        }
+
+        /* Footer */
+        footer {
+            padding: 2.5rem 0 1.8rem;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            margin-top: 2rem;
+            text-align: center;
+        }
+        footer a {
+            color: #9cb8dd;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        footer a:hover { color: #c6deff; text-shadow: 0 0 12px rgba(70,150,255,0.2); }
+        #showStartTime {
+            font-size: 0.9rem;
+            color: rgba(200,215,235,0.6);
+            letter-spacing: 1px;
+            margin-top: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .glass-card { padding: 1.5rem 1rem; min-height: 170px; }
+            .glass-card h2 { font-size: 1.4rem; }
+            .section-title { font-size: 1.4rem; }
+            .nav-container { padding: 0 1rem; }
+            .holiday-grid { grid-template-columns: 1fr; }
+        }
+        .text-glow { text-shadow: 0 0 20px rgba(80,160,255,0.15); }
+        .mt-2 { margin-top: 0.5rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .text-center { text-align: center; }
+        .d-flex { display: flex; }
+        .align-items-center { align-items: center; }
+        .justify-content-center { justify-content: center; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-4 { gap: 1.5rem; }
+        .flex-wrap { flex-wrap: wrap; }
+        .w-100 { width: 100%; }
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; }
+        .row { display: flex; flex-wrap: wrap; margin: 0 -0.75rem; }
+        .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-12 { padding: 0 0.75rem; flex: 0 0 auto; }
+        .col-md-4 { flex: 0 0 33.333%; }
+        .col-md-5 { flex: 0 0 41.666%; }
+        .col-md-6 { flex: 0 0 50%; }
+        .col-md-7 { flex: 0 0 58.333%; }
+        .col-md-12 { flex: 0 0 100%; }
+        @media (max-width: 768px) {
+            .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-12 { flex: 0 0 100%; }
+        }
+        .g-4 { gap: 1.5rem; }
+        .mt-4 { margin-top: 1.5rem; }
+        .mb-4 { margin-bottom: 1.5rem; }
+        .me-2 { margin-right: 0.5rem; }
+        .me-3 { margin-right: 1rem; }
+        .ms-2 { margin-left: 0.5rem; }
+        .badge { display: inline-block; padding: 0.4rem 1rem; border-radius: 40px; background: rgba(70,130,200,0.2); color: #d6e6ff; font-weight: 500; }
+        .hidden { display: none !important; }
+    </style>
 </head>
 <body>
-	<!-- 顶部导航 -->
-	<nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
-		<div class="container">
-			<div class="navbar-header"> <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-					data-target="#navbar" aria-expanded="false" aria-controls="navbar"> <span class="sr-only">Toggle
-						navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span
-						class="icon-bar"></span> </button> <a class="navbar-brand" href="#"
-					title="Errkiller'Zone">Errkiller'Zone</a> </div>
-			<p id="ti" class="navbar-text" title="当前时间"></p>
-			<div id="test1"></div>
-			<p id="weekNumber" class="navbar-text" title="当前周" 　 startDate="2024/1/1" startWeekNum="1"></p>
-			<div id="navbar" class="navbar-collapse collapse">
-				<ul class="nav navbar-nav">
-					<li> </li>
-				</ul>
-				<ul class="nav navbar-nav navbar-right">
-					<li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-							aria-haspopup="true" aria-expanded="false" title="点击查看更多功能">功能<span
-								class="caret"></span></a>
-						<ul class="dropdown-menu">
-							<li><a href="pages/timeLock.html">时间锁</a></li>
-							<li><a href="pages/proresume.html">专业简历生成器</a></li>
-							<li><a href="pages/clock.html">桌面时钟</a></li>
-							<li><a href="pages/waterImageMarkTool.html">图片加水印</a></li>
-							<li><a href="pages/hdMusic.html">HD Music</a></li>
-							<li><a target="_blank" href="pages/musicDown.html"><s>音乐下载</s></a></li>
-						</ul>
-					</li>
-					<li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-							aria-haspopup="true" aria-expanded="false" title="hese things are very interesting">杂记<span
-								class="caret"></span></a>
-						<ul class="dropdown-menu">
-							<li><a target="_blank"
-									href="https://www.ruanyifeng.com/survivor/startup/advices.html">职业建议</a></li>
-							<li><a target="_blank"
-									href="https://ivm2tp4p7p.feishu.cn/docx/AVwddmrspobYnLxeS16cziCPnrg">其他</a></li>
-						</ul>
-					</li>
-					<li><a target="_blank" href="pages/about.html">关于</a></li>
-				</ul>
-			</div>
-			<!--/.nav-collapse -->
-		</div>
-	</nav>
-	<div class="container" style="padding-top:70px;">
-		<div class="row clearfix" id="leftShow" style="padding-top:70px;">
-			<div class="col-md-4 column">
-				<div class="jumbotron">
-					<h2 class="ml2" id="leftShow_word">祝您2024</h2> <br>
-					<div id="leftShow_time" endTime="2025/1/1 00:00:00" class="ft ft-dark"></div>
-					<div id="leftShow_message"></div>
-				</div>
-			</div>
-			<div class="col-md-4 column" id="centerShow">
-				<div class="jumbotron">
-					<h2 class="ml2" id="centerShow_word">万事如意</h2> <br>
-					<div id="centerShow_time" endTime="2024/5/25 00:00:00" class="ft ft-light"> </div>
-					<div id="centerShow_message"> </div>
-				</div>
-			</div>
-			<div class="col-md-4 column" id="rightShow">
-				<div class="jumbotron">
-					<h2 class="ml2" id="rightShow_word">身体健康</h2> <br>
-					<div id="rightShow_time" endTime="2024/9/1 00:00:00" class="ft ft-darkdark"></div>
-					<div id="rightShow_message"></div>
-				</div>
-			</div>
-		</div>
-		<hr class="featurette-divider">
-		<div class="row clearfix">
-			<div class="col-md-12 column">
-				<div class="row featurette">
-					<div class="col-md-5"> <img class="featurette-image img-responsive center-block"
-							data-src="holder.js/500x500/auto" alt="500x500" src="https://api.dujin.org/bing/1366.php"
-							data-holder-rendered="true"> </div>
-					<div class="col-md-7" id="randomShow"></div>
-				</div>
-			</div>
-		</div>
-		<hr class="featurette-divider">
-		<div class="row clearfix" id="showNews">
-			<div class="col-md-6 column">
-				<h1 id="historyNow">历史上的今天</h1>
-			</div>
-			<div class="col-md-6 column ">
-				<h1 id="popularSearch">今日热搜</h1>
-				<div id="popularSearchContent" class=""></div>
-			</div>
-		</div>
-	</div>
-</body>
-<hr class="featurette-divider">
-<footer style="padding: 50px;">
-	<p class="text-center bg-light text-dark"><a title="Copyright © ErrKiller. All Rights Reserved" href="#"
-			style="text-decoration:none;font-size: 20px;color: #c2c2c2;">Copyright © ErrKiller. All Rights
-			Reserved</a></p>
-	<p id="showStartTime" class="text-center bg-light text-dark" style="font-size: 15px;color: #ffffff;"> </p>
-</footer>
 
+<div id="app">
+    <!-- 导航 -->
+    <nav class="navbar-glass">
+        <div class="nav-container">
+            <a class="navbar-brand" href="#"><i class="fas fa-terminal"></i>ErrKiller'Zone</a>
+            <button class="navbar-toggler" @click="navOpen = !navOpen">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="nav-left">
+                <span class="nav-clock"><i class="far fa-clock"></i> {{ currentTime }}</span>
+                <span class="nav-week"><i class="far fa-calendar-alt"></i> 第 {{ currentWeek }} 周</span>
+            </div>
+            <div class="nav-menu" :class="{ open: navOpen }">
+                <div class="dropdown" @mouseenter="openDropdown('func')" @mouseleave="closeDropdown('func')" @click.stop>
+                    <button class="dropdown-toggle" @click="toggleDropdown('func')">
+                        <i class="fas fa-cubes"></i> 功能 <i class="fas fa-caret-down"></i>
+                    </button>
+                    <div class="dropdown-menu-custom" :class="{ show: activeDropdown === 'func' }">
+                        <a href="pages/timeLock.html"><i class="fas fa-lock me-2"></i>时间锁</a>
+                        <a href="pages/proresume.html"><i class="fas fa-file-alt me-2"></i>专业简历生成器</a>
+                        <a href="pages/clock.html"><i class="fas fa-desktop me-2"></i>桌面时钟</a>
+                        <a href="pages/waterImageMarkTool.html"><i class="fas fa-water me-2"></i>图片加水印</a>
+                        <a href="pages/hdMusic.html"><i class="fas fa-music me-2"></i>HD Music</a>
+                        <div class="divider"></div>
+                        <a href="pages/musicDown.html" class="text-decoration-line-through"><i class="fas fa-download me-2"></i><s>音乐下载</s></a>
+                    </div>
+                </div>
+                <div class="dropdown" @mouseenter="openDropdown('note')" @mouseleave="closeDropdown('note')" @click.stop>
+                    <button class="dropdown-toggle" @click="toggleDropdown('note')">
+                        <i class="fas fa-book-open"></i> 杂记 <i class="fas fa-caret-down"></i>
+                    </button>
+                    <div class="dropdown-menu-custom" :class="{ show: activeDropdown === 'note' }">
+                        <a target="_blank" href="https://www.ruanyifeng.com/survivor/startup/advices.html"><i class="fas fa-briefcase me-2"></i>职业建议</a>
+                        <a target="_blank" href="https://ivm2tp4p7p.feishu.cn/docx/AVwddmrspobYnLxeS16cziCPnrg"><i class="fas fa-link me-2"></i>其他</a>
+                    </div>
+                </div>
+                <a class="nav-link" target="_blank" href="pages/about.html"><i class="fas fa-user-astronaut me-1"></i>关于</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容 -->
+    <div class="container" style="padding-top: 8px;">
+        <!-- 节假日卡片 -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="glass-card">
+                    <h2><i class="fas fa-calendar-check" style="color:#ffb347;"></i> {{ currentYear }}年节假日一览</h2>
+                    <div v-if="holidayList.length === 0" class="card-sub">加载中...</div>
+                    <div class="holiday-grid">
+                        <div v-for="item in holidayList" :key="item.name" class="holiday-item">
+                            <span class="name">{{ item.name }}</span>
+                            <span class="date">{{ item.date }}</span>
+                            <span class="countdown" v-if="item.days !== undefined">
+                                <i class="far fa-hourglass"></i> {{ item.days }}天
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr class="featurette-divider">
+
+        <!-- 图片 + 随机展示 -->
+        <div class="row g-4 align-items-center">
+            <div class="col-md-5">
+                <img class="featurette-image" :src="bingImage" alt="每日壁纸" loading="lazy" @error="onImageError">
+            </div>
+            <div class="col-md-7">
+                <div class="glass-card" style="min-height:180px; display:flex; flex-direction:column; justify-content:center;">
+                    <h4 style="font-weight:500; color:#b7d6ff;"><i class="fas fa-crystal-ball me-2"></i>今日随想</h4>
+                    <p style="color:#cbdcee; font-size:1.1rem; opacity:0.9;">“保持好奇，保持纯粹。 —— ErrKiller”</p>
+                    <div class="mt-2"><span class="badge"><i class="far fa-calendar-check me-1"></i> 灵感永续</span></div>
+                </div>
+            </div>
+        </div>
+
+        <hr class="featurette-divider">
+
+        <!-- 历史 & 热搜 -->
+        <div class="row g-4">
+            <div class="col-md-6" v-show="historyList.length > 0">
+                <h2 class="section-title"><i class="fas fa-history me-2" style="-webkit-text-fill-color:initial; color:#7fb0f0;"></i>历史上的今天</h2>
+                <div class="history-box">
+                    <div class="history-date">{{ historyDate }}</div>
+                    <div v-for="(item, idx) in historyList" :key="idx" class="history-item">
+                        <i class="fas fa-circle"></i> {{ item }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6" v-show="hotList.length > 0">
+                <h2 class="section-title"><i class="fas fa-fire me-2" style="-webkit-text-fill-color:initial; color:#f6a86b;"></i>今日知乎热榜</h2>
+                <div class="hot-list">
+                    <div v-for="(item, idx) in hotList" :key="idx" class="hot-item">
+                        <i class="fas fa-hashtag"></i>
+                        <span class="hot-title">{{ item.title }}</span>
+                        <span class="hot-meta">{{ item.hint }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p><a href="#" title="Copyright © ErrKiller. All Rights Reserved"><i class="far fa-copyright me-2"></i>ErrKiller. All Rights Reserved</a></p>
+            <p id="showStartTime"><i class="far fa-hourglass me-2"></i>网站已运行：{{ runTime }}</p>
+        </div>
+    </footer>
+</div>
+
+<!-- Vue 3 & Axios (国内CDN) -->
+<script src="https://cdn.bootcdn.net/ajax/libs/vue/3.4.27/vue.global.prod.js">
+</script>
+<script src="https://cdn.bootcdn.net/ajax/libs/axios/1.6.7/axios.min.js">
+</script>
+
+<script>
+    const { createApp, ref, onMounted, onBeforeUnmount } = Vue;
+
+    const app = createApp({
+        setup() {
+            // ----- 状态 -----
+            const navOpen = ref(false);
+            const activeDropdown = ref(null);
+
+            // 时间
+            const currentTime = ref('');
+            const currentWeek = ref(0);
+            const currentYear = ref(new Date().getFullYear());
+
+            // 节假日
+            const holidayList = ref([]);
+
+            // 图片
+            const bingImage = ref('https://api.dujin.org/bing/1366.php');
+
+            // 历史
+            const historyList = ref([]);
+            const historyDate = ref('');
+
+            // 热搜 (知乎)
+            const hotList = ref([]);
+
+            // 运行时间
+            const runTime = ref('');
+
+            let timerInterval = null;
+
+            // ----- 方法 -----
+            function calcWeek() {
+                const start = new Date('2024/1/1');
+                const now = new Date();
+                const diffDays = Math.floor((now - start) / (1000 * 60 * 60 * 24));
+                if (diffDays < 0) return 1;
+                return 1 + Math.floor(diffDays / 7);
+            }
+
+            function calcRunTime() {
+                const start = new Date('2022-3-25 22:14').getTime();
+                const now = Date.now();
+                let diff = Math.max(0, (now - start) / 1000);
+                const years = Math.floor(diff / (3600 * 24 * 365));
+                diff -= years * 3600 * 24 * 365;
+                const months = Math.floor(diff / (3600 * 24 * 30));
+                diff -= months * 3600 * 24 * 30;
+                const days = Math.floor(diff / (3600 * 24));
+                diff -= days * 3600 * 24;
+                const hours = Math.floor(diff / 3600);
+                diff -= hours * 3600;
+                const mins = Math.floor(diff / 60);
+                const secs = Math.floor(diff % 60);
+                return `${years}年${months}月${days}日${hours}时${mins}分${secs}秒`;
+            }
+
+            function updateClock() {
+                const now = new Date();
+                const h = String(now.getHours()).padStart(2, '0');
+                const m = String(now.getMinutes()).padStart(2, '0');
+                const s = String(now.getSeconds()).padStart(2, '0');
+                currentTime.value = `${h}:${m}:${s}`;
+                currentWeek.value = calcWeek();
+                runTime.value = calcRunTime();
+                // 更新节假日倒计时 (每天更新一次即可)
+                updateHolidayCountdown();
+            }
+
+            function onImageError() {
+                bingImage.value = 'https://picsum.photos/1366/768?random=' + Date.now();
+            }
+
+            // 计算距离节日的天数
+            function calcDaysToDate(dateStr) {
+                const target = new Date(dateStr);
+                const now = new Date();
+                // 重置时间为当天0点，只比较日期
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const diffTime = target.getTime() - today.getTime();
+                if (diffTime < 0) return 0; // 已过期
+                return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            }
+
+            function updateHolidayCountdown() {
+                holidayList.value = holidayList.value.map(item => {
+                    if (item.date) {
+                        const days = calcDaysToDate(item.date);
+                        return { ...item, days };
+                    }
+                    return item;
+                });
+            }
+
+            // 获取节假日
+            async function fetchHolidays() {
+                try {
+                    const resp = await axios.get('https://api.btstu.cn/jiejiari/api.php', { timeout: 5000 });
+                    if (resp.data && resp.data.code === 200 && resp.data.data && Array.isArray(resp.data.data) && resp
+                        .data.data.length > 0) {
+                        const list = resp.data.data.map(item => ({
+                            name: item.name || '节日',
+                            date: item.date || ''
+                        }));
+                        // 计算倒计时
+                        holidayList.value = list.map(item => {
+                            const days = item.date ? calcDaysToDate(item.date) : undefined;
+                            return { ...item, days };
+                        });
+                        return;
+                    }
+                    throw new Error('no data');
+                } catch (e) {
+                    // 备用数据 (2026年主要节假日)
+                    const fallback = [
+                        { name: '元旦', date: '2026-01-01' },
+                        { name: '春节', date: '2026-02-17' },
+                        { name: '清明节', date: '2026-04-05' },
+                        { name: '劳动节', date: '2026-05-01' },
+                        { name: '端午节', date: '2026-06-19' },
+                        { name: '中秋节', date: '2026-10-04' },
+                        { name: '国庆节', date: '2026-10-01' }
+                    ];
+                    holidayList.value = fallback.map(item => {
+                        const days = item.date ? calcDaysToDate(item.date) : undefined;
+                        return { ...item, days };
+                    });
+                }
+            }
+
+            // 获取历史上的今天 (新API)
+            async function fetchHistory() {
+                try {
+                    const resp = await axios.get('https://zj.v.api.aa1.cn/api/bk/?num=5&type=json', { timeout: 5000 });
+                    if (resp.data && resp.data.code === 200 && resp.data.content && resp.data.content.length > 0) {
+                        historyList.value = resp.data.content;
+                        historyDate.value = resp.data.day || '';
+                        return;
+                    }
+                    throw new Error('no data');
+                } catch (e) {
+                    // 接口不可用，隐藏板块 (保留空数组)
+                    historyList.value = [];
+                    historyDate.value = '';
+                }
+            }
+
+            // 获取知乎热榜 (新API)
+            async function fetchHot() {
+                try {
+                    const resp = await axios.get('https://v.api.aa1.cn/api/zhihu-news/', { timeout: 5000 });
+                    if (resp.data && resp.data.news && resp.data.news.length > 0) {
+                        // 取前6条
+                        hotList.value = resp.data.news.slice(0, 6).map(item => ({
+                            title: item.title || '未知',
+                            hint: item.hint || ''
+                        }));
+                        return;
+                    }
+                    throw new Error('no data');
+                } catch (e) {
+                    // 接口不可用，隐藏板块
+                    hotList.value = [];
+                }
+            }
+
+            // 下拉控制
+            function toggleDropdown(name) {
+                activeDropdown.value = (activeDropdown.value === name) ? null : name;
+            }
+
+            function openDropdown(name) {
+                activeDropdown.value = name;
+            }
+
+            function closeDropdown(name) {
+                if (activeDropdown.value === name) {
+                    setTimeout(() => {
+                        if (activeDropdown.value === name) activeDropdown.value = null;
+                    }, 150);
+                }
+            }
+
+            // 生命周期
+            onMounted(() => {
+                updateClock();
+                timerInterval = setInterval(updateClock, 1000);
+                fetchHolidays();
+                fetchHistory();
+                fetchHot();
+            });
+
+            onBeforeUnmount(() => {
+                if (timerInterval) clearInterval(timerInterval);
+            });
+
+            return {
+                navOpen,
+                activeDropdown,
+                currentTime,
+                currentWeek,
+                currentYear,
+                holidayList,
+                bingImage,
+                historyList,
+                historyDate,
+                hotList,
+                runTime,
+                onImageError,
+                toggleDropdown,
+                openDropdown,
+                closeDropdown
+            };
+        }
+    });
+
+    app.mount('#app');
+</script>
+</body>
 </html>
-<script
-	type="text/javascript">let fun = function (t) { let e = new Date(t).getTime(), o = ((new Date).getTime() - e) / 1e3, a = Math.floor(o / 3600 / 24 / 365), f = Math.floor((o - 365 * a * 24 * 3600) / 3600 / 24 / 30), l = Math.floor((o - 365 * a * 24 * 3600 - 30 * f * 24 * 3600) / 3600 / 24), n = Math.floor((o - 365 * a * 24 * 3600 - 30 * f * 24 * 3600 - 24 * l * 3600) / 3600), r = Math.floor((o - 365 * a * 24 * 3600 - 30 * f * 24 * 3600 - 24 * l * 3600 - 3600 * n) / 60); return `${a}年${f}月${l}日${n}时${r}分${Math.floor(o - 365 * a * 24 * 3600 - 30 * f * 24 * 3600 - 24 * l * 3600 - 3600 * n - 60 * r)}秒` }; setInterval(function () { $("#showStartTime").html("网站已运行：" + fun("2022-3-25 22:14")) }, 1e3);</script>
-<!-- link js-->
-<script type="text/javascript" src="js/index.js"></script>
-<script type="text/javascript" src="https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"> </script>
-<!-- <script src="../js/crypto-js.min.js" type="text/javascript"></script> -->
-<script type="text/javascript" src="js/msgPush.js" defer></script>
-<!-- analyse -->
-<script type="text/javascript" src="js/webAnalyse.js" defer></script>
-<script type="text/javascript" src="js/index_ajax.js" defer></script>
