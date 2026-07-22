@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ErrKiller · 现代庭院</title>
+    <title>ErrKiller</title>
     <link rel="shortcut icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%232d2d2d'/%3E%3Cpath d='M30 30 L70 30 L70 70 L30 70 Z' fill='none' stroke='%23b3ffb3' stroke-width='6'/%3E%3Cpath d='M45 45 L55 45 L55 55 L45 55 Z' fill='%23b3ffb3'/%3E%3C/svg%3E" type="image/svg+xml">
     <!-- Font Awesome 6 (国内CDN) -->
     <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -211,7 +211,7 @@
         /* 节假日列表 */
         .holiday-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 0.8rem 1.2rem;
         }
         .holiday-item {
@@ -235,7 +235,7 @@
             font-weight: 500;
             font-size: 0.95rem;
         }
-        .holiday-item .date-range {
+        .holiday-item .info {
             font-size: 0.8rem;
             opacity: 0.7;
             margin-right: 4px;
@@ -288,7 +288,7 @@
             padding-left: 16px;
         }
 
-        /* 热搜列表 (知乎日报风格) */
+        /* 热搜列表 */
         .hot-list {
             background: rgba(18, 28, 42, 0.4);
             backdrop-filter: blur(6px);
@@ -442,7 +442,7 @@
                     <div class="holiday-grid">
                         <div v-for="item in holidayList" :key="item.name" class="holiday-item">
                             <span class="name">{{ item.name }}</span>
-                            <span class="date-range">{{ item.dateRange }}</span>
+                            <span class="info">{{ item.startDate }} 共{{ item.totalDays }}天</span>
                             <span class="countdown" :class="{ passed: item.days <= 0 }">
                                 <i class="far fa-hourglass"></i>
                                 {{ item.days > 0 ? item.days + '天' : '已过' }}
@@ -471,7 +471,7 @@
 
         <hr class="featurette-divider">
 
-        <!-- 知乎热榜 (占满整行) -->
+        <!-- 知乎热榜 -->
         <div class="row g-4">
             <div class="col-md-12" v-show="hotList.length > 0">
                 <h2 class="section-title"><i class="fas fa-fire me-2" style="-webkit-text-fill-color:initial; color:#f6a86b;"></i>今日知乎热榜</h2>
@@ -584,102 +584,75 @@
             // 更新节假日倒计时
             function updateHolidayCountdown() {
                 holidayList.value = holidayList.value.map(item => {
-                    if (item.start) {
-                        const days = calcDaysToDate(item.start);
+                    if (item.startDate) {
+                        const days = calcDaysToDate(item.startDate);
                         return { ...item, days };
                     }
                     return item;
                 });
             }
 
-            // 获取节假日 (新API: chinese-days)
+            // 获取节假日 (仅取 holidays 字段)
             async function fetchHolidays() {
                 try {
                     const year = currentYear.value;
                     const url = `https://cdn.jsdelivr.net/npm/chinese-days/dist/years/${year}.json`;
                     const resp = await axios.get(url, { timeout: 8000 });
 
-                    if (resp.data && resp.data.holidays) {
+                    // 严格只取 holidays 字段
+                    if (resp.data && resp.data.holidays && typeof resp.data.holidays === 'object') {
                         const holidays = resp.data.holidays; // { "2026-01-01": "New Year's Day,元旦,1", ... }
                         const dateMap = {};
 
-                        // 解析数据: 提取日期和中文名
+                        // 解析: 日期 -> 中文名
                         for (const [date, value] of Object.entries(holidays)) {
                             const parts = value.split(',');
-                            const name = parts[1] || parts[0]; // 取中文名，如果没有则取英文名
+                            // 取中文名 (第二个字段)
+                            const name = (parts.length > 1 && parts[1]) ? parts[1] : parts[0];
                             if (!dateMap[name]) {
                                 dateMap[name] = [];
                             }
                             dateMap[name].push(date);
                         }
 
-                        // 按名称分组，生成日期范围
+                        // 按名称分组，生成结果
                         const result = [];
                         for (const [name, dates] of Object.entries(dateMap)) {
                             dates.sort();
                             const start = dates[0];
                             const end = dates[dates.length - 1];
                             const totalDays = dates.length;
-                            let dateRange = start;
-                            if (start !== end) {
-                                // 格式化显示: MM-DD ~ MM-DD
-                                const fmt = (d) => {
-                                    const parts = d.split('-');
-                                    return `${parts[1]}-${parts[2]}`;
-                                };
-                                dateRange = `${fmt(start)} ~ ${fmt(end)} (${totalDays}天)`;
-                            } else {
-                                const fmt = (d) => {
-                                    const parts = d.split('-');
-                                    return `${parts[1]}-${parts[2]}`;
-                                };
-                                dateRange = fmt(start);
-                            }
                             const days = calcDaysToDate(start);
                             result.push({
                                 name: name,
-                                start: start,
-                                end: end,
-                                dateRange: dateRange,
+                                startDate: start,
+                                endDate: end,
                                 totalDays: totalDays,
                                 days: days
                             });
                         }
 
                         // 按开始日期排序
-                        result.sort((a, b) => a.start.localeCompare(b.start));
+                        result.sort((a, b) => a.startDate.localeCompare(b.startDate));
                         holidayList.value = result;
                         return;
                     }
-                    throw new Error('no data');
+                    throw new Error('Invalid data structure');
                 } catch (e) {
                     // 备用数据 (2026年主要节假日)
                     const fallback = [
-                        { name: '元旦', start: '2026-01-01', end: '2026-01-03', totalDays: 3 },
-                        { name: '春节', start: '2026-02-15', end: '2026-02-23', totalDays: 9 },
-                        { name: '清明', start: '2026-04-04', end: '2026-04-06', totalDays: 3 },
-                        { name: '劳动节', start: '2026-05-01', end: '2026-05-05', totalDays: 5 },
-                        { name: '端午', start: '2026-06-19', end: '2026-06-21', totalDays: 3 },
-                        { name: '中秋', start: '2026-09-25', end: '2026-09-27', totalDays: 3 },
-                        { name: '国庆节', start: '2026-10-01', end: '2026-10-07', totalDays: 7 }
+                        { name: '元旦', startDate: '2026-01-01', endDate: '2026-01-03', totalDays: 3 },
+                        { name: '春节', startDate: '2026-02-15', endDate: '2026-02-23', totalDays: 9 },
+                        { name: '清明', startDate: '2026-04-04', endDate: '2026-04-06', totalDays: 3 },
+                        { name: '劳动节', startDate: '2026-05-01', endDate: '2026-05-05', totalDays: 5 },
+                        { name: '端午', startDate: '2026-06-19', endDate: '2026-06-21', totalDays: 3 },
+                        { name: '中秋', startDate: '2026-09-25', endDate: '2026-09-27', totalDays: 3 },
+                        { name: '国庆节', startDate: '2026-10-01', endDate: '2026-10-07', totalDays: 7 }
                     ];
-                    // 格式化日期范围显示
-                    const fmt = (d) => {
-                        const parts = d.split('-');
-                        return `${parts[1]}-${parts[2]}`;
-                    };
-                    holidayList.value = fallback.map(item => {
-                        let dateRange = fmt(item.start);
-                        if (item.start !== item.end) {
-                            dateRange = `${fmt(item.start)} ~ ${fmt(item.end)} (${item.totalDays}天)`;
-                        }
-                        const days = calcDaysToDate(item.start);
-                        return {
-                            ...item,
-                            dateRange: dateRange,
-                            days: days
-                        };
-                    });
+                    holidayList.value = fallback.map(item => ({
+                        ...item,
+                        days: calcDaysToDate(item.startDate)
+                    }));
                 }
             }
 
