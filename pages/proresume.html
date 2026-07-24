@@ -186,9 +186,10 @@ G:()=><I c={<><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 
 Cd:()=><I c={<><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></>}/>,
 F:()=><I c={<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>}/>,
 Pl:()=><I c={<><path d="M5 12h14"/><path d="M12 5v14"/></>}/>,
+Ch:()=><I c={<polyline points="20 6 9 17 4 12"/>}/>,
+Ul:()=><I c={<><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></>}/>,
 T:()=><I c={<><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></>}/>,
 Dl:()=><I c={<><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></>}/>,
-Ul:()=><I c={<><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></>}/>,
 Ft:()=><I c={<><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></>}/>,
 Pa:()=><I c={<><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.01 17.461 2 12 2z"/></>}/>,
 La:()=><I c={<><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></>}/>,
@@ -207,7 +208,7 @@ Pr:()=><I c={<><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-
 
 // Default data
 const defaultData={
-  personal:{name:'张明远',title:'高级前端工程师',email:'zhangmingyuan@example.com',phone:'138-0000-8888',location:'北京市朝阳区',website:'https://zhangmingyuan.dev',gender:'男',birth:'1994-05-12',ethnicity:'汉族',political:'群众',marital:'未婚',summary:'8年前端开发经验，专注于React生态系统和现代Web技术。曾主导多个大型SaaS平台的前端架构设计与实现，擅长性能优化、组件化开发和工程化建设。热衷于开源社区贡献，GitHub累计获得5000+ Stars。'},
+  personal:{name:'张明远',title:'高级前端工程师',email:'zhangmingyuan@example.com',phone:'138-0000-8888',location:'北京市朝阳区',website:'https://zhangmingyuan.dev',gender:'男',birth:'1994-05-12',ethnicity:'汉族',political:'群众',marital:'未婚',avatar:'',summary:'8年前端开发经验，专注于React生态系统和现代Web技术。曾主导多个大型SaaS平台的前端架构设计与实现，擅长性能优化、组件化开发和工程化建设。热衷于开源社区贡献，GitHub累计获得5000+ Stars。'},
   advantages:'1. 扎实的工程能力：8年前端开发经验，主导过日均千万级PV的核心交易链路架构设计\n2. 突出的性能优化能力：曾将首屏加载时间从3.2s降至1.1s，构建时间缩短60%\n3. 良好的团队协作：建立前端监控体系，推动TypeScript在团队内全面落地\n4. 开源贡献者：GitHub 5000+ Stars，FastUI组件库被10+业务线复用',
   jobStatus:'在职-考虑新机会',
   intention:{position:'高级前端工程师 / 前端架构师',salary:'25-40K·15薪',location:'北京',type:'全职',industry:'互联网/IT'},
@@ -221,8 +222,8 @@ const defaultData={
     {id:uid(),school:'清华大学',degree:'本科',field:'计算机科学与技术',startDate:'2012-09',endDate:'2016-06',description:'GPA 3.8/4.0，连续三年获得国家奖学金\nACM程序设计竞赛省级一等奖\n优秀毕业生，校学生会技术部部长'}
   ],
   projects:[
-    {id:uid(),name:'ProResume 简历生成器',description:'基于React的在线简历生成工具，支持多模板、实时预览和PDF导出。采用纯前端技术栈，无需后端服务。',link:'https://github.com/example/proresume',tech:'React, html2canvas, jsPDF'},
-    {id:uid(),name:'FastUI 组件库',description:'企业级React组件库，包含50+高质量组件，支持暗色模式和主题定制。在内部10+项目中使用。',link:'https://fastui.dev',tech:'React, TypeScript, Storybook'}
+    {id:uid(),name:'ProResume 简历生成器',description:'基于React的在线简历生成工具，支持多模板、实时预览和PDF导出。采用纯前端技术栈，无需后端服务。',link:'https://github.com/example/proresume',tech:'React, html2canvas, jsPDF',startDate:'2024-01',endDate:'2024-06'},
+    {id:uid(),name:'FastUI 组件库',description:'企业级React组件库，包含50+高质量组件，支持暗色模式和主题定制。在内部10+项目中使用。',link:'https://fastui.dev',tech:'React, TypeScript, Storybook',startDate:'2022-03',endDate:'2023-08'}
   ],
   trainings:[],
   languages:[
@@ -243,16 +244,143 @@ const defaultData={
     {id:uid(),position:'技术部部长',org:'计算机系学生会',startDate:'2013-09',endDate:'2014-06',description:'组织系内技术分享会、ACM校赛等活动\n维护系内技术博客，发表技术文章20+篇'}
   ],
   visibility:{
-    personal:{name:true,title:true,email:true,phone:true,location:true,website:true,gender:true,birth:true,ethnicity:false,political:false,marital:false,summary:true},
+    personal:{name:true,title:true,email:true,phone:true,location:true,website:true,gender:true,birth:true,age:true,ethnicity:true,political:true,marital:true,avatar:true,summary:true},
     advantages:true,jobStatus:true,intention:true,
     education:true,experience:true,projects:true,trainings:true,
     languages:true,skills:true,certificates:true,studentLeadership:true
   }
 };
 
+// 派生计算年龄（基于 birth，1994-05 格式），不修改 JSON 结构
+const calcAge=birth=>{
+  if(!birth)return null;
+  const m=String(birth).match(/^(\d{4})(?:-(\d{1,2}))?/);
+  if(!m)return null;
+  const y=parseInt(m[1],10);
+  if(isNaN(y))return null;
+  const mo=m[2]?parseInt(m[2],10):1;
+  const today=new Date();
+  let age=today.getFullYear()-y;
+  if(today.getMonth()+1<mo||(today.getMonth()+1===mo&&today.getDate()<1))age--;
+  return age>=0&&age<150?age:null;
+};
+
+// 头像裁剪器（一寸证件照 5:7 比例）
+function AvatarCropper({src,onConfirm,onCancel}){
+  const[zoom,setZoom]=useState(1);
+  const[posX,setPosX]=useState(50);
+  const[posY,setPosY]=useState(50);
+  const[imgDims,setImgDims]=useState({w:0,h:0});
+
+  useEffect(()=>{
+    const img=new Image();
+    img.onload=()=>{
+      setImgDims({w:img.naturalWidth,h:img.naturalHeight});
+      // 默认缩放：让图片短边刚好填满 320×448 框（cover 模式）
+      const boxRatio=320/448;
+      const imgRatio=img.naturalWidth/img.naturalHeight;
+      if(imgRatio>boxRatio){
+        setZoom(448/img.naturalHeight);
+      }else{
+        setZoom(320/img.naturalWidth);
+      }
+      setPosX(50);setPosY(50);
+    };
+    img.src=src;
+  },[src]);
+
+  const confirm=()=>{
+    const img=new Image();
+    img.onload=()=>{
+      const canvas=document.createElement('canvas');
+      canvas.width=320;canvas.height=448;
+      const ctx=canvas.getContext('2d');
+      // 320×448 框内图片的实际渲染尺寸
+      const renderW=img.naturalWidth*zoom;
+      const renderH=img.naturalHeight*zoom;
+      // 根据 posX/posY (0-100) 计算偏移
+      let offsetX,offsetY;
+      if(renderW>320){
+        offsetX=(posX/100-1)*(renderW-320);
+      }else{
+        offsetX=(posX/100)*(320-renderW);
+      }
+      if(renderH>448){
+        offsetY=(posY/100-1)*(renderH-448);
+      }else{
+        offsetY=(posY/100)*(448-renderH);
+      }
+      // 框内可见区域在图片坐标系中的源区域
+      const sx=-offsetX/zoom;
+      const sy=-offsetY/zoom;
+      const sw=320/zoom;
+      const sh=448/zoom;
+      ctx.drawImage(img,sx,sy,sw,sh,0,0,320,448);
+      onConfirm(canvas.toDataURL('image/jpeg',0.9));
+    };
+    img.src=src;
+  };
+
+  const previewStyle={
+    width:160,height:224,
+    backgroundImage:`url(${src})`,
+    backgroundSize:`${zoom*100}%`,
+    backgroundPosition:`${posX}% ${posY}%`,
+    backgroundRepeat:'no-repeat',
+    backgroundColor:'#f0f0f0',
+    borderRadius:4
+  };
+
+  return<div className="lo" style={{zIndex:400}}>
+    <div style={{background:'#fff',borderRadius:12,padding:24,display:'flex',gap:24,alignItems:'flex-start',maxWidth:'90vw',boxShadow:'0 20px 60px rgba(0,0,0,.3)'}}>
+      <div>
+        <h3 style={{marginBottom:12,color:'var(--ct)',fontSize:16}}>裁剪头像（一寸证件照 5:7）</h3>
+        <div style={previewStyle}/>
+        <div style={{fontSize:11,color:'var(--ctm)',marginTop:6,textAlign:'center'}}>{imgDims.w}×{imgDims.h}px</div>
+      </div>
+      <div style={{display:'flex',flexDirection:'column',gap:12,minWidth:220,paddingTop:36}}>
+        <div>
+          <div style={{fontSize:12,color:'var(--ct2)',marginBottom:4,display:'flex',justifyContent:'space-between'}}><span>缩放</span><span>{Math.round(zoom*100)}%</span></div>
+          <input type="range" min="0.3" max="3" step="0.02" value={zoom} onChange={e=>setZoom(parseFloat(e.target.value))} style={{width:'100%'}}/>
+        </div>
+        <div>
+          <div style={{fontSize:12,color:'var(--ct2)',marginBottom:4,display:'flex',justifyContent:'space-between'}}><span>左右位置</span><span>{posX}</span></div>
+          <input type="range" min="0" max="100" value={posX} onChange={e=>setPosX(parseInt(e.target.value))} style={{width:'100%'}}/>
+        </div>
+        <div>
+          <div style={{fontSize:12,color:'var(--ct2)',marginBottom:4,display:'flex',justifyContent:'space-between'}}><span>上下位置</span><span>{posY}</span></div>
+          <input type="range" min="0" max="100" value={posY} onChange={e=>setPosY(parseInt(e.target.value))} style={{width:'100%'}}/>
+        </div>
+        <div style={{display:'flex',gap:8,marginTop:8}}>
+          <button type="button" className="btn bp" onClick={confirm} style={{flex:1}}><Ic.Ch/> 确认</button>
+          <button type="button" className="btn bs" onClick={onCancel} style={{flex:1}}>取消</button>
+        </div>
+        <div style={{fontSize:11,color:'var(--ctm)',lineHeight:1.5,borderTop:'1px solid var(--cbd)',paddingTop:8}}>提示：标准一寸证件照为 2.5×3.5cm（5:7），输出分辨率 200×280px（足够印刷）。</div>
+      </div>
+    </div>
+  </div>
+}
+
 // Storage
 const KEY='proresume_v4';
-const load=()=>{try{const s=localStorage.getItem(KEY);return s?JSON.parse(s):defaultData}catch{return defaultData}};
+const load=()=>{
+  try{
+    const s=localStorage.getItem(KEY);
+    if(s){
+      const d=JSON.parse(s);
+      // === 数据迁移：基础信息字段（婚姻/年龄/民族/政治面貌/头像）默认开启 ===
+      if(d.visibility&&d.visibility.personal){
+        ['marital','age','ethnicity','political','avatar'].forEach(k=>{
+          if(d.visibility.personal[k]===false)d.visibility.personal[k]=true;
+        });
+      }
+      // === 数据迁移：personal 加 avatar 字段（不破坏结构） ===
+      if(d.personal&&d.personal.avatar===undefined)d.personal.avatar='';
+      return d;
+    }
+    return defaultData;
+  }catch{return defaultData}
+};
 const save=d=>{try{localStorage.setItem(KEY,JSON.stringify(d))}catch{}};
 
 // Theme
@@ -304,16 +432,52 @@ function ListForm({title,icon,items,onChange,fields,defaults,addText,addMsg,rmMs
 
 // Section forms
 function PersonalForm({data,onChange}){
+  const{show}=useT();
+  const[cropSrc,setCropSrc]=useState(null); // 待裁剪的源图
   const h=k=>e=>onChange({...data,[k]:e.target.value});
+  // 选择文件 → 弹出裁剪器
+  const onAvatarPick=e=>{
+    const file=e.target.files&&e.target.files[0];
+    if(!file)return;
+    if(!file.type.startsWith('image/')){show('请选择图片文件','error');e.target.value='';return}
+    if(file.size>10*1024*1024){show('图片不能超过 10MB','error');e.target.value='';return}
+    const reader=new FileReader();
+    reader.onload=ev=>{setCropSrc(ev.target.result)};
+    reader.readAsDataURL(file);
+    e.target.value='';
+  };
+  // 裁剪确认
+  const onAvatarConfirm=url=>{onChange({...data,avatar:url});setCropSrc(null);show('头像已更新','success')};
+  // 清除
+  const clearAvatar=()=>{onChange({...data,avatar:''});show('头像已清除','info')};
   return<div className="sc">
     <div className="st"><Ic.U/>基本信息</div>
     <div className="row"><div className="ig"><label>姓名</label><input value={data.name} onChange={h('name')} placeholder="您的姓名"/></div><div className="ig"><label>性别</label><select value={data.gender} onChange={h('gender')}><option value="男">男</option><option value="女">女</option></select></div></div>
-    <div className="row"><div className="ig"><label>出生年月</label><input type="month" value={data.birth} onChange={h('birth')}/></div><div className="ig"><label>民族</label><input value={data.ethnicity} onChange={h('ethnicity')} placeholder="如：汉族"/></div></div>
+    <div className="row"><div className="ig"><label>出生年月</label><input type="month" value={data.birth} onChange={h('birth')}/></div><div className="ig"><label>年龄 <span style={{color:'var(--ctm)',fontWeight:400,fontSize:11}}>(自动)</span></label><input value={calcAge(data.birth)!=null?calcAge(data.birth)+' 岁':''} readOnly placeholder="填写出生年月后自动显示" style={{background:'var(--cbg)',cursor:'default',color:calcAge(data.birth)!=null?'var(--ct)':'var(--ctm)'}}/></div></div>
+    <div className="row"><div className="ig"><label>民族</label><input value={data.ethnicity} onChange={h('ethnicity')} placeholder="如：汉族"/></div><div className="ig" style={{visibility:'hidden'}}><label>占位</label><input tabIndex={-1}/></div></div>
     <div className="row"><div className="ig"><label>政治面貌</label><select value={data.political} onChange={h('political')}><option value="群众">群众</option><option value="共青团员">共青团员</option><option value="中共党员">中共党员</option><option value="民主党派">民主党派</option><option value="无党派人士">无党派人士</option></select></div><div className="ig"><label>婚姻状况</label><select value={data.marital} onChange={h('marital')}><option value="未婚">未婚</option><option value="已婚">已婚</option><option value="离异">离异</option><option value="保密">保密</option></select></div></div>
     <div className="row"><div className="ig"><label>联系电话</label><input value={data.phone} onChange={h('phone')} placeholder="138-0000-0000"/></div><div className="ig"><label>电子邮箱</label><input value={data.email} onChange={h('email')} placeholder="example@email.com"/></div></div>
     <div className="row"><div className="ig"><label>现居地</label><input value={data.location} onChange={h('location')} placeholder="城市/地区"/></div><div className="ig"><label>个人网站</label><input value={data.website} onChange={h('website')} placeholder="https://..."/></div></div>
     <div className="ig"><label>目标职位</label><input value={data.title} onChange={h('title')} placeholder="期望岗位"/></div>
     <div className="ig"><label>个人简介</label><textarea value={data.summary} onChange={h('summary')} rows={5} placeholder="简要介绍您的专业背景和核心优势..."/></div>
+    {/* 头像 - 可选项（一寸证件照 5:7）*/}
+    <div style={{marginTop:20,paddingTop:16,borderTop:'1px dashed var(--cbd)'}}>
+      <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:10}}>
+        <span style={{fontSize:13,fontWeight:600,color:'var(--cp)'}}>头像</span>
+        <span style={{fontSize:11,color:'var(--ctm)',background:'var(--csa)',padding:'2px 8px',borderRadius:10}}>可选项 · 一寸证件照 5:7</span>
+      </div>
+      <div style={{display:'flex',alignItems:'center',gap:14}}>
+        <div style={{width:56,height:78,borderRadius:4,background:'var(--csa)',display:'flex',alignItems:'center',justifyContent:'center',overflow:'hidden',flexShrink:0,color:'var(--ca)',fontFamily:'var(--fs)',fontSize:24,fontWeight:700}}>
+          {data.avatar?<img src={data.avatar} alt="头像" style={{width:'100%',height:'100%',objectFit:'cover',display:'block'}}/>:((data.name||'?').charAt(0))}
+        </div>
+        <div style={{flex:1,display:'flex',flexWrap:'wrap',gap:6}}>
+          <label className="btn bs bsm" style={{cursor:'pointer',margin:0}}><Ic.Ul/>{data.avatar?'重新上传':'上传头像'}<input type="file" accept="image/*" onChange={onAvatarPick} style={{display:'none'}}/></label>
+          {data.avatar&&<><button type="button" className="btn bg bsm" onClick={()=>setCropSrc(data.avatar)} style={{border:'1px solid var(--cbd)'}}><Ic.Zo/>调整裁剪</button><button type="button" className="btn bg bsm" onClick={clearAvatar}><Ic.T/>清除</button></>}
+          {!data.avatar&&<span style={{fontSize:11,color:'var(--ctm)',alignSelf:'center'}}>不上传则使用姓名首字符</span>}
+        </div>
+      </div>
+    </div>
+    {cropSrc&&<AvatarCropper src={cropSrc} onConfirm={onAvatarConfirm} onCancel={()=>setCropSrc(null)}/>}
   </div>
 }
 
@@ -340,7 +504,7 @@ function VP({visibility,counts,onChange}){
   const up=(k,val)=>onChange({...v,personal:{...vp,[k]:val}});
   return<div className="sc"><div className="st"><Ic.Sl/>显示设置</div>
     <div style={{fontWeight:600,fontSize:'var(--t2)',color:'var(--cp)',margin:'8px 0'}}>基本信息</div>
-    {[['name','姓名'],['title','目标职位'],['gender','性别'],['birth','出生日期'],['ethnicity','民族'],['political','政治面貌'],['marital','婚姻状况'],['email','邮箱'],['phone','电话'],['location','现居地'],['website','个人网站'],['summary','个人简介']].map(([k,l])=><TS key={k} label={l} checked={vp[k]!==false} onChange={x=>up(k,x)}/>)}
+    {[['name','姓名'],['title','目标职位'],['avatar','头像'],['gender','性别'],['birth','出生日期'],['age','年龄'],['ethnicity','民族'],['political','政治面貌'],['marital','婚姻状况'],['email','邮箱'],['phone','电话'],['location','现居地'],['website','个人网站'],['summary','个人简介']].map(([k,l])=><TS key={k} label={l} checked={vp[k]!==false} onChange={x=>up(k,x)}/>)}
     <div style={{fontWeight:600,fontSize:'var(--t2)',color:'var(--cp)',margin:'16px 0 8px'}}>内容板块</div>
     {[['advantages','个人优势'],['jobStatus','求职状态'],['intention','求职意向'],['experience','工作/实习经历'],['education','教育经历'],['projects','项目经历'],['trainings','培训经历'],['languages','语言能力'],['skills','专业技能'],['certificates','获得证书'],['studentLeadership','学生干部经历']].map(([k,l])=><TS key={k} label={l} sub={counts[k]!==undefined?`${counts[k]} 条`:''} checked={v[k]!==false} onChange={x=>u(k,x)}/>)}
   </div>
@@ -353,8 +517,11 @@ function Preview({data,template,theme}){
   const tc=themes[theme]||themes.c;
   const sv={'--rp':tc.primary,'--ra':tc.accent,'--rsa':tc.surfaceAlt,'--rt':tc.text,'--rt2':tc.textSecondary,'--rtm':tc.textMuted,'--rb':tc.border};
   // 保留换行和空白 - 使用 whiteSpace:pre-wrap 同时保留换行符和连续空格/缩进
-  const desc=t=>t?t.split('\n').map((l,i)=><div key={i} style={{whiteSpace:'pre-wrap',wordBreak:'break-word'}}>{l||' '}</div>):null;
-  const adv=t=>t?t.split('\n').map((l,i)=><div key={i} style={{whiteSpace:'pre-wrap',marginBottom:6,wordBreak:'break-word'}}>{l||' '}</div>):null;
+  const desc=t=>t?t.split('\n').map((l,i)=><div key={i} style={{whiteSpace:'pre-wrap',wordBreak:'break-word'}}>{l||' '}</div>):null;
+  const adv=t=>t?t.split('\n').map((l,i)=><div key={i} style={{whiteSpace:'pre-wrap',marginBottom:6,wordBreak:'break-word'}}>{l||' '}</div>):null;
+  // 派生：年龄 + 是否显示年龄
+  const age=calcAge(p.birth);
+  const showAge=vp.age!==false&&age!=null;
 
   const contactItems=()=>{
     const r=[];
@@ -372,6 +539,7 @@ function Preview({data,template,theme}){
   if(template==='classic'){
     return<div className="a4 tc" style={sv}>
       <div className="sb">
+        {vp.avatar!==false&&p.avatar&&<div style={{width:80,height:112,borderRadius:4,overflow:'hidden',margin:'0 0 20px'}}><img src={p.avatar} alt="头像" style={{width:'100%',height:'100%',objectFit:'cover',display:'block'}}/></div>}
         {vp.name&&p.name&&<div className="nm">{p.name}</div>}
         {vp.title&&p.title&&<div className="tt">{p.title}</div>}
         {(vp.email||vp.phone||vp.location||vp.website)&&<div className="ss"><div className="sst">联系方式</div>
@@ -380,6 +548,14 @@ function Preview({data,template,theme}){
           {vp.location&&p.location&&<div className="si"><strong>现居地</strong>{p.location}</div>}
           {vp.website&&p.website&&<div className="si"><strong>个人网站</strong>{p.website}</div>}
         </div>}
+        {(vp.gender&&p.gender)||(vp.birth&&p.birth)||showAge||(vp.ethnicity&&p.ethnicity)||(vp.political&&p.political)||(vp.marital&&p.marital)?<div className="ss"><div className="sst">个人信息</div>
+          {vp.gender&&p.gender&&<div className="si"><strong>性别</strong>{p.gender}</div>}
+          {vp.birth&&p.birth&&<div className="si"><strong>出生年月</strong>{p.birth}</div>}
+          {showAge&&<div className="si"><strong>年龄</strong>{age} 岁</div>}
+          {vp.ethnicity&&p.ethnicity&&<div className="si"><strong>民族</strong>{p.ethnicity}</div>}
+          {vp.political&&p.political&&<div className="si"><strong>政治面貌</strong>{p.political}</div>}
+          {vp.marital&&p.marital&&<div className="si"><strong>婚姻状况</strong>{p.marital}</div>}
+        </div>:null}
         {v.jobStatus!==false&&js&&<div className="ss"><div className="sst">求职状态</div><div className="si">{js}</div></div>}
         {v.intention!==false&&(it.position||it.salary||it.location)&&<div className="ss"><div className="sst">求职意向</div>
           {it.position&&<div className="si"><strong>期望职位</strong>{it.position}</div>}
@@ -397,7 +573,7 @@ function Preview({data,template,theme}){
         {v.advantages!==false&&a&&<div className="ms"><div className="mst">个人优势</div><div className="sm">{adv(a)}</div></div>}
         {vp.summary&&p.summary&&<div className="ms"><div className="mst">个人简介</div><div className="sm" style={{whiteSpace:'pre-wrap',wordBreak:'break-word'}}>{p.summary}</div></div>}
         {expSection({ei:'ei',ei_section:'ms',ei_title:'mst',eh:'eh',et:'et',ed:'ed',ec2:'ec2',eds:'eds'})}
-        {v.projects!==false&&pj.length>0&&<div className="ms"><div className="mst">项目经历</div>{pj.map(p2=><div key={p2.id} className="pi"><div className="pn">{p2.name}{p2.tech&&<span style={{fontSize:12,color:'var(--rtm)',fontWeight:400,marginLeft:8}}>| {p2.tech}</span>}</div><div className="pd" style={{whiteSpace:'pre-wrap',wordBreak:'break-word'}}>{p2.description}</div></div>)}</div>}
+        {v.projects!==false&&pj.length>0&&<div className="ms"><div className="mst">项目经历</div>{pj.map(p2=><div key={p2.id} className="pi"><div className="pn" style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',gap:8,flexWrap:'wrap'}}><span style={{flex:1,minWidth:0}}>{p2.name}{p2.tech&&<span style={{fontSize:12,color:'var(--rtm)',fontWeight:400,marginLeft:6}}>| {p2.tech}</span>}</span>{(p2.startDate||p2.endDate)&&<span style={{fontSize:12,color:'var(--rtm)',fontWeight:400,whiteSpace:'nowrap'}}>{p2.startDate||'?'} - {p2.endDate||'至今'}</span>}</div><div className="pd" style={{whiteSpace:'pre-wrap',wordBreak:'break-word'}}>{p2.description}</div></div>)}</div>}
         {v.studentLeadership!==false&&sl.length>0&&<div className="ms"><div className="mst">学生干部经历</div>{sl.map(s=><div key={s.id} className="ei"><div className="eh"><span className="et">{s.position}</span><span className="ed">{s.startDate} - {s.endDate}</span></div><div className="ec2">{s.org}</div><div className="eds">{desc(s.description)}</div></div>)}</div>}
         {v.trainings!==false&&tr.length>0&&<div className="ms"><div className="mst">培训经历</div>{tr.map(t2=><div key={t2.id} className="ei"><div className="eh"><span className="et">{t2.name}</span><span className="ed">{t2.startDate} - {t2.endDate}</span></div><div className="ec2">{t2.org}</div>{t2.description&&<div className="eds">{desc(t2.description)}</div>}</div>)}</div>}
       </div>
@@ -408,18 +584,20 @@ function Preview({data,template,theme}){
   if(template==='modern'){
     return<div className="a4 tm" style={sv}>
       <div className="hd">
+        {vp.avatar!==false&&p.avatar&&<div style={{width:88,height:124,borderRadius:4,overflow:'hidden',margin:'0 auto 22px'}}><img src={p.avatar} alt="头像" style={{width:'100%',height:'100%',objectFit:'cover',display:'block'}}/></div>}
         {vp.name&&p.name&&<div className="nm">{p.name}</div>}
         {vp.title&&p.title&&<div className="tt">{p.title}</div>}
         <div className="cr">{contactItems()}</div>
       </div>
       <div className="bd">
+        {(vp.gender&&p.gender)||(vp.birth&&p.birth)||showAge||(vp.ethnicity&&p.ethnicity)||(vp.political&&p.political)||(vp.marital&&p.marital)?<div className="sc2"><div className="sct">基本信息</div><div className="lc">{vp.gender&&p.gender&&<div><strong>性别：</strong>{p.gender}</div>}{vp.birth&&p.birth&&<div><strong>出生：</strong>{p.birth}</div>}{showAge&&<div><strong>年龄：</strong>{age} 岁</div>}{vp.ethnicity&&p.ethnicity&&<div><strong>民族：</strong>{p.ethnicity}</div>}{vp.political&&p.political&&<div><strong>政治面貌：</strong>{p.political}</div>}{vp.marital&&p.marital&&<div><strong>婚姻：</strong>{p.marital}</div>}</div></div>:null}
         {v.advantages!==false&&a&&<div className="sc2"><div className="sct">个人优势</div><div className="sm">{adv(a)}</div></div>}
         {v.intention!==false&&(it.position||it.salary||it.location)&&<div className="sc2"><div className="sct">求职意向</div><div className="lc">{it.position&&<div><strong>职位：</strong>{it.position}</div>}{it.salary&&<div><strong>薪资：</strong>{it.salary}</div>}{it.location&&<div><strong>地点：</strong>{it.location}</div>}{it.type&&<div><strong>类型：</strong>{it.type}</div>}{it.industry&&<div><strong>行业：</strong>{it.industry}</div>}{v.jobStatus!==false&&js&&<div><strong>状态：</strong>{js}</div>}</div></div>}
         {vp.summary&&p.summary&&<div className="sc2"><div className="sct">个人简介</div><div className="sm" style={{whiteSpace:'pre-wrap',wordBreak:'break-word'}}>{p.summary}</div></div>}
         <div className="tcc">
           <div>
             {expSection({ei:'ei',ei_section:'sc2',ei_title:'sct',eh:'eh',et:'et',ed:'ed',ec2:'ec2',eds:'eds'})}
-            {v.projects!==false&&pj.length>0&&<div className="sc2"><div className="sct">项目经历</div>{pj.map(p2=><div key={p2.id} className="pi"><div className="pn">{p2.name}</div><div className="pd" style={{whiteSpace:'pre-wrap',wordBreak:'break-word'}}>{p2.description}</div></div>)}</div>}
+            {v.projects!==false&&pj.length>0&&<div className="sc2"><div className="sct">项目经历</div>{pj.map(p2=><div key={p2.id} className="pi"><div className="pn" style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',gap:8,flexWrap:'wrap'}}><span style={{flex:1,minWidth:0}}>{p2.name}</span>{(p2.startDate||p2.endDate)&&<span style={{fontSize:12,color:'var(--rtm)',fontWeight:400,whiteSpace:'nowrap'}}>{p2.startDate||'?'} - {p2.endDate||'至今'}</span>}</div>{p2.tech&&<div style={{fontSize:12,color:'var(--rtm)',marginBottom:4}}>{p2.tech}</div>}<div className="pd" style={{whiteSpace:'pre-wrap',wordBreak:'break-word'}}>{p2.description}</div></div>)}</div>}
             {v.studentLeadership!==false&&sl.length>0&&<div className="sc2"><div className="sct">学生干部经历</div>{sl.map(s=><div key={s.id} className="ei"><div className="eh"><span className="et">{s.position}</span><span className="ed">{s.startDate} - {s.endDate}</span></div><div className="ec2">{s.org}</div><div className="eds">{desc(s.description)}</div></div>)}</div>}
             {v.trainings!==false&&tr.length>0&&<div className="sc2"><div className="sct">培训经历</div>{tr.map(t2=><div key={t2.id} className="ei"><div className="eh"><span className="et">{t2.name}</span><span className="ed">{t2.startDate} - {t2.endDate}</span></div><div className="ec2">{t2.org}</div>{t2.description&&<div className="eds">{desc(t2.description)}</div>}</div>)}</div>}
           </div>
@@ -438,7 +616,7 @@ function Preview({data,template,theme}){
   return<div className="a4 tr2" style={sv}>
     <div className="ab"></div>
     <div className="ts">
-      {vp.name&&p.name&&<div className="av">{p.name.charAt(0)}</div>}
+      {vp.name&&p.name&&vp.avatar!==false&&<div className="av" style={p.avatar?{padding:0,overflow:'hidden',background:'transparent',borderRadius:4,width:84,height:118,marginRight:4}:{}}>{p.avatar?<img src={p.avatar} alt="头像" style={{width:'100%',height:'100%',objectFit:'cover',display:'block'}}/>:p.name.charAt(0)}</div>}
       <div className="ns">
         {vp.name&&p.name&&<div className="nm">{p.name}</div>}
         {vp.title&&p.title&&<div className="tt">{p.title}</div>}
@@ -451,11 +629,12 @@ function Preview({data,template,theme}){
       </div>
     </div>
     <div className="mb">
+      {(vp.gender&&p.gender)||(vp.birth&&p.birth)||showAge||(vp.ethnicity&&p.ethnicity)||(vp.political&&p.political)||(vp.marital&&p.marital)?<div className="rs"><div className="rst">基本信息</div><div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(140px,1fr))',gap:8,fontSize:13,lineHeight:1.8}}>{vp.gender&&p.gender&&<div><strong>性别：</strong>{p.gender}</div>}{vp.birth&&p.birth&&<div><strong>出生：</strong>{p.birth}</div>}{showAge&&<div><strong>年龄：</strong>{age} 岁</div>}{vp.ethnicity&&p.ethnicity&&<div><strong>民族：</strong>{p.ethnicity}</div>}{vp.political&&p.political&&<div><strong>政治面貌：</strong>{p.political}</div>}{vp.marital&&p.marital&&<div><strong>婚姻：</strong>{p.marital}</div>}</div></div>:null}
       {v.advantages!==false&&a&&<div className="rs"><div className="rst">个人优势</div><div className="sm">{adv(a)}</div></div>}
       {v.intention!==false&&(it.position||it.salary||it.location)&&<div className="rs"><div className="rst">求职意向</div><div style={{fontSize:13,lineHeight:1.8}}>{[it.position&&`职位：${it.position}`,it.salary&&`薪资：${it.salary}`,it.location&&`地点：${it.location}`,it.type&&`类型：${it.type}`,v.jobStatus!==false&&js&&`状态：${js}`].filter(Boolean).join('  ·  ')}</div></div>}
       {vp.summary&&p.summary&&<div className="rs"><div className="rst">个人简介</div><div className="sm" style={{whiteSpace:'pre-wrap',wordBreak:'break-word'}}>{p.summary}</div></div>}
       {expSection({ei:'ei',ei_section:'rs',ei_title:'rst',eh:'eh',et:'et',ed:'ed',ec2:'ec2',eds:'eds'})}
-      {v.projects!==false&&pj.length>0&&<div className="rs"><div className="rst">项目经历</div>{pj.map(p2=><div key={p2.id} className="pi"><div className="pn">{p2.name}</div><div className="pd" style={{whiteSpace:'pre-wrap',wordBreak:'break-word'}}>{p2.description}</div></div>)}</div>}
+      {v.projects!==false&&pj.length>0&&<div className="rs"><div className="rst">项目经历</div>{pj.map(p2=><div key={p2.id} className="pi"><div className="pn" style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',gap:8,flexWrap:'wrap'}}><span style={{flex:1,minWidth:0}}>{p2.name}</span>{(p2.startDate||p2.endDate)&&<span style={{fontSize:12,color:'var(--rtm)',fontWeight:400,whiteSpace:'nowrap'}}>{p2.startDate||'?'} - {p2.endDate||'至今'}</span>}</div>{p2.tech&&<div style={{fontSize:12,color:'var(--rtm)',marginBottom:4}}>{p2.tech}</div>}<div className="pd" style={{whiteSpace:'pre-wrap',wordBreak:'break-word'}}>{p2.description}</div></div>)}</div>}
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:32}}>
         <div>
           {v.education!==false&&ed.length>0&&<div className="rs"><div className="rst">教育背景</div>{ed.map(e=><div key={e.id} className="ei" style={{borderLeft:'none',paddingLeft:0,marginBottom:12}}><div className="et">{e.school}</div><div className="ec2">{e.degree} · {e.field}</div><div className="ed" style={{background:'none',padding:0,marginTop:4}}>{e.startDate} - {e.endDate}</div></div>)}</div>}
@@ -636,6 +815,7 @@ function App(){
         ]}/>}
         {tab==='projects'&&<ListForm title="项目经历" icon={<Ic.F/>} items={data.projects} onChange={up('projects')} addMsg="已添加项目" addText="添加项目经历" fields={[
           {row:[{key:'name',label:'项目名称',ph:'项目名'},{key:'link',label:'项目链接',ph:'https://...'}]},
+          {key:'dateRange',label:'起止时间',months:[{key:'startDate',label:'起始'},{key:'endDate',ph:'至今'}]},
           {key:'tech',label:'技术栈',ph:'React, Node.js, ...'},
           {key:'description',label:'项目描述',type:'textarea',rows:3,ph:'项目背景、您的角色和成果'}
         ]}/>}
