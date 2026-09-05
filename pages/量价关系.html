@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>量价位置 · 四维决策矩阵</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #f0f2f6;
+            padding: 24px 16px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1320px;
+            width: 100%;
+        }
+
+        /* ===== 头部 ===== */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #0a1e3a;
+            letter-spacing: -0.5px;
+        }
+
+        .header h1 small {
+            font-size: 14px;
+            font-weight: 400;
+            color: #7a8fa3;
+            margin-left: 8px;
+        }
+
+        .header .tag {
+            background: #fff;
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1f3a5e;
+            border: 1px solid #e6ecf3;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+        .header .tag strong { color: #1a4cff; }
+
+        /* ===== 筛选栏（四行） ===== */
+        .filter-bar {
+            background: #fff;
+            border-radius: 16px;
+            border: 1px solid #eef2f7;
+            padding: 10px 20px 12px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px 12px;
+            padding: 4px 0;
+        }
+
+        .filter-row+.filter-row {
+            border-top: 1px solid #f0f2f6;
+            padding-top: 8px;
+            margin-top: 4px;
+        }
+
+        .filter-row .label {
+            font-weight: 600;
+            color: #1f3a5e;
+            font-size: 13px;
+            min-width: 56px;
+            flex-shrink: 0;
+        }
+
+        .filter-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #f0f2f6;
+            color: #3d5575;
+            white-space: nowrap;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .filter-btn .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .filter-btn .dot-round {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .dot-round.low  { background: #1a9e5c; }
+        .dot-round.mid  { background: #e6a020; }
+        .dot-round.high { background: #d14c4c; }
+
+        .filter-btn.active {
+            border-color: #1a4cff;
+            background: #eaf0ff;
+            color: #1a4cff;
+        }
+
+        .filter-btn.active .dot {
+            border: 2px solid #1a4cff;
+        }
+
+        .filter-btn .badge-count {
+            background: rgba(0,0,0,0.06);
+            padding: 0 8px;
+            border-radius: 40px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #5a6b7e;
+        }
+
+        .filter-btn.active .badge-count {
+            background: rgba(26,76,255,0.12);
+            color: #1a4cff;
+        }
+
+        .filter-divider {
+            width: 1px;
+            height: 22px;
+            background: #e0e6ed;
+            flex-shrink: 0;
+        }
+
+        /* 四个筛选行的独立配色 */
+        .filter-row-grade .filter-btn.active { border-color: #6b7f96; }
+        .filter-row-pos .filter-btn.active { border-color: #1a9e5c; }
+        .filter-row-volume .filter-btn.active { border-color: #4a7ab5; }
+        .filter-row-price .filter-btn.active { border-color: #b57a4a; }
+
+        /* ===== 矩阵容器 ===== */
+        .matrix-wrapper {
+            background: #fff;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid #eef2f7;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+            margin-bottom: 16px;
+        }
+
+        .matrix-scroll {
+            overflow-x: auto;
+            padding: 4px 0;
+        }
+
+        table.matrix {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            min-width: 760px;
+        }
+
+        table.matrix thead th {
+            padding: 12px 12px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 15px;
+            color: #0a1e3a;
+            background: #f7f9fc;
+            border-bottom: 2px solid #e6ecf3;
+            white-space: nowrap;
+        }
+
+        table.matrix thead th .sub {
+            font-weight: 400;
+            font-size: 12px;
+            color: #7a8fa3;
+            display: block;
+            margin-top: 2px;
+        }
+
+        table.matrix thead th:first-child {
+            background: #f0f2f6;
+            min-width: 70px;
+        }
+
+        table.matrix tbody th {
+            padding: 10px 12px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 15px;
+            color: #0a1e3a;
+            background: #f7f9fc;
+            border-bottom: 1px solid #eef2f7;
+            white-space: nowrap;
+            min-width: 60px;
+        }
+
+        table.matrix tbody th .sub {
+            font-weight: 400;
+            font-size: 12px;
+            color: #7a8fa3;
+            display: block;
+        }
+
+        table.matrix tbody td {
+            padding: 6px 4px;
+            text-align: center;
+            border-bottom: 1px solid #eef2f7;
+            border-right: 1px solid #f0f2f6;
+            vertical-align: top;
+            min-width: 170px;
+        }
+        table.matrix tbody td:last-child { border-right: none; }
+
+        /* ===== 单元格内部：三个位置块 ===== */
+        .pos-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 5px 3px;
+            margin: 2px 0;
+            border-radius: 8px;
+            transition: all 0.25s ease;
+            cursor: default;
+            background: #fafbfd;
+            border: 1px solid transparent;
+        }
+
+        .pos-block .pos-label {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 1px 10px;
+            border-radius: 20px;
+            margin-bottom: 2px;
+            background: #eef2f7;
+            color: #4a5b6e;
+        }
+
+        .pos-block .pos-label.low  { background: #e8f5ee; color: #0d6e3a; }
+        .pos-block .pos-label.mid  { background: #fef3e0; color: #a8650b; }
+        .pos-block .pos-label.high { background: #fde8e8; color: #b22234; }
+
+        .pos-block .dec-badge {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 1px 10px;
+            border-radius: 20px;
+            margin: 2px 0;
+            white-space: nowrap;
+        }
+
+        .dec-badge.green { background: #d9f0e1; color: #0a5e2e; }
+        .dec-badge.yellow { background: #fef0d0; color: #8a6300; }
+        .dec-badge.orange { background: #fde8c8; color: #b85c0a; }
+        .dec-badge.red { background: #fde2e2; color: #b22234; }
+        .dec-badge.gray { background: #eaeef5; color: #3d5575; }
+
+        .pos-block .meaning-short {
+            font-size: 10px;
+            color: #1f3a5e;
+            line-height: 1.2;
+            margin-top: 1px;
+        }
+
+        .pos-block .meaning-short small {
+            display: block;
+            font-size: 9px;
+            color: #7a8fa3;
+        }
+
+        /* ---- 筛选显示状态 ---- */
+        .pos-block.matched {
+            background: #ffffff;
+            border-color: #d0d9e8;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+
+        .pos-block.matched.highlight-green { border-color: #1a9e5c; background: #f0faf4; }
+        .pos-block.matched.highlight-yellow { border-color: #e6a020; background: #fefaf0; }
+        .pos-block.matched.highlight-orange { border-color: #d97a2b; background: #fef5ea; }
+        .pos-block.matched.highlight-red { border-color: #d14c4c; background: #fdf0ef; }
+        .pos-block.matched.highlight-gray { border-color: #aab8c9; background: #f5f7fa; }
+
+        .pos-block.hidden {
+            opacity: 0.2;
+            filter: grayscale(0.9);
+            pointer-events: none;
+        }
+
+        /* ===== 详情面板 ===== */
+        .detail-panel {
+            background: #f7f9fc;
+            border-top: 2px solid #e6ecf3;
+            padding: 14px 20px 18px;
+            transition: all 0.3s;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .detail-panel .detail-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #0a1e3a;
+            margin-bottom: 2px;
+        }
+
+        .detail-panel .detail-sub {
+            font-size: 13px;
+            color: #5a7a8e;
+            margin-bottom: 12px;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 12px;
+        }
+
+        .detail-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 12px 16px;
+            border: 1px solid #eef2f7;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .detail-card:hover {
+            border-color: #c8d2e0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        }
+
+        .detail-card .dc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3px;
+        }
+
+        .detail-card .dc-combo {
+            font-weight: 700;
+            font-size: 13px;
+            color: #0a1e3a;
+        }
+
+        .detail-card .dc-pos {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 12px;
+            border-radius: 40px;
+            background: #eef2f7;
+            color: #3d5575;
+        }
+        .detail-card .dc-pos.low  { background: #e8f5ee; color: #0d6e3a; }
+        .detail-card .dc-pos.mid  { background: #fef3e0; color: #a8650b; }
+        .detail-card .dc-pos.high { background: #fde8e8; color: #b22234; }
+
+        .detail-card .dc-meaning {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1f3a5e;
+            margin: 3px 0 2px;
+        }
+
+        .detail-card .dc-reason {
+            font-size: 12px;
+            color: #4a5b6e;
+            line-height: 1.5;
+            margin: 2px 0 5px;
+        }
+
+        .detail-card .dc-action {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 2px 14px;
+            border-radius: 40px;
+            background: #eef2f7;
+            color: #1f3a5e;
+        }
+
+        .detail-card .dc-action.green { background: #d9f0e1; color: #0a5e2e; }
+        .detail-card .dc-action.yellow { background: #fef0d0; color: #8a6300; }
+        .detail-card .dc-action.orange { background: #fde8c8; color: #b85c0a; }
+        .detail-card .dc-action.red { background: #fde2e2; color: #b22234; }
+        .detail-card .dc-action.gray { background: #eaeef5; color: #3d5575; }
+
+        .no-match {
+            padding: 30px 0;
+            text-align: center;
+            color: #8a9bb0;
+            font-size: 14px;
+        }
+
+        /* ===== 底部快捷口诀 ===== */
+        .footer-bar {
+            margin-top: 16px;
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 12px 24px;
+            border: 1px solid #eef2f7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px 16px;
+        }
+
+        .footer-bar .item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1f3a5e;
+        }
+
+        .footer-bar .item .dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .footer-bar .item .desc {
+            font-weight: 400;
+            color: #5a7a8e;
+            font-size: 12px;
+        }
+
+        /* ===== 临时高亮 ===== */
+        .pos-block.temp-highlight {
+            animation: flash-highlight 0.8s ease 3;
+            border-color: #1a4cff !important;
+            box-shadow: 0 0 20px rgba(26,76,255,0.3) !important;
+        }
+        @keyframes flash-highlight {
+            0% { background: #ffffff; }
+            50% { background: #dce6ff; }
+            100% { background: #ffffff; }
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 860px) {
+            .header h1 { font-size: 20px; }
+            .header .tag { font-size: 11px; padding: 4px 12px; }
+            .filter-bar { padding: 8px 14px; }
+            .filter-row { gap: 4px 8px; }
+            .filter-row .label { font-size: 12px; min-width: 44px; }
+            .filter-btn { font-size: 11px; padding: 3px 10px; }
+            .filter-btn .badge-count { font-size: 9px; padding: 0 6px; }
+            .filter-divider { display: none; }
+            table.matrix { font-size: 12px; min-width: 600px; }
+            table.matrix thead th { padding: 8px 6px; font-size: 13px; }
+            table.matrix tbody th { padding: 6px 6px; font-size: 13px; }
+            table.matrix tbody td { padding: 4px 2px; min-width: 120px; }
+            .pos-block { padding: 4px 2px; }
+            .pos-block .dec-badge { font-size: 9px; padding: 1px 8px; }
+            .pos-block .meaning-short { font-size: 9px; }
+            .pos-block .pos-label { font-size: 9px; padding: 1px 8px; }
+            .detail-panel { padding: 10px 14px; }
+            .detail-grid { grid-template-columns: 1fr; }
+            .footer-bar { flex-direction: column; align-items: flex-start; gap: 4px; padding: 10px 16px; }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 10px 6px; }
+            .header h1 { font-size: 17px; }
+            .header h1 small { display: block; font-size: 11px; margin-left: 0; }
+            .filter-btn { font-size: 10px; padding: 2px 8px; }
+            .filter-btn .dot { width: 10px; height: 10px; }
+            .filter-row .label { font-size: 11px; min-width: 38px; }
+            .detail-card { padding: 10px 12px; }
+            .detail-card .dc-combo { font-size: 12px; }
+            .detail-card .dc-meaning { font-size: 12px; }
+            .detail-card .dc-reason { font-size: 11px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- ===== 头部 ===== -->
+    <div class="header">
+        <h1>
+            📊 量价位置 · 四维决策矩阵
+            <small>情况 · 位置 · 量 · 价</small>
+        </h1>
+        <div class="tag">📏 放量标准：比前5日均量 <strong>+30%</strong></div>
+    </div>
+
+    <!-- ===== 四行筛选栏 ===== -->
+    <div class="filter-bar" id="filterBar">
+
+        <!-- 第一行：情况筛选 -->
+        <div class="filter-row filter-row-grade">
+            <span class="label">📌 情况</span>
+            <button class="filter-btn active" data-type="grade" data-value="all">
+                <span class="dot" style="background:#6b7f96;"></span> 全部
+                <span class="badge-count">27</span>
+            </button>
+            <button class="filter-btn" data-type="grade" data-value="green">
+                <span class="dot" style="background:#1a9e5c;"></span> 机会
+                <span class="badge-count">0</span>
+            </button>
+            <button class="filter-btn" data-type="grade" data-value="yellow">
+                <span class="dot" style="background:#e6a020;"></span> 谨慎
+                <span class="badge-count">0</span>
+            </button>
+            <button class="filter-btn" data-type="grade" data-value="orange">
+                <span class="dot" style="background:#d97a2b;"></span> 警惕
+                <span class="badge-count">0</span>
+            </button>
+            <button class="filter-btn" data-type="grade" data-value="red">
+                <span class="dot" style="background:#d14c4c;"></span> 危险
+                <span class="badge-count">0</span>
+            </button>
+            <button class="filter-btn" data-type="grade" data-value="gray">
+                <span class="dot" style="background:#aab8c9;"></span> 观望
+                <span class="badge-count">0</span>
+            </button>
+        </div>
+
+        <!-- 第二行：位置筛选 -->
+        <div class="filter-row filter-row-pos">
+            <span class="label">📍 位置</span>
+            <button class="filter-btn active" data-type="pos" data-value="all">
+                <span class="dot-round" style="background:#6b7f96;"></span> 全部
+                <span class="badge-count">27</span>
+            </button>
+            <button class="filter-btn" data-type="pos" data-value="low">
+                <span class="dot-round low"></span> 低位
+                <span class="badge-count">0</span>
+            </button>
+            <button class="filter-btn" data-type="pos" data-value="mid">
+                <span class="dot-round mid"></span> 中位
+                <span class="badge-count">0</span>
+            </button>
+            <button class="filter-btn" data-type="pos" data-value="high">
+                <span class="dot-round high"></span> 高位
+                <span class="badge-count">0</span>
+            </button>
+        </div>
+
+        <!-- 第三行：量筛选 -->
+        <div class="filter-row filter-row-volume">
+            <span class="label">📊 量</span>
+            <button class="filter-btn active" data-type="volume" data-value="all">
+                <span class="dot" style="background:#4a7ab5;"></span> 全部
+                <span class="badge-count">27</span>
+            </button>
+            <button class="filter-btn" data-type="volume" data-value="up">
+                <span class="dot" style="background:#0059b3;"></span> 量增
+                <span class="badge-count">0</span>
+            </button>
+            <button class="filter-btn" data-type="volume" data-value="flat">
+                <span class="dot" style="background:#7a8fa3;"></span> 量平
+                <span class="badge-count">0</span>
+            </button>
+            <button class="filter-btn" data-type="volume" data-value="down">
+                <span class="dot" style="background:#8a5a7a;"></span> 量减
+                <span class="badge-count">0</span>
+            </button>
+        </div>
+
+        <!-- 第四行：价筛选 -->
+        <div class="filter-row filter-row-price">
+            <span class="label">💰 价</span>
+            <button class="filter-btn active" data-type="price" data-value="all">
+                <span class="dot" style="background:#b57a4a;"></span> 全部
+                <span class="badge-count">27</span>
+            </button>
+            <button class="filter-btn" data-type="price" data-value="up">
+                <span class="dot" style="background:#0d7a3e;"></span> 价增
+                <span class="badge-count">0</span>
+            </button>
+            <button class="filter-btn" data-type="price" data-value="flat">
+                <span class="dot" style="background:#9a8a6a;"></span> 价平
+                <span class="badge-count">0</span>
+            </button>
+            <button class="filter-btn" data-type="price" data-value="down">
+                <span class="dot" style="background:#b22234;"></span> 价减
+                <span class="badge-count">0</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== 矩阵 ===== -->
+    <div class="matrix-wrapper">
+        <div class="matrix-scroll">
+            <table class="matrix" id="matrixTable">
+                <thead>
+                    <tr>
+                        <th>量 \\ 价</th>
+                        <th>价 ↑ 增 <span class="sub">价格上涨</span></th>
+                        <th>价 → 平 <span class="sub">价格横盘</span></th>
+                        <th>价 ↓ 减 <span class="sub">价格下跌</span></th>
+                    </tr>
+                </thead>
+                <tbody id="matrixBody">
+                    <!-- 由JS动态生成 -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ===== 详情面板 ===== -->
+        <div class="detail-panel" id="detailPanel">
+            <div class="detail-title" id="detailTitle">📋 组合详解</div>
+            <div class="detail-sub" id="detailSub">使用顶部四维筛选，精准定位任意量价组合</div>
+            <div id="detailGridContainer">
+                <div class="detail-grid" id="detailGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 底部口诀 ===== -->
+    <div class="footer-bar">
+        <div class="item"><span class="dot" style="background:#1a9e5c;"></span> 低位放量点火 <span class="desc">→ 试错</span></div>
+        <div class="item"><span class="dot" style="background:#e6a020;"></span> 中位放量加速 <span class="desc">→ 持仓</span></div>
+        <div class="item"><span class="dot" style="background:#d14c4c;"></span> 高位放量滞涨/背离 <span class="desc">→ 清仓</span></div>
+        <div class="item"><span class="dot" style="background:#aab8c9;"></span> 缩量阴跌 <span class="desc">→ 空仓</span></div>
+        <div style="font-size:12px;color:#7a8fa3;">量↑增 · 量→平 · 量↓减 &nbsp;|&nbsp; 价↑增 · 价→平 · 价↓减</div>
+    </div>
+
+</div>
+
+<script>
+    // ============================================================
+    // 1. 数据定义
+    // ============================================================
+    const detailData = {
+        'vol-up-price-up': {
+            label: '量↑ 价↑ · 量价齐升',
+            vol: 'up',
+            price: 'up',
+            positions: {
+                low: { color: 'green', badge: '机会', meaning: '主力点火 · 启动信号', action: '✅ 试错进场',
+                    reason: '低位放量上涨，说明有增量资金真金白银在抢筹。这是右侧交易的第一进场点，配合站上5日线即可用两成仓试错。' },
+                mid: { color: 'green', badge: '机会', meaning: '主升浪加速 · 趋势健康', action: '📦 持仓 / 加仓',
+                    reason: '中位放量上涨，量价配合良好，趋势在延续。移动止盈设在5日线，让利润奔跑。' },
+                high: { color: 'orange', badge: '警惕', meaning: '赶顶 · 最后的疯狂', action: '🔻 逐步减仓',
+                    reason: '高位放量上涨，可能是主力拉高出货的最后阶段。虽然还在涨，但风险收益比已经不合适，应该逐步减仓锁定利润。' }
+            }
+        },
+        'vol-up-price-flat': {
+            label: '量↑ 价→ · 放量滞涨',
+            vol: 'up',
+            price: 'flat',
+            positions: {
+                low: { color: 'yellow', badge: '谨慎', meaning: '吸筹 / 试盘', action: '👀 观察',
+                    reason: '低位放量但不涨，可能是主力在吸筹或试盘。需要观察后续几天是否出现放量阳线突破，否则可能是试盘失败。' },
+                mid: { color: 'orange', badge: '警惕', meaning: '主力对倒 · 抛压显现', action: '🔻 减半仓',
+                    reason: '中位放量滞涨，说明上方抛压很大，主力可能在用对倒手法出货。筹码开始松动，应该减仓保护利润。' },
+                high: { color: 'red', badge: '危险', meaning: '主力出货 · 骗炮', action: '🚨 清仓离场',
+                    reason: '高位放量不涨，是最经典的出货信号。主力在用大单托住股价，小单偷偷卖出。必须立即清仓，不要有任何幻想。' }
+            }
+        },
+        'vol-up-price-down': {
+            label: '量↑ 价↓ · 放量下跌',
+            vol: 'up',
+            price: 'down',
+            positions: {
+                low: { color: 'orange', badge: '警惕', meaning: '恐慌杀跌 · 可能最后一跌', action: '👀 等待企稳',
+                    reason: '低位放量下跌，通常是恐慌盘在涌出。可能是最后一跌，但不要急着抄底，等出现放量阳线企稳信号再说。' },
+                mid: { color: 'red', badge: '危险', meaning: '主力出货 · 趋势走坏', action: '🚨 离场观望',
+                    reason: '中位放量下跌，说明主力在加速出货，趋势已经被破坏。不要犹豫，立即离场。' },
+                high: { color: 'red', badge: '危险', meaning: '踩踏出货 · 飞刀落地', action: '❌ 坚决不抄底',
+                    reason: '高位放量暴跌，是主力踩踏出逃的明确信号。暴跌之后还有阴跌，千万不要去接飞刀。' }
+            }
+        },
+        'vol-flat-price-up': {
+            label: '量→ 价↑ · 平量上涨',
+            vol: 'flat',
+            price: 'up',
+            positions: {
+                low: { color: 'gray', badge: '观望', meaning: '无量反弹 · 动力不足', action: '⛔ 不追',
+                    reason: '低位平量上涨，没有新增资金进场，只是抛压暂时减轻。这种反弹大概率是一日游，追进去容易被套。' },
+                mid: { color: 'yellow', badge: '谨慎', meaning: '存量博弈 · 动力不足', action: '⚠️ 警惕',
+                    reason: '中位平量上涨，说明没有新增资金，只是存量资金在博弈。上涨持续性存疑，不要轻易加仓。' },
+                high: { color: 'red', badge: '危险', meaning: '无量续涨 · 买盘衰竭', action: '🚨 清仓离场',
+                    reason: '高位平量上涨，是典型的买盘衰竭信号。没有新的资金愿意在高位接盘，随时可能变盘向下。' }
+            }
+        },
+        'vol-flat-price-flat': {
+            label: '量→ 价→ · 量价平衡',
+            vol: 'flat',
+            price: 'flat',
+            positions: {
+                low: { color: 'gray', badge: '观望', meaning: '筑底横盘 · 方向待选', action: '👀 等待方向',
+                    reason: '低位缩量横盘，多空双方都在观望。这是筑底的常见形态，但需要等待放量突破方向才能确认。' },
+                mid: { color: 'gray', badge: '观望', meaning: '中位横盘 · 方向选择', action: '📦 持有观察',
+                    reason: '中位横盘，可能是上涨中继，也可能是顶部。以持有观察为主，等待放量选择方向。' },
+                high: { color: 'orange', badge: '警惕', meaning: '高位横盘 · 变盘在即', action: '⚠️ 警惕',
+                    reason: '高位横盘，说明多空在高位达成暂时平衡。但这种平衡很脆弱，一旦向下突破，就是大跌。要提高警惕。' }
+            }
+        },
+        'vol-flat-price-down': {
+            label: '量→ 价↓ · 平量下跌',
+            vol: 'flat',
+            price: 'down',
+            positions: {
+                low: { color: 'gray', badge: '观望', meaning: '阴跌 · 温水煮青蛙', action: '⛔ 空仓',
+                    reason: '低位平量下跌，是典型的阴跌走势。没有人愿意接盘，每天跌一点，非常磨人。不要抄底，等放量信号。' },
+                mid: { color: 'orange', badge: '警惕', meaning: '趋势走弱 · 筹码松动', action: '🔻 减仓',
+                    reason: '中位平量下跌，说明趋势在走弱，筹码开始松动。应该减仓，保护已有利润。' },
+                high: { color: 'red', badge: '危险', meaning: '高位阴跌 · 趋势逆转', action: '🚨 清仓离场',
+                    reason: '高位平量下跌，是趋势逆转的明确信号。不要抱有幻想，立即清仓离场。' }
+            }
+        },
+        'vol-down-price-up': {
+            label: '量↓ 价↑ · 缩量上涨（背离）',
+            vol: 'down',
+            price: 'up',
+            positions: {
+                low: { color: 'red', badge: '危险', meaning: '量价背离 · 诱多陷阱', action: '⛔ 不碰',
+                    reason: '低位缩量上涨，是最典型的诱多陷阱。没有资金跟进，上涨不可持续，追进去就是接盘。' },
+                mid: { color: 'red', badge: '危险', meaning: '量价背离 · 买盘枯竭', action: '🚨 减仓',
+                    reason: '中位缩量上涨，说明买盘在衰竭。这是赶顶的信号，应该减仓，不要被上涨迷惑。' },
+                high: { color: 'red', badge: '危险', meaning: '经典背离 · A杀前兆', action: '🚨 坚决清仓',
+                    reason: '高位缩量上涨，是量价背离最危险的形式。这是A杀的前兆，必须坚决清仓，不要有任何犹豫。' }
+            }
+        },
+        'vol-down-price-flat': {
+            label: '量↓ 价→ · 缩量横盘',
+            vol: 'down',
+            price: 'flat',
+            positions: {
+                low: { color: 'gray', badge: '观望', meaning: '地量横盘 · 可能见底', action: '👀 等待放量',
+                    reason: '低位缩量横盘，说明抛压已经释放得差不多了，但买盘也没有进来。地量见地价，但需要放量阳线确认底部。' },
+                mid: { color: 'gray', badge: '观望', meaning: '缩量横盘 · 洗盘或变盘', action: '📦 持有观察',
+                    reason: '中位缩量横盘，可能是洗盘，也可能是变盘前兆。以持有观察为主，等待放量选择方向。' },
+                high: { color: 'red', badge: '危险', meaning: '高位缩量横盘 · 买盘枯竭', action: '🚨 清仓离场',
+                    reason: '高位缩量横盘，说明买盘已经完全枯竭。没有人愿意在高位接盘，随时可能向下变盘。' }
+            }
+        },
+        'vol-down-price-down': {
+            label: '量↓ 价↓ · 缩量下跌',
+            vol: 'down',
+            price: 'down',
+            positions: {
+                low: { color: 'gray', badge: '观望', meaning: '缩量阴跌 · 无人接盘', action: '⛔ 空仓',
+                    reason: '低位缩量下跌，是最磨人的走势。没有人愿意买，价格持续往下掉。不要抄底，等放量信号。' },
+                mid: { color: 'red', badge: '危险', meaning: '趋势确认向下', action: '🚨 离场',
+                    reason: '中位缩量下跌，确认了趋势已经向下。不要犹豫，立即离场，保住本金。' },
+                high: { color: 'red', badge: '危险', meaning: '阴跌不止 · 价值毁灭', action: '🚨 坚决清仓',
+                    reason: '高位缩量下跌，是最可怕的走势。没有买盘承接，股价会持续阴跌，跌到你怀疑人生。必须坚决清仓。' }
+            }
+        }
+    };
+
+    // ============================================================
+    // 2. 辅助数据
+    // ============================================================
+    const rowKeys = ['vol-up', 'vol-flat', 'vol-down'];
+    const colKeys = ['price-up', 'price-flat', 'price-down'];
+    const rowLabels = { 'vol-up': '量 ↑ 增', 'vol-flat': '量 → 平', 'vol-down': '量 ↓ 减' };
+    const rowVolMap = { 'vol-up': 'up', 'vol-flat': 'flat', 'vol-down': 'down' };
+    const colPriceMap = { 'price-up': 'up', 'price-flat': 'flat', 'price-down': 'down' };
+    const posList = ['low', 'mid', 'high'];
+    const posName = { low: '低位', mid: '中位', high: '高位' };
+    const volName = { up: '量增', flat: '量平', down: '量减' };
+    const priceName = { up: '价增', flat: '价平', down: '价减' };
+
+    // ============================================================
+    // 3. 统计
+    // ============================================================
+    function countAll() {
+        const counts = {
+            grade: { green: 0, yellow: 0, orange: 0, red: 0, gray: 0 },
+            pos: { low: 0, mid: 0, high: 0 },
+            volume: { up: 0, flat: 0, down: 0 },
+            price: { up: 0, flat: 0, down: 0 }
+        };
+        for (const row of rowKeys) {
+            for (const col of colKeys) {
+                const key = row + '-' + col;
+                const data = detailData[key];
+                if (!data) continue;
+                const vol = data.vol;
+                const p = data.price;
+                for (const pos of posList) {
+                    const info = data.positions[pos];
+                    if (info && info.color) {
+                        counts.grade[info.color] = (counts.grade[info.color] || 0) + 1;
+                        counts.pos[pos] = (counts.pos[pos] || 0) + 1;
+                        counts.volume[vol] = (counts.volume[vol] || 0) + 1;
+                        counts.price[p] = (counts.price[p] || 0) + 1;
+                    }
+                }
+            }
+        }
+        return counts;
+    }
+    const totalCounts = countAll();
+
+    function updateBadgeCounts() {
+        document.querySelectorAll('.filter-btn[data-type="grade"]').forEach(btn => {
+            const val = btn.dataset.value;
+            if (val === 'all') btn.querySelector('.badge-count').textContent = '27';
+            else btn.querySelector('.badge-count').textContent = totalCounts.grade[val] || 0;
+        });
+        document.querySelectorAll('.filter-btn[data-type="pos"]').forEach(btn => {
+            const val = btn.dataset.value;
+            if (val === 'all') btn.querySelector('.badge-count').textContent = '27';
+            else btn.querySelector('.badge-count').textContent = totalCounts.pos[val] || 0;
+        });
+        document.querySelectorAll('.filter-btn[data-type="volume"]').forEach(btn => {
+            const val = btn.dataset.value;
+            if (val === 'all') btn.querySelector('.badge-count').textContent = '27';
+            else btn.querySelector('.badge-count').textContent = totalCounts.volume[val] || 0;
+        });
+        document.querySelectorAll('.filter-btn[data-type="price"]').forEach(btn => {
+            const val = btn.dataset.value;
+            if (val === 'all') btn.querySelector('.badge-count').textContent = '27';
+            else btn.querySelector('.badge-count').textContent = totalCounts.price[val] || 0;
+        });
+    }
+
+    // ============================================================
+    // 4. 构建矩阵
+    // ============================================================
+    const matrixBody = document.getElementById('matrixBody');
+
+    function buildMatrix() {
+        matrixBody.innerHTML = '';
+        for (const row of rowKeys) {
+            const tr = document.createElement('tr');
+            const th = document.createElement('th');
+            const volLabel = row === 'vol-up' ? '放量' : row === 'vol-flat' ? '平量' : '缩量';
+            th.innerHTML = `${rowLabels[row]} <span class="sub">${volLabel}</span>`;
+            tr.appendChild(th);
+
+            for (const col of colKeys) {
+                const td = document.createElement('td');
+                const key = row + '-' + col;
+                td.dataset.key = key;
+                const data = detailData[key];
+                if (data) {
+                    for (const pos of posList) {
+                        const info = data.positions[pos];
+                        if (!info) continue;
+                        const block = document.createElement('div');
+                        block.className = 'pos-block';
+                        block.dataset.grade = info.color;
+                        block.dataset.pos = pos;
+                        block.dataset.key = key;
+                        block.dataset.vol = data.vol;
+                        block.dataset.price = data.price;
+
+                        const label = document.createElement('div');
+                        label.className = `pos-label ${pos}`;
+                        label.textContent = posName[pos];
+                        block.appendChild(label);
+
+                        const badge = document.createElement('div');
+                        badge.className = `dec-badge ${info.color}`;
+                        badge.textContent = info.badge;
+                        block.appendChild(badge);
+
+                        const meaning = document.createElement('div');
+                        meaning.className = 'meaning-short';
+                        meaning.innerHTML = `${info.meaning} <small>${info.action}</small>`;
+                        block.appendChild(meaning);
+
+                        td.appendChild(block);
+                    }
+                } else {
+                    td.textContent = '—';
+                }
+                tr.appendChild(td);
+            }
+            matrixBody.appendChild(tr);
+        }
+    }
+    buildMatrix();
+    updateBadgeCounts();
+
+    // ============================================================
+    // 5. 四维筛选逻辑
+    // ============================================================
+    const filterState = {
+        grade: 'all',
+        pos: 'all',
+        volume: 'all',
+        price: 'all'
+    };
+
+    const detailGrid = document.getElementById('detailGrid');
+    const detailTitle = document.getElementById('detailTitle');
+    const detailSub = document.getElementById('detailSub');
+
+    function getFilteredBlocks() {
+        const blocks = document.querySelectorAll('.pos-block');
+        const result = [];
+        blocks.forEach(block => {
+            const grade = block.dataset.grade;
+            const pos = block.dataset.pos;
+            const vol = block.dataset.vol;
+            const price = block.dataset.price;
+            const matchGrade = (filterState.grade === 'all' || grade === filterState.grade);
+            const matchPos = (filterState.pos === 'all' || pos === filterState.pos);
+            const matchVol = (filterState.volume === 'all' || vol === filterState.volume);
+            const matchPrice = (filterState.price === 'all' || price === filterState.price);
+            if (matchGrade && matchPos && matchVol && matchPrice) {
+                result.push(block);
+            }
+        });
+        return result;
+    }
+
+    function getFilteredDetails() {
+        const matches = [];
+        for (const row of rowKeys) {
+            for (const col of colKeys) {
+                const key = row + '-' + col;
+                const data = detailData[key];
+                if (!data) continue;
+                const vol = data.vol;
+                const p = data.price;
+                const matchVol = (filterState.volume === 'all' || vol === filterState.volume);
+                const matchPrice = (filterState.price === 'all' || p === filterState.price);
+                if (!matchVol || !matchPrice) continue;
+                for (const pos of posList) {
+                    const info = data.positions[pos];
+                    if (!info) continue;
+                    const matchGrade = (filterState.grade === 'all' || info.color === filterState.grade);
+                    const matchPos = (filterState.pos === 'all' || pos === filterState.pos);
+                    if (matchGrade && matchPos) {
+                        matches.push({
+                            key: key,
+                            pos: pos,
+                            label: data.label,
+                            vol: vol,
+                            price: p,
+                            ...info
+                        });
+                    }
+                }
+            }
+        }
+        return matches;
+    }
+
+    function renderFilter() {
+        // 更新按钮状态
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            const type = btn.dataset.type;
+            const val = btn.dataset.value;
+            btn.classList.toggle('active', filterState[type] === val);
+        });
+
+        // 更新矩阵
+        const allBlocks = document.querySelectorAll('.pos-block');
+        const matchedBlocks = getFilteredBlocks();
+        const matchedSet = new Set(matchedBlocks);
+
+        allBlocks.forEach(block => {
+            const isMatch = matchedSet.has(block);
+            block.classList.toggle('hidden', !isMatch);
+            block.classList.toggle('matched', isMatch);
+            if (isMatch) {
+                block.className = block.className
+                    .replace(/highlight-\w+/g, '')
+                    .trim();
+                block.classList.add('highlight-' + block.dataset.grade);
+            }
+        });
+
+        // 更新详情
+        const details = getFilteredDetails();
+        const gradeName = {
+            green: '机会', yellow: '谨慎', orange: '警惕', red: '危险', gray: '观望'
+        };
+
+        let parts = [];
+        if (filterState.grade !== 'all') parts.push(gradeName[filterState.grade] || filterState.grade);
+        if (filterState.pos !== 'all') parts.push(posName[filterState.pos]);
+        if (filterState.volume !== 'all') parts.push(volName[filterState.volume]);
+        if (filterState.price !== 'all') parts.push(priceName[filterState.price]);
+
+        if (parts.length === 0) {
+            detailTitle.textContent = '📋 全部组合';
+            detailSub.textContent = '显示所有量价×位置的完整决策';
+        } else {
+            detailTitle.textContent = `📋 ${parts.join(' · ')} · 共 ${details.length} 个组合`;
+            detailSub.textContent = `同时满足「${parts.join('」和「')}」条件，点击卡片定位到矩阵对应位置。`;
+        }
+
+        renderDetailCards(details);
+    }
+
+    function renderDetailCards(list) {
+        if (!list || list.length === 0) {
+            detailGrid.innerHTML = `<div class="no-match">暂无匹配的组合</div>`;
+            return;
+        }
+
+        let html = '';
+        list.forEach(item => {
+            const posClass = item.pos;
+            const actionClass = item.color;
+            const volIcon = item.vol === 'up' ? '↑' : item.vol === 'down' ? '↓' : '→';
+            const priceIcon = item.price === 'up' ? '↑' : item.price === 'down' ? '↓' : '→';
+            html += `
+                <div class="detail-card" data-key="${item.key}" data-pos="${item.pos}">
+                    <div class="dc-header">
+                        <span class="dc-combo">${item.label}</span>
+                        <span class="dc-pos ${posClass}">${posName[item.pos]}</span>
+                    </div>
+                    <div class="dc-meaning">${item.meaning}</div>
+                    <div class="dc-reason">${item.reason}</div>
+                    <span class="dc-action ${actionClass}">${item.action}</span>
+                </div>
+            `;
+        });
+        detailGrid.innerHTML = html;
+
+        detailGrid.querySelectorAll('.detail-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const key = this.dataset.key;
+                const pos = this.dataset.pos;
+                const targetBlock = document.querySelector(`.pos-block[data-key="${key}"][data-pos="${pos}"]`);
+                if (targetBlock) {
+                    document.querySelectorAll('.pos-block.temp-highlight').forEach(el => el.classList.remove('temp-highlight'));
+                    targetBlock.classList.add('temp-highlight');
+                    targetBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    setTimeout(() => {
+                        targetBlock.classList.remove('temp-highlight');
+                    }, 2000);
+                }
+            });
+        });
+    }
+
+    // ============================================================
+    // 6. 事件绑定
+    // ============================================================
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const type = this.dataset.type;
+            const val = this.dataset.value;
+            filterState[type] = val;
+            renderFilter();
+        });
+    });
+
+    // ============================================================
+    // 7. 初始化
+    // ============================================================
+    renderFilter();
+
+    console.log('📊 量价位置 · 四维决策矩阵已加载！');
+    console.log('💡 四个维度：情况、位置、量、价，可自由组合筛选。');
+    console.log('💡 点击详情卡片可定位到矩阵对应位置。');
+</script>
+
+</body>
+</html>
