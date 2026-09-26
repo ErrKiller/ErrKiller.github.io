@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>情侣飞行棋</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    margin: 0; padding: 0;
+    height: 100%;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+    color: #fff;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-font-smoothing: antialiased;
+    background: #1a0b1f;
+    background-image: radial-gradient(circle at 50% 0%, #2d1030 0%, #1a0b1f 60%, #0d0511 100%);
+    background-attachment: fixed;
+  }
+
+  .app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* ---------- 顶部 ---------- */
+  .topbar {
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .turn-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(236,72,153,0.2), rgba(168,85,247,0.2));
+    border: 1px solid rgba(168,85,247,0.4);
+    font-size: 14px;
+    font-weight: 600;
+    transition: opacity 0.25s, background 0.25s, border-color 0.25s;
+  }
+  .turn-badge .emoji { font-size: 20px; line-height: 1; }
+  .turn-badge.p2 {
+    background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(168,85,247,0.2));
+    border-color: rgba(59,130,246,0.4);
+  }
+  .topbar-right {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .progress-info {
+    font-size: 11px;
+    opacity: 0.65;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    font-variant-numeric: tabular-nums;
+  }
+  .settings-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.06);
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.18s, transform 0.12s;
+    transform: translateZ(0);
+  }
+  .settings-btn:active {
+    background: rgba(255,255,255,0.15);
+    transform: scale(0.94) translateZ(0);
+  }
+
+  /* ---------- 棋盘 ---------- */
+  .board-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 10px;
+    min-height: 0;
+  }
+  .board {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    gap: 4px;
+    aspect-ratio: 10 / 6;
+    width: min(100%, 700px, calc((100dvh - 210px) * 10 / 6));
+    max-width: 700px;
+    transform: translateZ(0);
+  }
+
+  .cell {
+    position: relative;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    contain: layout paint style;
+    transition: transform 0.18s ease;
+  }
+  .cell::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.28),
+                inset 0 -1px 0 rgba(0,0,0,0.18);
+    pointer-events: none;
+  }
+  .cell.green  { background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%); }
+  .cell.yellow { background: linear-gradient(135deg, #facc15 0%, #eab308 100%); }
+  .cell.orange { background: linear-gradient(135deg, #fb923c 0%, #ea580c 100%); }
+  .cell.red    { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+  .cell.purple { background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%); }
+
+  .cell .num {
+    position: absolute;
+    top: 2px; left: 3px;
+    font-size: clamp(7px, 1.7vw, 10px);
+    font-weight: 700;
+    color: rgba(0,0,0,0.38);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- 棋子层（绝对定位 + GPU 动画） ---------- */
+  .piece-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+    overflow: visible;
+  }
+  .piece {
+    position: absolute;
+    top: 0; left: 0;
+    font-size: clamp(15px, 3.6vw, 24px);
+    line-height: 1;
+    transform: translate3d(0, 0, 0) translate(-50%, -50%);
+    transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+  .piece .inner {
+    display: block;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.55));
+    transition: filter 0.25s;
+    transform: translateZ(0);
+  }
+  .piece.active-piece .inner {
+    filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 10px rgba(255,255,255,0.55)) drop-shadow(0 2px 3px rgba(0,0,0,0.55));
+    animation: pulse 1.3s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1) translateZ(0); }
+    50%      { transform: scale(1.14) translateZ(0); }
+  }
+
+  /* ---------- 底部 ---------- */
+  .bottombar {
+    padding: 10px 20px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+  .dice {
+    font-size: 44px;
+    line-height: 1;
+    width: 60px;
+    text-align: center;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    filter: drop-shadow(0 4px 10px rgba(236,72,153,0.45));
+    will-change: transform;
+  }
+  .dice.rolling {
+    animation: dice-roll 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @keyframes dice-roll {
+    0%   { transform: rotate(0deg) scale(1) translateZ(0); }
+    40%  { transform: rotate(180deg) scale(1.18) translateZ(0); }
+    100% { transform: rotate(360deg) scale(1) translateZ(0); }
+  }
+
+  .roll-btn {
+    padding: 14px 44px;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    border: none;
+    border-radius: 30px;
+    background: linear-gradient(135deg, #ec4899, #a855f7);
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(236,72,153,0.42), inset 0 1px 0 rgba(255,255,255,0.22);
+    cursor: pointer;
+    font-family: inherit;
+    transform: translateZ(0);
+    transition: transform 0.12s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+    will-change: transform;
+  }
+  .roll-btn:active {
+    transform: scale(0.955) translateZ(0);
+    box-shadow: 0 4px 14px rgba(236,72,153,0.5), inset 0 1px 0 rgba(255,255,255,0.22);
+  }
+  .roll-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  /* ---------- 弹窗 ---------- */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 3, 12, 0.82);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.28s ease;
+    will-change: opacity;
+  }
+  .modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .modal {
+    background: linear-gradient(160deg, rgba(60,20,70,0.98), rgba(30,10,40,0.98));
+    border: 1px solid rgba(168,85,247,0.38);
+    border-radius: 24px;
+    padding: 30px 26px 24px;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    transform: translate3d(0, 22px, 0) scale(0.96);
+    transition: transform 0.34s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 20px 60px rgba(168,85,247,0.28);
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+  .modal-overlay.active .modal {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  .modal-player {
+    font-size: 15px;
+    opacity: 0.85;
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+  .modal-task {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.5;
+    margin-bottom: 24px;
+    padding: 16px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    word-break: break-word;
+  }
+
+  .timer-wrap {
+    width: 80px; height: 80px;
+    margin: 0 auto 20px;
+    position: relative;
+    display: none;
+  }
+  .timer-wrap.active { display: block; }
+  .timer-wrap svg { width: 100%; height: 100%; display: block; }
+  .timer-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 12px;
+  }
+  .modal-actions button {
+    flex: 1;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    font-family: inherit;
+    transform: translateZ(0);
+    transition: transform 0.12s ease, filter 0.15s ease;
+    will-change: transform;
+  }
+  .modal-actions button:active { transform: scale(0.955) translateZ(0); }
+  .btn-primary {
+    background: linear-gradient(135deg, #ec4899, #a855f7);
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(236,72,153,0.38);
+  }
+  .btn-secondary {
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.15) !important;
+  }
+
+  /* ---------- 设置面板 ---------- */
+  .settings-panel {
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 3, 12, 0.88);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.28s ease;
+    will-change: opacity;
+  }
+  .settings-panel.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .settings-box {
+    background: linear-gradient(160deg, rgba(60,20,70,0.98), rgba(30,10,40,0.98));
+    border: 1px solid rgba(168,85,247,0.38);
+    border-radius: 24px;
+    padding: 26px 22px;
+    max-width: 400px;
+    width: 100%;
+    transform: translate3d(0, 22px, 0) scale(0.96);
+    transition: transform 0.34s cubic-bezier(0.34, 1.56, 0.64, 1);
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+  .settings-panel.active .settings-box {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  .settings-box h2 {
+    font-size: 20px;
+    margin: 0 0 20px;
+    text-align: center;
+    font-weight: 700;
+  }
+  .setting-item { margin-bottom: 20px; }
+  .setting-item > label {
+    display: block;
+    font-size: 13px;
+    opacity: 0.75;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .setting-item input[type="text"] {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.06);
+    color: #fff;
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .setting-item input[type="text"]:focus {
+    border-color: rgba(236,72,153,0.6);
+  }
+  .scale-toggle {
+    display: flex;
+    gap: 8px;
+    background: rgba(0,0,0,0.3);
+    padding: 4px;
+    border-radius: 12px;
+  }
+  .scale-toggle button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: rgba(255,255,255,0.6);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s, color 0.2s;
+  }
+  .scale-toggle button.active {
+    background: linear-gradient(135deg, #ec4899, #a855f7);
+    color: #fff;
+  }
+  .switch-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .switch-row > label { margin: 0 !important; }
+  .switch {
+    position: relative;
+    width: 48px; height: 28px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.15);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.22s;
+    transform: translateZ(0);
+  }
+  .switch.on { background: linear-gradient(135deg, #ec4899, #a855f7); }
+  .switch::after {
+    content: '';
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.32);
+    transform: translate3d(0, 0, 0);
+    transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+  }
+  .switch.on::after { transform: translate3d(20px, 0, 0); }
+
+  /* 胜利 */
+  .win-emoji { font-size: 60px; margin-bottom: 16px; line-height: 1; }
+  .win-title { font-size: 24px; font-weight: 700; margin-bottom: 10px; }
+  .win-desc { font-size: 15px; opacity: 0.8; line-height: 1.6; }
+
+  @media (min-width: 640px) {
+    .cell .num { font-size: 10px; }
+    .piece { font-size: 24px; }
+    .modal-task { font-size: 24px; }
+    .roll-btn { padding: 16px 52px; font-size: 18px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .piece, .modal, .settings-box, .dice, .roll-btn { transition-duration: 0.01ms !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="turn-badge" id="turnBadge">
+      <span class="emoji" id="turnEmoji">🦊</span>
+      <span id="turnName">宝贝</span>
+    </div>
+    <div class="topbar-right">
+      <div class="progress-info" id="progressInfo">1 · 4 / 60</div>
+      <button class="settings-btn" id="settingsBtn" aria-label="设置">⚙</button>
+    </div>
+  </div>
+
+  <div class="board-wrap">
+    <div class="board" id="board"></div>
+  </div>
+
+  <div class="bottombar">
+    <div class="dice" id="dice">⚀</div>
+    <button class="roll-btn" id="rollBtn">掷 骰 子</button>
+  </div>
+</div>
+
+<!-- 任务弹窗 -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-player" id="modalPlayer"></div>
+    <div class="modal-task" id="modalTask"></div>
+    <div class="timer-wrap" id="timerWrap">
+      <svg viewBox="0 0 60 60">
+        <circle cx="30" cy="30" r="26" stroke="rgba(255,255,255,0.1)" stroke-width="4" fill="none"/>
+        <circle cx="30" cy="30" r="26" stroke="#ec4899" stroke-width="4" fill="none"
+                stroke-dasharray="163.36" stroke-dashoffset="0" id="timerCircle"
+                stroke-linecap="round" transform="rotate(-90 30 30)"/>
+      </svg>
+      <div class="timer-text" id="timerText">30</div>
+    </div>
+    <div class="modal-actions" id="taskActions">
+      <button class="btn-secondary" id="failBtn">完不成</button>
+      <button class="btn-primary" id="completeBtn">完成 ✓</button>
+    </div>
+    <div class="modal-actions" id="penaltyActions" style="display:none;">
+      <button class="btn-secondary" id="penaltyBack">后退 2 格</button>
+      <button class="btn-primary" id="penaltyStrip">脱一件</button>
+    </div>
+    <div class="modal-actions" id="okActions" style="display:none;">
+      <button class="btn-primary" id="okBtn">知道啦</button>
+    </div>
+  </div>
+</div>
+
+<!-- 设置面板 -->
+<div class="settings-panel" id="settingsPanel">
+  <div class="settings-box">
+    <h2>游戏设置</h2>
+
+    <div class="setting-item">
+      <label>玩家 1 名字</label>
+      <input type="text" id="name1" value="宝贝" maxlength="8">
+    </div>
+    <div class="setting-item">
+      <label>玩家 2 名字</label>
+      <input type="text" id="name2" value="亲爱的" maxlength="8">
+    </div>
+
+    <div class="setting-item">
+      <label>尺度</label>
+      <div class="scale-toggle" id="scaleToggle">
+        <button data-scale="2">温柔</button>
+        <button data-scale="3" class="active">全部</button>
+      </div>
+    </div>
+
+    <div class="setting-item">
+      <div class="switch-row">
+        <label>30 秒计时器</label>
+        <div class="switch" id="timerSwitch"></div>
+      </div>
+    </div>
+
+    <div class="modal-actions" style="margin-top:24px;">
+      <button class="btn-secondary" id="resetBtn">重新开始</button>
+      <button class="btn-primary" id="closeSettings">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ========== 常量 ========== */
+  const TOTAL = 60;
+  const COLS = 10;
+  const DICE_FACES = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+  const COLORS_COUNT = { green: 9, yellow: 12, orange: 18, red: 15, purple: 6 };
+
+  /* ========== 任务数据（60 条独立任务，不重复） ========== */
+  const TASKS = {
+    green: [
+      '拥抱对方 30 秒，不许松手',
+      '舌吻 10 秒',
+      '在对方耳边说一句最想对 Ta 做的事',
+      '亲对方手背，再亲手指',
+      '把耳朵贴在对方胸口，听心跳 15 秒',
+      '用鼻子蹭对方鼻子 10 秒',
+      '额头抵额头，对视 15 秒',
+      '亲对方脸颊，必须发出声音',
+      '拉着对方的手，说出三个喜欢 Ta 的理由'
+    ],
+    yellow: [
+      '壁咚对方，保持 10 秒',
+      '从背后抱住对方，亲吻肩膀',
+      '公主抱对方走 5 步',
+      '隔衣抚摸对方后背 30 秒',
+      '亲吻对方额头，再亲鼻尖',
+      '牵手对视 15 秒，先笑的人罚',
+      '用嘴唇轻碰对方耳朵',
+      '让对方坐在你腿上 30 秒',
+      '摸对方头发，再揉耳后 20 秒',
+      '十指紧扣，把对方的手压住 15 秒',
+      '用嘴喂对方喝一口水',
+      '贴在对方耳边说悄悄话 20 秒'
+    ],
+    orange: [
+      '亲吻对方脖子 15 秒',
+      '亲吻对方锁骨 15 秒',
+      '让对方闭眼，你选一个部位亲一下',
+      '各自脱掉一件衣物',
+      '用嘴解开对方一颗扣子',
+      '手放在对方腰侧 30 秒',
+      '手放在对方大腿内侧 20 秒',
+      '闭眼帮对方解内衣扣（不许看）',
+      '解开对方皮带或裤扣',
+      '亲吻对方小腹 10 秒',
+      '坐在对方身上，不许动 20 秒',
+      '用嘴脱下对方一只袜子',
+      '让对方把手放进你衣服里 20 秒',
+      '互摸大腿内侧 20 秒',
+      '亲吻对方后颈 10 秒',
+      '用嘴唇从对方肩膀滑到手腕',
+      '隔着衣服亲吻对方胸口 10 秒',
+      '让对方枕在你腿上，抚摸 Ta 的脸 30 秒'
+    ],
+    red: [
+      '亲吻对方敏感部位',
+      '用嘴脱掉对方一件衣物',
+      '单手脱掉对方一件衣物',
+      '让对方指定你做一个动作，必须完成',
+      '贴身抱住 30 秒，不许动',
+      '在对方身上留下一个吻痕',
+      '闭眼帮对方脱内衣',
+      '舔对方耳垂 15 秒',
+      '用嘴解对方内衣扣',
+      '让对方坐你腿上，互吻 20 秒',
+      '隔着内衣亲吻对方胸口',
+      '手伸进对方衣服里 30 秒',
+      '让对方指定一个部位让你亲',
+      '解开对方内衣，保持 15 秒',
+      '用嘴唇在对方身上写一个数字，让 Ta 猜'
+    ],
+    purple: [
+      '前进 3 格',
+      '后退 2 格',
+      '指定对方完成一个任务',
+      '免罚一次（本回合跳过）',
+      '与对方交换位置',
+      '连续掷两次骰子'
+    ]
+  };
+
+  /* ========== 状态 ========== */
+  const state = {
+    board: [],
+    players: [
+      { name: '宝贝', emoji: '🦊', pos: 0 },
+      { name: '亲爱的', emoji: '🐰', pos: 3 }
+    ],
+    current: 0,
+    scale: 3,
+    timerEnabled: false,
+    rolling: false,
+    gameOver: false,
+    _pendingPurple: null,
+    _isOtherTask: false,
+    _win: false
+  };
+
+  /* ========== DOM 缓存 ========== */
+  const boardEl = document.getElementById('board');
+  const rollBtn = document.getElementById('rollBtn');
+  const diceEl = document.getElementById('dice');
+  const turnBadge = document.getElementById('turnBadge');
+  const turnEmoji = document.getElementById('turnEmoji');
+  const turnName = document.getElementById('turnName');
+  const progressInfo = document.getElementById('progressInfo');
+  const modalEl = document.getElementById('modal');
+  const modalPlayer = document.getElementById('modalPlayer');
+  const modalTask = document.getElementById('modalTask');
+  const taskActions = document.getElementById('taskActions');
+  const penaltyActions = document.getElementById('penaltyActions');
+  const okActions = document.getElementById('okActions');
+  const okBtn = document.getElementById('okBtn');
+  const timerWrap = document.getElementById('timerWrap');
+  const timerCircle = document.getElementById('timerCircle');
+  const timerText = document.getElementById('timerText');
+  const settingsPanel = document.getElementById('settingsPanel');
+  const scaleToggle = document.getElementById('scaleToggle');
+  const timerSwitch = document.getElementById('timerSwitch');
+  const name1Input = document.getElementById('name1');
+  const name2Input = document.getElementById('name2');
+
+  /* ========== 内部引用 ========== */
+  let cellEls = [];
+  let pieceEls = [];
+  let timerInterval = null;
+  let moveTimeout = null;
+  let diceTimeout = null;
+
+  /* ========== 工具 ========== */
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  /* ========== 生成棋盘数据 ========== */
+  function buildBoardData() {
+    const colors = [];
+    for (const c in COLORS_COUNT) {
+      for (let i = 0; i < COLORS_COUNT[c]; i++) colors.push(c);
+    }
+    const shuffledColors = shuffle(colors);
+
+    const pools = {};
+    for (const c in TASKS) pools[c] = shuffle(TASKS[c]);
+
+    const idx = { green: 0, yellow: 0, orange: 0, red: 0, purple: 0 };
+    const board = [];
+    for (let i = 0; i < TOTAL; i++) {
+      const c = shuffledColors[i];
+      board.push({ index: i, color: c, task: pools[c][idx[c]++] });
+    }
+    return board;
+  }
+
+  /* ========== 渲染棋盘（仅一次） ========== */
+  function renderBoard() {
+    boardEl.innerHTML = '';
+    cellEls = [];
+    pieceEls = [];
+
+    const frag = document.createDocumentFragment();
+    for (let i = 0; i < TOTAL; i++) {
+      const cell = state.board[i];
+      const div = document.createElement('div');
+      div.className = 'cell ' + cell.color;
+
+      const row = Math.floor(i / COLS);
+      const col = row % 2 === 0 ? (i % COLS) : (COLS - 1 - (i % COLS));
+      div.style.gridRow = String(row + 1);
+      div.style.gridColumn = String(col + 1);
+
+      const num = document.createElement('span');
+      num.className = 'num';
+      num.textContent = String(i + 1);
+      div.appendChild(num);
+
+      frag.appendChild(div);
+      cellEls.push(div);
+    }
+    boardEl.appendChild(frag);
+
+    // 棋子层
+    const layer = document.createElement('div');
+    layer.className = 'piece-layer';
+    for (let i = 0; i < state.players.length; i++) {
+      const p = state.players[i];
+      const el = document.createElement('div');
+      el.className = 'piece';
+      const inner = document.createElement('span');
+      inner.className = 'inner';
+      inner.textContent = p.emoji;
+      el.appendChild(inner);
+      layer.appendChild(el);
+      pieceEls.push(el);
+    }
+    boardEl.appendChild(layer);
+
+    // 等下一帧布局完成后再定位（避免从 (0,0) 滑入）
+    requestAnimationFrame(function () {
+      syncPiecePositions(false);
+    });
+  }
+
+  /* ========== 获取格子中心（相对棋盘） ========== */
+  function getCellCenter(index) {
+    const cell = cellEls[index];
+    const cRect = cell.getBoundingClientRect();
+    const bRect = boardEl.getBoundingClientRect();
+    return {
+      x: cRect.left - bRect.left + cRect.width * 0.5,
+      y: cRect.top - bRect.top + cRect.height * 0.5
+    };
+  }
+
+  /* ========== 同步棋子位置 ========== */
+  function syncPiecePositions(animate) {
+    if (!cellEls.length || !pieceEls.length) return;
+    for (let i = 0; i < state.players.length; i++) {
+      const p = state.players[i];
+      const el = pieceEls[i];
+      if (!el) continue;
+      const c = getCellCenter(p.pos);
+
+      if (!animate) {
+        el.style.transition = 'none';
+        el.style.transform = 'translate3d(' + c.x + 'px,' + c.y + 'px,0) translate(-50%,-50%)';
+        // 强制 reflow 后恢复
+        void el.offsetWidth;
+        el.style.transition = '';
+      } else {
+        el.style.transform = 'translate3d(' + c.x + 'px,' + c.y + 'px,0) translate(-50%,-50%)';
+      }
+      el.classList.toggle('active-piece', i === state.current && !state.gameOver);
+    }
+  }
+
+  /* ========== 只更新高亮（切换玩家时用） ========== */
+  function updateActivePiece() {
+    for (let i = 0; i < pieceEls.length; i++) {
+      pieceEls[i].classList.toggle('active-piece', i === state.current && !state.gameOver);
+    }
+  }
+
+  /* ========== 更新顶部 UI ========== */
+  function updateTurnUI() {
+    const p = state.players[state.current];
+    turnEmoji.textContent = p.emoji;
+    turnName.textContent = p.name;
+    turnBadge.classList.toggle('p2', state.current === 1);
+  }
+
+  function updateProgressUI() {
+    progressInfo.textContent = (state.players[0].pos + 1) + ' · ' + (state.players[1].pos + 1) + ' / ' + TOTAL;
+  }
+
+  /* ========== 掷骰子 ========== */
+  function rollDice() {
+    if (state.rolling || state.gameOver) return;
+    state.rolling = true;
+    rollBtn.disabled = true;
+    diceEl.classList.add('rolling');
+
+    const roll = Math.floor(Math.random() * 6) + 1;
+
+    // 骰子面滚动（低频，开销极小）
+    const changeInterval = setInterval(function () {
+      diceEl.textContent = DICE_FACES[Math.floor(Math.random() * 6)];
+    }, 80);
+
+    clearTimeout(diceTimeout);
+    diceTimeout = setTimeout(function () {
+      clearInterval(changeInterval);
+      diceEl.textContent = DICE_FACES[roll - 1];
+      diceEl.classList.remove('rolling');
+      movePlayer(roll);
+    }, 600);
+  }
+
+  /* ========== 移动玩家 ========== */
+  function movePlayer(steps) {
+    const player = state.players[state.current];
+    const newPos = Math.min(TOTAL - 1, player.pos + steps);
+    player.pos = newPos;
+    updateProgressUI();
+    syncPiecePositions(true);
+
+    clearTimeout(moveTimeout);
+    // 棋子过渡 0.55s，留出余量
+    moveTimeout = setTimeout(handleLanding, 620);
+  }
+
+  /* ========== 落格 ========== */
+  function handleLanding() {
+    const player = state.players[state.current];
+
+    if (player.pos >= TOTAL - 1) {
+      showWin();
+      return;
+    }
+
+    const cell = state.board[player.pos];
+    if (cell.color === 'purple') {
+      handlePurple(cell.task);
+    } else {
+      showTask(cell);
+    }
+  }
+
+  /* ========== 紫色格 ========== */
+  function handlePurple(task) {
+    const player = state.players[state.current];
+    state._pendingPurple = task;
+
+    modalPlayer.textContent = player.emoji + ' ' + player.name;
+    modalTask.textContent = task;
+    modalTask.style.padding = '';
+    modalTask.style.background = '';
+    modalTask.style.border = '';
+
+    taskActions.style.display = 'none';
+    penaltyActions.style.display = 'none';
+    okActions.style.display = 'flex';
+    okBtn.textContent = '知道啦';
+    stopTimer();
+
+    modalEl.classList.add('active');
+  }
+
+  function applyPurple(task) {
+    const player = state.players[state.current];
+    const other = state.players[1 - state.current];
+
+    if (task === '前进 3 格') {
+      player.pos = Math.min(TOTAL - 1, player.pos + 3);
+      updateProgressUI();
+      syncPiecePositions(true);
+      if (player.pos >= TOTAL - 1) {
+        setTimeout(showWin, 620);
+      } else {
+        setTimeout(endTurn, 620);
+      }
+    } else if (task === '后退 2 格') {
+      player.pos = Math.max(0, player.pos - 2);
+      updateProgressUI();
+      syncPiecePositions(true);
+      setTimeout(endTurn, 620);
+    } else if (task === '与对方交换位置') {
+      const tmp = player.pos;
+      player.pos = other.pos;
+      other.pos = tmp;
+      updateProgressUI();
+      syncPiecePositions(true);
+      setTimeout(endTurn, 620);
+    } else if (task === '免罚一次（本回合跳过）') {
+      setTimeout(endTurn, 260);
+    } else if (task === '指定对方完成一个任务') {
+      const pool = TASKS.yellow.concat(TASKS.orange);
+      const t = pool[Math.floor(Math.random() * pool.length)];
+      setTimeout(function () { showTaskForOther(other, t); }, 260);
+    } else if (task === '连续掷两次骰子') {
+      // 不切换玩家，当前玩家再掷一次
+      state.rolling = false;
+      rollBtn.disabled = false;
+      updateActivePiece();
+    }
+  }
+
+  function showTaskForOther(other, taskText) {
+    state._isOtherTask = true;
+    modalPlayer.textContent = other.emoji + ' ' + other.name + ' 请完成';
+    modalTask.textContent = taskText;
+    modalTask.style.padding = '';
+    modalTask.style.background = '';
+    modalTask.style.border = '';
+    taskActions.style.display = 'flex';
+    penaltyActions.style.display = 'none';
+    okActions.style.display = 'none';
+    if (state.timerEnabled) startTimer(30);
+    else stopTimer();
+    modalEl.classList.add('active');
+  }
+
+  /* ========== 普通任务 ========== */
+  function showTask(cell) {
+    const player = state.players[state.current];
+    let task = cell.task;
+
+    // 温柔模式：红色格降级为橙色随机任务
+    if (state.scale === 2 && cell.color === 'red') {
+      task = TASKS.orange[Math.floor(Math.random() * TASKS.orange.length)];
+    }
+
+    modalPlayer.textContent = player.emoji + ' ' + player.name;
+    modalTask.textContent = task;
+    modalTask.style.padding = '';
+    modalTask.style.background = '';
+    modalTask.style.border = '';
+
+    taskActions.style.display = 'flex';
+    penaltyActions.style.display = 'none';
+    okActions.style.display = 'none';
+
+    if (state.timerEnabled) startTimer(30);
+    else stopTimer();
+
+    modalEl.classList.add('active');
+  }
+
+  /* ========== 计时器 ========== */
+  function startTimer(seconds) {
+    timerWrap.classList.add('active');
+    let remaining = seconds;
+    const total = seconds;
+    const circumference = 163.36;
+
+    timerText.textContent = String(remaining);
+    timerCircle.style.strokeDashoffset = '0';
+    timerCircle.setAttribute('stroke', '#ec4899');
+
+    clearInterval(timerInterval);
+    timerInterval = setInterval(function () {
+      remaining--;
+      if (remaining <= 0) {
+        clearInterval(timerInterval);
+        timerText.textContent = '0';
+        timerCircle.style.strokeDashoffset = String(circumference);
+        return;
+      }
+      timerText.textContent = String(remaining);
+      const progress = 1 - remaining / total;
+      timerCircle.style.strokeDashoffset = String(circumference * progress);
+      if (remaining <= 10) timerCircle.setAttribute('stroke', '#ef4444');
+    }, 1000);
+  }
+
+  function stopTimer() {
+    clearInterval(timerInterval);
+    timerWrap.classList.remove('active');
+  }
+
+  /* ========== 完成 / 完不成 ========== */
+  function onComplete() {
+    stopTimer();
+    modalEl.classList.remove('active');
+    state._isOtherTask = false;
+    endTurn();
+  }
+
+  function onFail() {
+    stopTimer();
+    taskActions.style.display = 'none';
+    penaltyActions.style.display = 'flex';
+  }
+
+  function onPenaltyBack() {
+    modalEl.classList.remove('active');
+    const target = state._isOtherTask
+      ? state.players[1 - state.current]
+      : state.players[state.current];
+    state._isOtherTask = false;
+    target.pos = Math.max(0, target.pos - 2);
+    updateProgressUI();
+    syncPiecePositions(true);
+    setTimeout(endTurn, 620);
+  }
+
+  function onPenaltyStrip() {
+    modalEl.classList.remove('active');
+    state._isOtherTask = false;
+    setTimeout(endTurn, 220);
+  }
+
+  /* ========== 结束回合 ========== */
+  function endTurn() {
+    state.rolling = false;
+    rollBtn.disabled = false;
+    state.current = 1 - state.current;
+    updateTurnUI();
+    updateActivePiece();
+  }
+
+  /* ========== 胜利 ========== */
+  function showWin() {
+    state.gameOver = true;
+    const player = state.players[state.current];
+
+    modalPlayer.textContent = '';
+    modalTask.innerHTML =
+      '<div style="text-align:center;">' +
+        '<div class="win-emoji">🎉</div>' +
+        '<div class="win-title">' + player.emoji + ' ' + player.name + ' 获胜</div>' +
+        '<div class="win-desc">可以向对方提一个要求</div>' +
+      '</div>';
+    modalTask.style.padding = '0';
+    modalTask.style.background = 'transparent';
+    modalTask.style.border = 'none';
+
+    taskActions.style.display = 'none';
+    penaltyActions.style.display = 'none';
+    okActions.style.display = 'flex';
+    okBtn.textContent = '再来一局';
+    stopTimer();
+    state._win = true;
+
+    modalEl.classList.add('active');
+  }
+
+  /* ========== 重置 ========== */
+  function resetGame() {
+    state.board = buildBoardData();
+    state.players[0].pos = 0;
+    state.players[1].pos = 3;
+    state.current = 0;
+    state.rolling = false;
+    state.gameOver = false;
+    state._pendingPurple = null;
+    state._isOtherTask = false;
+    state._win = false;
+
+    rollBtn.disabled = false;
+    clearTimeout(moveTimeout);
+    clearTimeout(diceTimeout);
+    clearInterval(timerInterval);
+
+    modalEl.classList.remove('active');
+    settingsPanel.classList.remove('active');
+    diceEl.classList.remove('rolling');
+    diceEl.textContent = '⚀';
+
+    modalTask.innerHTML = '';
+    modalTask.style.padding = '';
+    modalTask.style.background = '';
+    modalTask.style.border = '';
+    okBtn.textContent = '知道啦';
+    stopTimer();
+
+    renderBoard();
+    updateTurnUI();
+    updateProgressUI();
+  }
+
+  /* ========== 事件绑定 ========== */
+  rollBtn.addEventListener('click', rollDice);
+  document.getElementById('completeBtn').addEventListener('click', onComplete);
+  document.getElementById('failBtn').addEventListener('click', onFail);
+  document.getElementById('penaltyBack').addEventListener('click', onPenaltyBack);
+  document.getElementById('penaltyStrip').addEventListener('click', onPenaltyStrip);
+
+  okBtn.addEventListener('click', function () {
+    if (state._win) {
+      resetGame();
+      return;
+    }
+    modalEl.classList.remove('active');
+    if (state._pendingPurple) {
+      const t = state._pendingPurple;
+      state._pendingPurple = null;
+      applyPurple(t);
+    }
+  });
+
+  document.getElementById('settingsBtn').addEventListener('click', function () {
+    settingsPanel.classList.add('active');
+  });
+
+  document.getElementById('closeSettings').addEventListener('click', function () {
+    state.players[0].name = name1Input.value.trim() || '宝贝';
+    state.players[1].name = name2Input.value.trim() || '亲爱的';
+    updateTurnUI();
+    settingsPanel.classList.remove('active');
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', resetGame);
+
+  scaleToggle.addEventListener('click', function (e) {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    const scale = parseInt(btn.dataset.scale, 10);
+    state.scale = scale;
+    const buttons = scaleToggle.querySelectorAll('button');
+    for (let i = 0; i < buttons.length; i++) {
+      buttons[i].classList.toggle('active', parseInt(buttons[i].dataset.scale, 10) === scale);
+    }
+  });
+
+  timerSwitch.addEventListener('click', function () {
+    state.timerEnabled = !state.timerEnabled;
+    timerSwitch.classList.toggle('on', state.timerEnabled);
+  });
+
+  /* ========== 响应式重算棋子位置 ========== */
+  let resizeRafId = 0;
+  function scheduleResize() {
+    if (resizeRafId) return;
+    resizeRafId = requestAnimationFrame(function () {
+      resizeRafId = 0;
+      syncPiecePositions(false);
+    });
+  }
+
+  if (window.ResizeObserver) {
+    new ResizeObserver(scheduleResize).observe(boardEl);
+  }
+  window.addEventListener('resize', scheduleResize, { passive: true });
+  window.addEventListener('orientationchange', scheduleResize, { passive: true });
+
+  /* ========== 启动 ========== */
+  resetGame();
+
+})();
+</script>
+</body>
+</html>
