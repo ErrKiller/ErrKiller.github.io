@@ -199,9 +199,6 @@
 {"id":198,"type":"truth","level":"wild","action":"gaze","text":"你觉得对方的眼神里最吸引你的是什么？"},
 {"id":199,"type":"truth","level":"wild","action":"gaze","text":"如果闭上眼睛想象对方正在看着你，你有什么感觉？"},
 {"id":200,"type":"truth","level":"wild","action":"gaze","text":"描述一次你们目光交汇后沉默的场景。"},
-]
-
-[
 {"id":201,"type":"dare","level":"mild","action":"touch","text":"拥抱对方30秒，不要说话。"},
 {"id":202,"type":"dare","level":"mild","action":"touch","text":"和对方十指紧扣走完一圈房间。"},
 {"id":203,"type":"dare","level":"mild","action":"touch","text":"用力拥抱对方15秒，感受对方的心跳。"},
