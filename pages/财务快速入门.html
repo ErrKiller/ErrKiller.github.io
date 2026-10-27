@@ -1,0 +1,1581 @@
+      
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公司财报小课堂 - 零基础入门</title>
+    <style>
+        :root {
+            --bg: #FAF8F5;
+            --card-bg: #FFFFFF;
+            --text-primary: #2C3E50;
+            --text-secondary: #4A5568;
+            --text-muted: #718096;
+            --accent: #E67E22;
+            --accent-light: #FDF2E9;
+            --blue: #3498DB;
+            --blue-light: #EBF5FB;
+            --blue-dark: #2980B9;
+            --green: #27AE60;
+            --green-light: #EAFAF1;
+            --green-dark: #1E8449;
+            --purple: #9B59B6;
+            --purple-light: #F4ECF7;
+            --purple-dark: #7D3C98;
+            --red: #E74C3C;
+            --red-light: #FDEDEC;
+            --gold: #F39C12;
+            --gold-light: #FEF5E7;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 40px rgba(0, 0, 0, 0.14);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-sans: 'PingFang SC', 'Microsoft YaHei', 'Hiragino Sans GB', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ===== 顶部导航 ===== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            padding: 0.75rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: var(--transition);
+        }
+        .navbar.scrolled {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        }
+        .navbar .logo {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+        .navbar .logo span {
+            font-size: 1.6rem;
+        }
+        .nav-links {
+            display: flex;
+            gap: 0.25rem;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 0.5rem 0.9rem;
+            border-radius: 999px;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+        .nav-links a:hover {
+            background: var(--accent-light);
+            color: var(--accent);
+        }
+        .nav-links a.active {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        /* ===== Hero 区域 ===== */
+        .hero {
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            background: linear-gradient(180deg, #FFF8F2 0%, var(--bg) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 900px;
+            height: 900px;
+            background: radial-gradient(circle, rgba(230, 126, 34, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            letter-spacing: -0.03em;
+            position: relative;
+        }
+        .hero h1 .highlight {
+            color: var(--accent);
+            position: relative;
+            white-space: nowrap;
+        }
+        .hero h1 .highlight::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: rgba(230, 126, 34, 0.3);
+            border-radius: 3px;
+        }
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 640px;
+            margin: 0 auto 2rem;
+            position: relative;
+        }
+        .hero .badge {
+            display: inline-block;
+            background: var(--accent-light);
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 0.4rem 1.2rem;
+            border-radius: 999px;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        .hero-cards {
+            display: flex;
+            gap: 1.25rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+            margin-top: 2rem;
+        }
+        .hero-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.5rem 1.8rem;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: left;
+            width: 220px;
+            border: 2px solid transparent;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .hero-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--accent);
+        }
+        .hero-card .icon {
+            font-size: 2.4rem;
+            margin-bottom: 0.6rem;
+            display: block;
+        }
+        .hero-card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        .hero-card p {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+        .hero-card.card-blue {
+            border-top: 4px solid var(--blue);
+        }
+        .hero-card.card-green {
+            border-top: 4px solid var(--green);
+        }
+        .hero-card.card-purple {
+            border-top: 4px solid var(--purple);
+        }
+
+        /* ===== Section 通用样式 ===== */
+        .section {
+            padding: 5rem 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .section-header .tag {
+            display: inline-block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 0.35rem 1rem;
+            border-radius: 999px;
+            margin-bottom: 0.8rem;
+        }
+        .section-header h2 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.6rem;
+        }
+        .section-header .subtitle {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            max-width: 560px;
+            margin: 0 auto;
+        }
+        .tag-blue {
+            background: var(--blue-light);
+            color: var(--blue-dark);
+        }
+        .tag-green {
+            background: var(--green-light);
+            color: var(--green-dark);
+        }
+        .tag-purple {
+            background: var(--purple-light);
+            color: var(--purple-dark);
+        }
+        .tag-gold {
+            background: var(--gold-light);
+            color: var(--gold);
+        }
+
+        /* ===== 比喻框 ===== */
+        .analogy-box {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.8rem 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1.2rem;
+            border-left: 5px solid var(--accent);
+        }
+        .analogy-box .emoji {
+            font-size: 2.6rem;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+        .analogy-box h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+        }
+        .analogy-box p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        /* ===== 可视化卡片 ===== */
+        .viz-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            transition: var(--transition);
+        }
+        .viz-card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+        .viz-card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .viz-card .desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        /* ===== 公式框 ===== */
+        .formula-box {
+            background: linear-gradient(135deg, #FFF8F0, #FFF3E8);
+            border: 2px dashed var(--accent);
+            border-radius: var(--radius-sm);
+            padding: 1.2rem 1.5rem;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--text-primary);
+            margin: 1.2rem 0;
+            letter-spacing: 0.02em;
+        }
+        .formula-box .eq {
+            color: var(--accent);
+            font-weight: 800;
+            font-size: 1.4rem;
+            margin: 0 0.3rem;
+        }
+
+        /* ===== 资产负债表天平 ===== */
+        .balance-container {
+            display: flex;
+            align-items: stretch;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .balance-side {
+            flex: 1;
+            min-width: 260px;
+            border-radius: var(--radius-sm);
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .balance-side.assets {
+            background: var(--blue-light);
+        }
+        .balance-side.liabilities {
+            background: var(--green-light);
+        }
+        .balance-side h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+        }
+        .balance-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            font-size: 0.9rem;
+        }
+        .balance-item .amount {
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+        .balance-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0 0.2rem;
+            font-weight: 800;
+            font-size: 1.1rem;
+            border-top: 3px solid rgba(0, 0, 0, 0.1);
+            margin-top: 0.5rem;
+        }
+        .balance-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--accent);
+            padding: 0 0.5rem;
+            min-width: 50px;
+        }
+        .balance-scale {
+            text-align: center;
+            margin: 1rem 0 1.5rem;
+        }
+        .balance-scale svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* ===== 利润表瀑布图 ===== */
+        .waterfall {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            margin-top: 1rem;
+        }
+        .wf-row {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 0.88rem;
+        }
+        .wf-label {
+            width: 120px;
+            text-align: right;
+            font-weight: 600;
+            flex-shrink: 0;
+            color: var(--text-secondary);
+        }
+        .wf-bar {
+            height: 36px;
+            border-radius: 8px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            padding: 0 0.8rem;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #fff;
+            white-space: nowrap;
+            min-width: 60px;
+            position: relative;
+        }
+        .wf-bar.wf-income {
+            background: linear-gradient(135deg, #2ECC71, #27AE60);
+        }
+        .wf-bar.wf-expense {
+            background: linear-gradient(135deg, #F1948A, #E74C3C);
+        }
+        .wf-bar.wf-profit {
+            background: linear-gradient(135deg, #58D68D, #1E8449);
+            box-shadow: 0 4px 16px rgba(30, 132, 73, 0.3);
+        }
+        .wf-bar.wf-total {
+            background: linear-gradient(135deg, #F5B041, #E67E22);
+        }
+        .wf-amount {
+            margin-left: 0.5rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            flex-shrink: 0;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* ===== 现金流量表管道 ===== */
+        .cashflow-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .cf-card {
+            border-radius: var(--radius-sm);
+            padding: 1.2rem;
+            text-align: center;
+            transition: var(--transition);
+        }
+        .cf-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow);
+        }
+        .cf-card.operating {
+            background: var(--green-light);
+            border: 2px solid rgba(39, 174, 96, 0.3);
+        }
+        .cf-card.investing {
+            background: var(--blue-light);
+            border: 2px solid rgba(52, 152, 219, 0.3);
+        }
+        .cf-card.financing {
+            background: var(--purple-light);
+            border: 2px solid rgba(155, 89, 182, 0.3);
+        }
+        .cf-card .cf-icon {
+            font-size: 2rem;
+            margin-bottom: 0.4rem;
+        }
+        .cf-card h5 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+        .cf-card .cf-amount {
+            font-size: 1.4rem;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+        }
+        .cf-card .cf-amount.positive {
+            color: var(--green-dark);
+        }
+        .cf-card .cf-amount.negative {
+            color: var(--red);
+        }
+        .cf-card .cf-detail {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+        }
+        .cf-total-bar {
+            margin-top: 1.5rem;
+            background: var(--card-bg);
+            border-radius: var(--radius-sm);
+            padding: 1rem 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow);
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .cf-total-bar .label {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        .cf-total-bar .value {
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--green-dark);
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* ===== 交互滑块 ===== */
+        .interactive-box {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-top: 1.5rem;
+        }
+        .interactive-box h4 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+        .interactive-box .hint {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1.2rem;
+        }
+        .slider-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        .slider-row label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            min-width: 100px;
+        }
+        .slider-row input[type="range"] {
+            flex: 1;
+            min-width: 200px;
+            height: 8px;
+            border-radius: 4px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #E2E8F0;
+            outline: none;
+            cursor: pointer;
+        }
+        .slider-row input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            border: 3px solid #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+        }
+        .slider-row input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+        .slider-value {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: var(--accent);
+            min-width: 70px;
+            text-align: center;
+        }
+        .calc-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .calc-result-item {
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            text-align: center;
+        }
+        .calc-result-item .label {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .calc-result-item .value {
+            font-size: 1.4rem;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+            margin-top: 0.2rem;
+        }
+        .calc-result-item .value.positive {
+            color: var(--green-dark);
+        }
+        .calc-result-item .value.negative {
+            color: var(--red);
+        }
+
+        /* ===== 三表关系图 ===== */
+        .relation-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            padding: 2rem 0;
+        }
+        .relation-node {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.2rem 1.5rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            min-width: 160px;
+            transition: var(--transition);
+        }
+        .relation-node:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+        }
+        .relation-node .node-icon {
+            font-size: 2.2rem;
+        }
+        .relation-node .node-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-top: 0.3rem;
+        }
+        .relation-node .node-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .relation-node.node-blue {
+            border-bottom: 4px solid var(--blue);
+        }
+        .relation-node.node-green {
+            border-bottom: 4px solid var(--green);
+        }
+        .relation-node.node-purple {
+            border-bottom: 4px solid var(--purple);
+        }
+        .relation-arrow {
+            font-size: 2rem;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        /* ===== 测验 ===== */
+        .quiz-container {
+            max-width: 680px;
+            margin: 0 auto;
+        }
+        .quiz-question {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.8rem 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.2rem;
+            transition: var(--transition);
+        }
+        .quiz-question h4 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+        }
+        .quiz-question h4 .q-num {
+            background: var(--accent);
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+        .quiz-option {
+            padding: 0.8rem 1.2rem;
+            border-radius: var(--radius-sm);
+            border: 2px solid #E2E8F0;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            background: #fff;
+            text-align: left;
+            font-family: var(--font-sans);
+            color: var(--text-primary);
+        }
+        .quiz-option:hover {
+            border-color: var(--accent);
+            background: var(--accent-light);
+        }
+        .quiz-option.selected {
+            border-color: var(--accent);
+            background: var(--accent-light);
+            font-weight: 600;
+        }
+        .quiz-option.correct {
+            border-color: var(--green);
+            background: var(--green-light);
+            font-weight: 600;
+        }
+        .quiz-option.wrong {
+            border-color: var(--red);
+            background: var(--red-light);
+            font-weight: 600;
+        }
+        .quiz-feedback {
+            margin-top: 0.8rem;
+            padding: 0.8rem 1.2rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.88rem;
+            display: none;
+            line-height: 1.6;
+        }
+        .quiz-feedback.show {
+            display: block;
+            animation: fadeInUp 0.4s ease;
+        }
+        .quiz-feedback.fb-correct {
+            background: var(--green-light);
+            color: var(--green-dark);
+            border: 1px solid rgba(39, 174, 96, 0.3);
+        }
+        .quiz-feedback.fb-wrong {
+            background: var(--red-light);
+            color: var(--red);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+        .quiz-score {
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            display: none;
+        }
+        .quiz-score.show {
+            display: block;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        /* ===== 提示框 ===== */
+        .tip-box {
+            background: var(--gold-light);
+            border-left: 5px solid var(--gold);
+            border-radius: var(--radius-sm);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+        }
+        .tip-box strong {
+            color: var(--gold);
+        }
+
+        /* ===== Footer ===== */
+        .footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.06);
+            background: #fff;
+        }
+
+        /* ===== 动画 ===== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 0.6rem 1rem;
+                flex-wrap: wrap;
+                gap: 0.4rem;
+            }
+            .navbar .logo {
+                font-size: 1rem;
+            }
+            .nav-links a {
+                font-size: 0.75rem;
+                padding: 0.35rem 0.6rem;
+            }
+            .hero {
+                padding: 7rem 1rem 3rem;
+            }
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .hero p {
+                font-size: 1rem;
+            }
+            .hero-card {
+                width: 100%;
+                max-width: 280px;
+                padding: 1.2rem;
+            }
+            .section {
+                padding: 3rem 1rem;
+            }
+            .section-header h2 {
+                font-size: 1.7rem;
+            }
+            .balance-container {
+                flex-direction: column;
+            }
+            .balance-center {
+                font-size: 1.8rem;
+                padding: 0.3rem 0;
+            }
+            .cashflow-grid {
+                grid-template-columns: 1fr;
+            }
+            .wf-label {
+                width: 80px;
+                font-size: 0.75rem;
+            }
+            .wf-bar {
+                height: 30px;
+                font-size: 0.75rem;
+                padding: 0 0.5rem;
+            }
+            .relation-diagram {
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+            .relation-arrow {
+                transform: rotate(90deg);
+                font-size: 1.5rem;
+            }
+            .quiz-question {
+                padding: 1.2rem 1rem;
+            }
+            .viz-card {
+                padding: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 1.6rem;
+            }
+            .nav-links a {
+                font-size: 0.7rem;
+                padding: 0.3rem 0.5rem;
+            }
+            .wf-label {
+                width: 60px;
+                font-size: 0.7rem;
+            }
+            .formula-box {
+                font-size: 0.95rem;
+            }
+            .formula-box .eq {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== 导航栏 ==================== -->
+    <nav class="navbar" id="navbar">
+        <a href="#" class="logo"><span>🧋</span> 财报小课堂</a>
+        <ul class="nav-links">
+            <li><a href="#overview">概览</a></li>
+            <li><a href="#balance-sheet">资产负债表</a></li>
+            <li><a href="#income-statement">利润表</a></li>
+            <li><a href="#cash-flow">现金流量表</a></li>
+            <li><a href="#relations">三表关系</a></li>
+            <li><a href="#quiz">小测验</a></li>
+        </ul>
+    </nav>
+
+    <!-- ==================== Hero 区域 ==================== -->
+    <header class="hero" id="overview">
+        <div class="badge">🎓 零基础友好 · 奶茶店案例教学</div>
+        <h1>看懂公司财报<br>其实<span class="highlight">没那么难</span></h1>
+        <p>假设你开了一家奶茶店 🧋，我们用它来理解公司的三大财务报表。不需要任何会计基础，只要会加减法就够了！</p>
+        <div class="hero-cards">
+            <a href="#balance-sheet" class="hero-card card-blue">
+                <span class="icon">⚖️</span>
+                <h3>资产负债表</h3>
+                <p>你拥有什么？欠别人什么？</p>
+            </a>
+            <a href="#income-statement" class="hero-card card-green">
+                <span class="icon">📊</span>
+                <h3>利润表</h3>
+                <p>你赚了多少钱？花了多少？</p>
+            </a>
+            <a href="#cash-flow" class="hero-card card-purple">
+                <span class="icon">💸</span>
+                <h3>现金流量表</h3>
+                <p>钱实际怎么进来和出去？</p>
+            </a>
+        </div>
+    </header>
+
+    <!-- ==================== 资产负债表 ==================== -->
+    <section class="section" id="balance-sheet">
+        <div class="section-header reveal">
+            <span class="tag tag-blue">第一张表</span>
+            <h2>⚖️ 资产负债表</h2>
+            <p class="subtitle">给奶茶店拍一张"快照"，记录某一个时刻你拥有什么、欠什么。</p>
+        </div>
+
+        <div class="analogy-box reveal">
+            <span class="emoji">📸</span>
+            <div>
+                <h4>生活化比喻：就像给奶茶店拍一张照片</h4>
+                <p>照片定格在某一瞬间——"2026年8月17日晚上8点"，你的奶茶店有多少现金、多少设备、欠银行多少钱，一目了然。它不是一段视频，而是一个<strong>静态的瞬间</strong>。</p>
+            </div>
+        </div>
+
+        <div class="viz-card reveal">
+            <h3>🍹 奶茶店资产负债表（示例）</h3>
+            <p class="desc">左边是「你拥有的」，右边是「钱从哪里来的」。两边必须相等——这就是"平衡"的含义。</p>
+
+            <!-- 天平SVG -->
+            <div class="balance-scale">
+                <svg viewBox="0 0 500 180" xmlns="http://www.w3.org/2000/svg" style="max-width:500px;width:100%;">
+                    <!-- 支点 -->
+                    <polygon points="250,90 225,150 275,150" fill="#E67E22" />
+                    <!-- 横梁 -->
+                    <line x1="80" y1="90" x2="420" y2="90" stroke="#2C3E50" stroke-width="5" stroke-linecap="round"/>
+                    <!-- 左绳 -->
+                    <line x1="120" y1="90" x2="120" y2="120" stroke="#95A5A6" stroke-width="2"/>
+                    <line x1="130" y1="90" x2="130" y2="120" stroke="#95A5A6" stroke-width="2"/>
+                    <!-- 右绳 -->
+                    <line x1="370" y1="90" x2="370" y2="120" stroke="#95A5A6" stroke-width="2"/>
+                    <line x1="380" y1="90" x2="380" y2="120" stroke="#95A5A6" stroke-width="2"/>
+                    <!-- 左托盘 -->
+                    <path d="M100,120 Q125,135 150,120 Z" fill="#3498DB" opacity="0.85"/>
+                    <!-- 右托盘 -->
+                    <path d="M350,120 Q375,135 400,120 Z" fill="#27AE60" opacity="0.85"/>
+                    <!-- 左托盘内容 -->
+                    <circle cx="115" cy="115" r="8" fill="#F39C12"/>
+                    <circle cx="130" cy="112" r="10" fill="#E74C3C"/>
+                    <circle cx="145" cy="115" r="7" fill="#3498DB"/>
+                    <!-- 右托盘内容 -->
+                    <circle cx="360" cy="115" r="9" fill="#9B59B6"/>
+                    <circle cx="375" cy="113" r="11" fill="#27AE60"/>
+                    <circle cx="390" cy="116" r="6" fill="#F1C40F"/>
+                    <!-- 标签 -->
+                    <text x="125" y="165" text-anchor="middle" font-size="13" font-weight="700" fill="#3498DB">资产</text>
+                    <text x="375" y="165" text-anchor="middle" font-size="13" font-weight="700" fill="#27AE60">负债 + 权益</text>
+                    <text x="250" y="175" text-anchor="middle" font-size="12" fill="#95A5A6">⚖️ 平衡！</text>
+                </svg>
+            </div>
+
+            <div class="balance-container">
+                <div class="balance-side assets">
+                    <h4>📦 资产（你拥有的）</h4>
+                    <div class="balance-item"><span>现金 💰</span><span class="amount">¥50,000</span></div>
+                    <div class="balance-item"><span>设备 🧋</span><span class="amount">¥100,000</span></div>
+                    <div class="balance-item"><span>存货（奶茶原料）</span><span class="amount">¥20,000</span></div>
+                    <div class="balance-item"><span>店铺装修 🏪</span><span class="amount">¥80,000</span></div>
+                    <div class="balance-total"><span>总资产</span><span>¥250,000</span></div>
+                </div>
+                <div class="balance-center">=</div>
+                <div class="balance-side liabilities">
+                    <h4>📋 负债 + 所有者权益（钱从哪来）</h4>
+                    <div class="balance-item"><span>欠银行 🏦</span><span class="amount">¥80,000</span></div>
+                    <div class="balance-item"><span>欠供应商 📦</span><span class="amount">¥30,000</span></div>
+                    <div class="balance-item" style="opacity:0.6;"><span style="font-style:italic;">—— 以上是负债 ——</span></div>
+                    <div class="balance-item"><span>你自己投的钱 💪</span><span class="amount">¥140,000</span></div>
+                    <div class="balance-total"><span>总负债 + 权益</span><span>¥250,000</span></div>
+                </div>
+            </div>
+
+            <div class="formula-box">
+                资产 <span class="eq">=</span> 负债 <span class="eq">+</span> 所有者权益
+            </div>
+
+            <div class="tip-box">
+                <strong>💡 划重点：</strong>"所有者权益"就是真正属于你自己的部分。如果奶茶店明天关门了，卖掉所有资产还清欠款，剩下的钱就是你的权益。
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 利润表 ==================== -->
+    <section class="section" id="income-statement">
+        <div class="section-header reveal">
+            <span class="tag tag-green">第二张表</span>
+            <h2>📊 利润表</h2>
+            <p class="subtitle">给奶茶店拍一段"视频"，记录一段时间内你赚了多少钱、花了多少钱。</p>
+        </div>
+
+        <div class="analogy-box reveal">
+            <span class="emoji">🎬</span>
+            <div>
+                <h4>生活化比喻：就像给奶茶店拍一段视频</h4>
+                <p>视频记录的是"2026年7月1日到7月31日"这整整一个月里发生的所有事——卖了多少杯奶茶、进了多少原料、发了多少工资。它关注的是<strong>一段时间内的表现</strong>，而不是某个瞬间。</p>
+            </div>
+        </div>
+
+        <div class="viz-card reveal">
+            <h3>🧾 奶茶店利润表（7月份）</h3>
+            <p class="desc">从收入开始，一步步减去成本，最后剩下的就是利润。绿色是"赚"，红色是"花"。</p>
+
+            <div class="waterfall" id="waterfallChart">
+                <div class="wf-row">
+                    <span class="wf-label">💰 卖奶茶收入</span>
+                    <div class="wf-bar wf-income" style="width:100%;">¥200,000</div>
+                    <span class="wf-amount">+¥200,000</span>
+                </div>
+                <div class="wf-row">
+                    <span class="wf-label">🧋 原料成本</span>
+                    <div class="wf-bar wf-expense" style="width:40%;">¥80,000</div>
+                    <span class="wf-amount" style="color:var(--red);">-¥80,000</span>
+                </div>
+                <div class="wf-row">
+                    <span class="wf-label">🏪 房租</span>
+                    <div class="wf-bar wf-expense" style="width:15%;">¥30,000</div>
+                    <span class="wf-amount" style="color:var(--red);">-¥30,000</span>
+                </div>
+                <div class="wf-row">
+                    <span class="wf-label">👩‍🍳 员工工资</span>
+                    <div class="wf-bar wf-expense" style="width:20%;">¥40,000</div>
+                    <span class="wf-amount" style="color:var(--red);">-¥40,000</span>
+                </div>
+                <div class="wf-row">
+                    <span class="wf-label">💡 水电费</span>
+                    <div class="wf-bar wf-expense" style="width:5%;">¥10,000</div>
+                    <span class="wf-amount" style="color:var(--red);">-¥10,000</span>
+                </div>
+                <div class="wf-row">
+                    <span class="wf-label">✨ 净利润</span>
+                    <div class="wf-bar wf-profit" style="width:20%;">¥40,000</div>
+                    <span class="wf-amount" style="color:var(--green-dark);">= +¥40,000</span>
+                </div>
+            </div>
+
+            <div class="formula-box">
+                收入 <span class="eq">−</span> 成本费用 <span class="eq">=</span> 净利润
+            </div>
+
+            <div class="tip-box">
+                <strong>💡 划重点：</strong>利润表看的是"账面上赚了多少"，但赚了钱不等于手里就有现金——比如顾客赊账买了100杯奶茶，利润表上记了收入，但你还没收到钱。这就是为什么还需要第三张表！
+            </div>
+        </div>
+
+        <!-- 交互式模拟器 -->
+        <div class="interactive-box reveal">
+            <h4>🎮 动手试试：调整销量，看利润怎么变</h4>
+            <p class="hint">拖动滑块改变每天卖出的奶茶杯数，所有数字会实时更新。每杯奶茶卖20元，原料成本8元。</p>
+            <div class="slider-row">
+                <label for="cupsSlider">每天卖出：</label>
+                <input type="range" id="cupsSlider" min="50" max="400" value="333" step="1">
+                <span class="slider-value" id="cupsValue">333 杯</span>
+            </div>
+            <div class="calc-results">
+                <div class="calc-result-item">
+                    <div class="label">月收入（30天）</div>
+                    <div class="value positive" id="simRevenue">¥199,800</div>
+                </div>
+                <div class="calc-result-item">
+                    <div class="label">月原料成本</div>
+                    <div class="value negative" id="simCost">¥79,920</div>
+                </div>
+                <div class="calc-result-item">
+                    <div class="label">固定成本（房租+工资+水电）</div>
+                    <div class="value negative">¥80,000</div>
+                </div>
+                <div class="calc-result-item">
+                    <div class="label">月净利润</div>
+                    <div class="value" id="simProfit" style="color:var(--green-dark);">¥39,880</div>
+                </div>
+            </div>
+            <p id="simTip" style="font-size:0.85rem;color:var(--text-muted);margin-top:0.8rem;"></p>
+        </div>
+    </section>
+
+    <!-- ==================== 现金流量表 ==================== -->
+    <section class="section" id="cash-flow">
+        <div class="section-header reveal">
+            <span class="tag tag-purple">第三张表</span>
+            <h2>💸 现金流量表</h2>
+            <p class="subtitle">就像你的"银行流水"，记录钱实际怎么进进出出。</p>
+        </div>
+
+        <div class="analogy-box reveal">
+            <span class="emoji">🏦</span>
+            <div>
+                <h4>生活化比喻：就像查银行流水</h4>
+                <p>打开手机银行APP，每一笔钱进来、每一笔钱出去都记得清清楚楚。现金流量表就是公司的"银行流水"，告诉你<strong>钱到底去了哪里</strong>。</p>
+            </div>
+        </div>
+
+        <div class="viz-card reveal">
+            <h3>💧 奶茶店现金流量表（7月份）</h3>
+            <p class="desc">钱分三种方式流动：日常经营、买大件设备、借钱还钱。每种都单独记录。</p>
+
+            <div class="cashflow-grid">
+                <div class="cf-card operating">
+                    <div class="cf-icon">🧋</div>
+                    <h5>经营活动现金流</h5>
+                    <div class="cf-amount positive">+¥80,000</div>
+                    <div class="cf-detail">卖奶茶收到现金 ¥180,000<br>付原料/工资/房租 ¥100,000</div>
+                </div>
+                <div class="cf-card investing">
+                    <div class="cf-icon">🏗️</div>
+                    <h5>投资活动现金流</h5>
+                    <div class="cf-amount negative">-¥30,000</div>
+                    <div class="cf-detail">买新冰沙机 -¥25,000<br>装修升级 -¥5,000</div>
+                </div>
+                <div class="cf-card financing">
+                    <div class="cf-icon">🏦</div>
+                    <h5>筹资活动现金流</h5>
+                    <div class="cf-amount positive">+¥20,000</div>
+                    <div class="cf-detail">新借银行贷款 +¥30,000<br>还旧贷款 -¥10,000</div>
+                </div>
+            </div>
+
+            <div class="cf-total-bar">
+                <span class="label">📊 7月净现金流（总共多出来的现金）</span>
+                <span class="value">+¥70,000</span>
+            </div>
+
+            <div class="formula-box">
+                经营现金流 <span class="eq">+</span> 投资现金流 <span class="eq">+</span> 筹资现金流 <span class="eq">=</span> 净现金流
+            </div>
+
+            <div class="tip-box">
+                <strong>💡 划重点：</strong>利润表说赚了¥40,000，但现金却多了¥70,000——差别在于：银行新借了¥30,000。利润表不管借钱的事，现金流量表全部记录。这就是为什么两张表都要看！
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 三表关系 ==================== -->
+    <section class="section" id="relations">
+        <div class="section-header reveal">
+            <span class="tag tag-gold">串起来看</span>
+            <h2>🔗 三张表的关系</h2>
+            <p class="subtitle">它们不是孤立的，而是像拼图一样组合在一起，完整描述公司的财务状况。</p>
+        </div>
+
+        <div class="viz-card reveal">
+            <div class="relation-diagram">
+                <div class="relation-node node-blue">
+                    <div class="node-icon">⚖️</div>
+                    <div class="node-title">资产负债表</div>
+                    <div class="node-desc">某个瞬间的"快照"</div>
+                </div>
+                <div class="relation-arrow">➡️</div>
+                <div class="relation-node node-green">
+                    <div class="node-icon">📊</div>
+                    <div class="node-title">利润表</div>
+                    <div class="node-desc">一段时间的"视频"</div>
+                </div>
+                <div class="relation-arrow">➡️</div>
+                <div class="relation-node node-purple">
+                    <div class="node-icon">💸</div>
+                    <div class="node-title">现金流量表</div>
+                    <div class="node-desc">银行流水"记录"</div>
+                </div>
+            </div>
+
+            <div style="text-align:center;padding:1rem 0 0;">
+                <p style="font-size:0.95rem;color:var(--text-secondary);max-width:600px;margin:0 auto;">
+                    🧋 <strong>利润表</strong>的净利润 → 会增加到<strong>资产负债表</strong>的"所有者权益"里<br>
+                    💰 <strong>现金流量表</strong>的期末现金 → 会更新<strong>资产负债表</strong>的"现金"项目<br>
+                    🔄 三者环环相扣，共同讲述公司的完整故事
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 小测验 ==================== -->
+    <section class="section" id="quiz">
+        <div class="section-header reveal">
+            <span class="tag" style="background:var(--accent-light);color:var(--accent);">检验一下</span>
+            <h2>📝 小测验</h2>
+            <p class="subtitle">5道题，看看你掌握了多少！点击选项查看答案。</p>
+        </div>
+
+        <div class="quiz-container reveal" id="quizContainer">
+            <!-- 题目1 -->
+            <div class="quiz-question" data-question="1">
+                <h4><span class="q-num">1</span> 资产负债表的核心公式是？</h4>
+                <div class="quiz-options">
+                    <button class="quiz-option" data-answer="wrong" onclick="selectAnswer(this, 1)">A. 收入 - 成本 = 利润</button>
+                    <button class="quiz-option" data-answer="correct" onclick="selectAnswer(this, 1)">B. 资产 = 负债 + 所有者权益</button>
+                    <button class="quiz-option" data-answer="wrong" onclick="selectAnswer(this, 1)">C. 现金流入 - 现金流出 = 净现金流</button>
+                </div>
+                <div class="quiz-feedback" id="feedback-1"></div>
+            </div>
+            <!-- 题目2 -->
+            <div class="quiz-question" data-question="2">
+                <h4><span class="q-num">2</span> 利润表记录的是？</h4>
+                <div class="quiz-options">
+                    <button class="quiz-option" data-answer="correct" onclick="selectAnswer(this, 2)">A. 一段时间内的收入和支出</button>
+                    <button class="quiz-option" data-answer="wrong" onclick="selectAnswer(this, 2)">B. 某个瞬间的资产状况</button>
+                    <button class="quiz-option" data-answer="wrong" onclick="selectAnswer(this, 2)">C. 银行账户的实时余额</button>
+                </div>
+                <div class="quiz-feedback" id="feedback-2"></div>
+            </div>
+            <!-- 题目3 -->
+            <div class="quiz-question" data-question="3">
+                <h4><span class="q-num">3</span> 现金流量表分为哪三个部分？</h4>
+                <div class="quiz-options">
+                    <button class="quiz-option" data-answer="wrong" onclick="selectAnswer(this, 3)">A. 资产、负债、权益</button>
+                    <button class="quiz-option" data-answer="wrong" onclick="selectAnswer(this, 3)">B. 收入、成本、利润</button>
+                    <button class="quiz-option" data-answer="correct" onclick="selectAnswer(this, 3)">C. 经营、投资、筹资</button>
+                </div>
+                <div class="quiz-feedback" id="feedback-3"></div>
+            </div>
+            <!-- 题目4 -->
+            <div class="quiz-question" data-question="4">
+                <h4><span class="q-num">4</span> 奶茶店用现金买了一台¥10,000的封口机，资产负债表会怎么变？</h4>
+                <div class="quiz-options">
+                    <button class="quiz-option" data-answer="wrong" onclick="selectAnswer(this, 4)">A. 资产增加¥10,000，负债增加¥10,000</button>
+                    <button class="quiz-option" data-answer="correct" onclick="selectAnswer(this, 4)">B. 资产内部变化：现金减少¥10,000，设备增加¥10,000，总资产不变</button>
+                    <button class="quiz-option" data-answer="wrong" onclick="selectAnswer(this, 4)">C. 负债减少¥10,000，权益增加¥10,000</button>
+                </div>
+                <div class="quiz-feedback" id="feedback-4"></div>
+            </div>
+            <!-- 题目5 -->
+            <div class="quiz-question" data-question="5">
+                <h4><span class="q-num">5</span> "净利润"和"净现金流"是一回事吗？</h4>
+                <div class="quiz-options">
+                    <button class="quiz-option" data-answer="wrong" onclick="selectAnswer(this, 5)">A. 完全一样，只是叫法不同</button>
+                    <button class="quiz-option" data-answer="correct" onclick="selectAnswer(this, 5)">B. 不一样：利润是账面数字，现金流是实际收到的钱，两者可能有差异</button>
+                    <button class="quiz-option" data-answer="wrong" onclick="selectAnswer(this, 5)">C. 现金流一定大于利润</button>
+                </div>
+                <div class="quiz-feedback" id="feedback-5"></div>
+            </div>
+
+            <div class="quiz-score" id="quizScore"></div>
+        </div>
+    </section>
+
+    <!-- ==================== Footer ==================== -->
+    <footer class="footer">
+        <p>🧋 财报小课堂 · 用奶茶店的故事看懂公司财报</p>
+        <p style="margin-top:0.3rem;font-size:0.8rem;">资产负债表 = 快照 | 利润表 = 视频 | 现金流量表 = 银行流水</p>
+    </footer>
+
+    <script>
+        // ===== 导航栏滚动效果 =====
+        const navbar = document.getElementById('navbar');
+        const navLinks = document.querySelectorAll('.nav-links a');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+            // 高亮当前section
+            let current = '';
+            document.querySelectorAll('.section, .hero').forEach(section => {
+                const top = section.offsetTop - 120;
+                const bottom = top + section.offsetHeight;
+                if (window.scrollY >= top && window.scrollY < bottom) {
+                    current = section.id;
+                }
+            });
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // ===== 滚动触发动画 =====
+        const revealElements = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+        revealElements.forEach(el => observer.observe(el));
+
+        // ===== 利润表交互模拟器 =====
+        const cupsSlider = document.getElementById('cupsSlider');
+        const cupsValue = document.getElementById('cupsValue');
+        const simRevenue = document.getElementById('simRevenue');
+        const simCost = document.getElementById('simCost');
+        const simProfit = document.getElementById('simProfit');
+        const simTip = document.getElementById('simTip');
+
+        function formatCurrency(num) {
+            return '¥' + Math.round(num).toLocaleString('zh-CN');
+        }
+
+        function updateSimulation() {
+            const cups = parseInt(cupsSlider.value);
+            const pricePerCup = 20;
+            const costPerCup = 8;
+            const fixedCost = 80000; // 房租3万 + 工资4万 + 水电1万
+            const days = 30;
+
+            const revenue = cups * days * pricePerCup;
+            const variableCost = cups * days * costPerCup;
+            const totalCost = variableCost + fixedCost;
+            const profit = revenue - totalCost;
+
+            cupsValue.textContent = cups + ' 杯';
+            simRevenue.textContent = formatCurrency(revenue);
+            simCost.textContent = formatCurrency(variableCost);
+            simProfit.textContent = formatCurrency(profit);
+            simProfit.style.color = profit >= 0 ? 'var(--green-dark)' : 'var(--red)';
+
+            if (profit > 50000) {
+                simTip.textContent = '🎉 太棒了！奶茶店非常赚钱！';
+                simTip.style.color = 'var(--green-dark)';
+            } else if (profit > 0) {
+                simTip.textContent = '😊 还不错，奶茶店有小幅盈利。';
+                simTip.style.color = 'var(--text-secondary)';
+            } else {
+                simTip.textContent = '⚠️ 注意！奶茶店在亏钱，需要想想办法了。';
+                simTip.style.color = 'var(--red)';
+            }
+
+            // 更新瀑布图
+            const maxWidth = 200000; // 用于缩放
+            const wfRows = document.querySelectorAll('#waterfallChart .wf-bar');
+            // 收入
+            wfRows[0].style.width = Math.max(20, (revenue / maxWidth) * 100) + '%';
+            wfRows[0].textContent = formatCurrency(revenue);
+            // 原料成本
+            const costPct = Math.max(5, (variableCost / maxWidth) * 100);
+            wfRows[1].style.width = costPct + '%';
+            wfRows[1].textContent = formatCurrency(variableCost);
+            // 房租
+            wfRows[2].style.width = Math.max(5, (30000 / maxWidth) * 100) + '%';
+            wfRows[2].textContent = formatCurrency(30000);
+            // 工资
+            wfRows[3].style.width = Math.max(5, (40000 / maxWidth) * 100) + '%';
+            wfRows[3].textContent = formatCurrency(40000);
+            // 水电
+            wfRows[4].style.width = Math.max(3, (10000 / maxWidth) * 100) + '%';
+            wfRows[4].textContent = formatCurrency(10000);
+            // 净利润
+            const profitPct = Math.max(3, Math.abs(profit) / maxWidth * 100);
+            wfRows[5].style.width = profitPct + '%';
+            wfRows[5].textContent = formatCurrency(profit);
+            // 更新旁边金额
+            const wfAmounts = document.querySelectorAll('#waterfallChart .wf-amount');
+            wfAmounts[0].textContent = '+ ' + formatCurrency(revenue);
+            wfAmounts[1].textContent = '- ' + formatCurrency(variableCost);
+            wfAmounts[2].textContent = '- ' + formatCurrency(30000);
+            wfAmounts[3].textContent = '- ' + formatCurrency(40000);
+            wfAmounts[4].textContent = '- ' + formatCurrency(10000);
+            wfAmounts[5].textContent = '= ' + (profit >= 0 ? '+ ' : '- ') + formatCurrency(Math.abs(profit));
+        }
+
+        cupsSlider.addEventListener('input', updateSimulation);
+        // 初始调用
+        updateSimulation();
+
+        // ===== 测验逻辑 =====
+        let answeredQuestions = {};
+        let correctCount = 0;
+
+        function selectAnswer(btn, questionNum) {
+            // 如果这题已经回答过了，不允许再选
+            if (answeredQuestions[questionNum]) return;
+
+            const questionDiv = btn.closest('.quiz-question');
+            const allOptions = questionDiv.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('feedback-' + questionNum);
+            const isCorrect = btn.getAttribute('data-answer') === 'correct';
+
+            // 禁用所有选项
+            allOptions.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+            });
+
+            // 标记选中
+            btn.classList.add('selected');
+
+            if (isCorrect) {
+                btn.classList.add('correct');
+                feedback.textContent = '✅ 回答正确！' + getFeedbackText(questionNum, true);
+                feedback.className = 'quiz-feedback show fb-correct';
+                correctCount++;
+            } else {
+                btn.classList.add('wrong');
+                // 高亮正确答案
+                allOptions.forEach(opt => {
+                    if (opt.getAttribute('data-answer') === 'correct') {
+                        opt.classList.add('correct');
+                    }
+                });
+                feedback.textContent = '❌ 回答错误。' + getFeedbackText(questionNum, false);
+                feedback.className = 'quiz-feedback show fb-wrong';
+            }
+
+            answeredQuestions[questionNum] = true;
+
+            // 检查是否所有题都答完了
+            const totalQuestions = document.querySelectorAll('.quiz-question').length;
+            if (Object.keys(answeredQuestions).length === totalQuestions) {
+                showScore();
+            }
+        }
+
+        function getFeedbackText(qNum, isCorrect) {
+            const explanations = {
+                1: '资产负债表的本质是"平衡"——你拥有的（资产）一定等于钱的来源（负债+权益）。',
+                2: '利润表关注"一段时间"（比如一个月、一年）内的经营成果，而不是某个瞬间。',
+                3: '现金流量表将现金流分为三类：经营（日常卖货）、投资（买设备）、筹资（借钱还钱）。',
+                4: '用现金买设备，只是资产内部的变化（现金变成设备），总资产不变。记住：资产=负债+权益仍然平衡！',
+                5: '利润是"账面数字"，可能包含还没收到的钱（赊账）；现金流是"真金白银"。两者经常不同！'
+            };
+            return explanations[qNum] || '';
+        }
+
+        function showScore() {
+            const total = document.querySelectorAll('.quiz-question').length;
+            const scoreDiv = document.getElementById('quizScore');
+            const pct = Math.round((correctCount / total) * 100);
+            let emoji, msg;
+            if (pct === 100) {
+                emoji = '🏆';
+                msg = '完美！你已经完全掌握三大报表啦！';
+            } else if (pct >= 80) {
+                emoji = '🌟';
+                msg = '非常棒！只差一点点就满分了！';
+            } else if (pct >= 60) {
+                emoji = '👍';
+                msg = '不错！再复习一下错题就更好了！';
+            } else {
+                emoji = '📚';
+                msg = '没关系，再翻回去看看，你一定能掌握！';
+            }
+            scoreDiv.textContent = `${emoji} 你的得分：${correctCount}/${total}（${pct}%）— ${msg}`;
+            scoreDiv.classList.add('show');
+            scoreDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // ===== 瀑布图动画（页面加载时） =====
+        function animateWaterfall() {
+            const bars = document.querySelectorAll('#waterfallChart .wf-bar');
+            bars.forEach((bar, i) => {
+                const targetWidth = bar.style.width;
+                bar.style.width = '0%';
+                setTimeout(() => {
+                    bar.style.width = targetWidth;
+                }, 300 + i * 200);
+            });
+        }
+
+        // 在瀑布图进入视口时触发动画
+        const waterfallObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.dataset.animated) {
+                    entry.target.dataset.animated = 'true';
+                    animateWaterfall();
+                }
+            });
+        }, { threshold: 0.3 });
+
+        const waterfallChart = document.getElementById('waterfallChart');
+        if (waterfallChart) waterfallObserver.observe(waterfallChart);
+
+        // ===== 初始化瀑布图（在模拟器更新前设置初始宽度） =====
+        // 已经由updateSimulation处理
+    </script>
+</body>
+</html>
+
+    
