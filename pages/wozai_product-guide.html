@@ -1,0 +1,1352 @@
+      
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我在 · 产品介绍与使用手册</title>
+<style>
+  :root{
+    --bg:#FBF8F6;
+    --panel:#FFFFFF;
+    --ink:#2C2523;
+    --ink2:#5A4E49;
+    --muted:#8A7C75;
+    --line:#EFE6E1;
+    --rose:#C96B85;
+    --rose-deep:#A94F69;
+    --rose-soft:#F9E5EB;
+    --rose-pale:#FFF7F9;
+    --gold:#B08A5A;
+    --gold-soft:#FAF3E8;
+    --shadow:0 12px 32px rgba(93,64,54,.07);
+    --shadow-sm:0 4px 14px rgba(93,64,54,.06);
+    --radius:16px;
+    --max:1060px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:
+      radial-gradient(900px 500px at 12% -8%, #FFF1F5 0%, rgba(255,241,245,0) 62%),
+      radial-gradient(800px 460px at 92% 4%, #FBF3E8 0%, rgba(251,243,232,0) 58%),
+      var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif;
+    font-size:16px;
+    line-height:1.78;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+
+  /* ---------- 顶部导航 ---------- */
+  .nav{
+    position:sticky;top:0;z-index:20;
+    backdrop-filter:saturate(180%) blur(12px);
+    background:rgba(251,248,246,.86);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-in{
+    max-width:var(--max);margin:0 auto;padding:12px 24px;
+    display:flex;align-items:center;gap:18px;justify-content:space-between;
+  }
+  .brand{display:flex;align-items:center;gap:9px;font-weight:700;letter-spacing:.16em;font-size:15px}
+  .brand-mark{
+    width:22px;height:22px;border-radius:7px;
+    background:linear-gradient(140deg,#F3B7C6,#D2798F);
+    display:grid;place-items:center;color:#fff;font-size:11px;letter-spacing:0;
+  }
+  .nav-links{display:flex;gap:20px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+  .nav-links a{color:inherit;text-decoration:none;padding-bottom:2px;border-bottom:1px solid transparent;transition:.2s}
+  .nav-links a:hover{color:var(--rose-deep);border-color:var(--rose)}
+
+  /* ---------- 封面 ---------- */
+  .hero{padding:64px 0 40px;position:relative;overflow:hidden}
+  .hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:40px;align-items:center}
+  .kicker{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12px;letter-spacing:.18em;color:var(--rose-deep);
+    background:var(--rose-pale);border:1px solid #F6DDE4;
+    padding:5px 12px;border-radius:999px;margin-bottom:22px;
+  }
+  .kicker i{width:5px;height:5px;border-radius:50%;background:var(--rose);display:block}
+  h1{
+    font-size:clamp(46px,7vw,76px);
+    line-height:1.02;margin:0 0 10px;letter-spacing:.1em;font-weight:700;
+    background:linear-gradient(150deg,#3A2C2A 0%,#6E4A52 60%,#A9556C 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .slogan{font-size:clamp(17px,2.2vw,21px);color:var(--ink2);letter-spacing:.06em;margin:0 0 6px}
+  .slogan span{color:var(--rose-deep)}
+  .hero-lead{color:var(--muted);font-size:15px;max-width:44ch;margin:16px 0 26px}
+  .hero-chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{
+    font-size:12.5px;color:var(--ink2);background:#fff;
+    border:1px solid var(--line);border-radius:999px;padding:6px 13px;
+    box-shadow:var(--shadow-sm);
+  }
+
+  /* ---------- 通用区块 ---------- */
+  section{padding:66px 0}
+  section + section{border-top:1px solid var(--line)}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:12px}
+  .sec-num{
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:12px;color:var(--rose);letter-spacing:.1em;
+    border:1px solid #F3D9E0;background:var(--rose-pale);
+    border-radius:6px;padding:2px 7px;
+  }
+  .sec-head h2{font-size:24px;margin:0;letter-spacing:.04em;font-weight:700}
+  .sec-sub{color:var(--muted);font-size:14.5px;margin:0 0 34px;max-width:70ch}
+  h3{font-size:17px;margin:0 0 8px;letter-spacing:.03em}
+  p{margin:0 0 12px}
+  .muted{color:var(--muted)}
+
+  /* ---------- 痛点 / 卡片 ---------- */
+  .cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .card{
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:22px 22px 20px;box-shadow:var(--shadow-sm);
+  }
+  .card .num{
+    font-family:ui-monospace,monospace;font-size:11px;color:var(--gold);
+    letter-spacing:.14em;margin-bottom:12px;display:block;
+  }
+  .card h3{font-size:16px}
+  .card p{font-size:13.5px;color:var(--muted);margin:0}
+  .card .quote{
+    display:block;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);
+    font-size:13px;color:var(--rose-deep);
+  }
+
+  /* ---------- 表格 ---------- */
+  .tbl{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;background:#fff;
+    border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .tbl th,.tbl td{padding:13px 16px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  .tbl thead th{background:#FDF6F7;font-size:12.5px;letter-spacing:.06em;color:var(--ink2);font-weight:600}
+  .tbl tr:last-child td{border-bottom:none}
+  .tbl td:first-child{color:var(--ink2);width:30%}
+  .yes{color:var(--rose-deep);font-weight:600}
+  .no{color:#B9ADA6}
+
+  /* ---------- 流程图 ---------- */
+  .figure{
+    background:#fff;border:1px solid var(--line);border-radius:18px;
+    padding:26px 20px 18px;box-shadow:var(--shadow-sm);
+  }
+  .figure svg{display:block;width:100%;height:auto}
+  .fig-cap{font-size:12.5px;color:var(--muted);text-align:center;margin-top:10px}
+
+  /* ---------- 手机Mockup ---------- */
+  .phones{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .phone{
+    background:#241F1E;border-radius:24px;padding:5px;
+    box-shadow:0 14px 30px rgba(60,40,36,.16);
+  }
+  .phone-screen{
+    background:#FFFDFC;border-radius:20px;height:436px;overflow:hidden;
+    display:flex;flex-direction:column;position:relative;
+  }
+  .ph-status{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:7px 12px 2px;font-size:8px;color:#B7A9A2;letter-spacing:.04em;
+  }
+  .ph-status b{font-weight:600;color:#9C8C85}
+  .ph-head{
+    background:linear-gradient(138deg,#F7CBd6 0%,#EFB0C2 52%,#E9A2B7 100%);
+    padding:9px 12px 11px;color:#4A2B35;
+  }
+  .ph-names{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700}
+  .ph-online{width:5px;height:5px;border-radius:50%;background:#4FBF83;box-shadow:0 0 0 2px rgba(79,191,131,.22)}
+  .ph-days{font-size:8px;margin-top:4px;color:#6B3C4A;opacity:.92}
+  .ph-wx{font-size:7.5px;margin-top:3px;color:#6B3C4A;opacity:.75}
+  .ph-body{flex:1;padding:9px;display:flex;flex-direction:column;gap:7px;overflow:hidden}
+  .ph-card{background:#fff;border:1px solid #F4EAE6;border-radius:10px;padding:7px 8px}
+  .ph-card-t{font-size:7.5px;color:#A2938C;margin-bottom:5px;letter-spacing:.03em}
+  .ph-moods{display:flex;gap:6px}
+  .ph-mood{flex:1;border-radius:8px;background:#FDF6F8;padding:6px 5px;text-align:center}
+  .ph-mood i{display:block;font-style:normal;font-size:6.5px;color:#A2938C}
+  .ph-mood b{display:block;font-size:8.5px;margin-top:2px;color:#5B4149}
+  .ph-btn{
+    background:linear-gradient(135deg,#E291A7,#CF7089);color:#fff;border-radius:8px;
+    text-align:center;font-size:8.5px;padding:6px;letter-spacing:.05em;
+  }
+  .ph-link{font-size:7px;color:#C0808F;text-align:center;margin-top:5px}
+  .ph-row{display:flex;justify-content:space-between;align-items:center;padding:6px 2px;border-bottom:1px solid #F6EFEB;font-size:8px}
+  .ph-row:last-child{border-bottom:none}
+  .ph-row .k{color:#A2938C}
+  .ph-row .v{color:#5B4B45}
+  .ph-sec{font-size:7px;color:#B4A29A;margin:2px 0 -2px;letter-spacing:.06em}
+  .ph-tabs{
+    display:flex;border-top:1px solid #F3E9E4;background:#fff;
+    padding:5px 0 6px;font-size:7px;color:#BCABA3;
+  }
+  .ph-tab{flex:1;text-align:center;position:relative}
+  .ph-tab.on{color:#D2798F;font-weight:600}
+  .ph-tab .dot{
+    position:absolute;top:-1px;right:calc(50% - 12px);
+    width:4px;height:4px;border-radius:50%;background:#E5544F;
+  }
+  .ph-tab .ico{display:block;font-size:9px;line-height:1.2;margin-bottom:1px}
+  .ph-strip{display:flex;gap:3px}
+  .ph-strip span{
+    flex:1;text-align:center;font-size:6.5px;color:#A2938C;
+    border-radius:6px;padding:4px 0;background:#FBF4F1;
+  }
+  .ph-strip span.on{background:#F6D9E1;color:#8E4459;font-weight:700}
+  .ph-strip em{display:block;font-style:normal;font-size:7.5px;margin-top:1px;color:#6B5650}
+  .tl{display:flex;gap:6px;font-size:7.5px;line-height:1.45;color:#5B4B45}
+  .tl .t{color:#B4A29A;font-size:6.5px;flex:0 0 26px;padding-top:1px}
+  .tl .b{flex:1}
+  .newtag{
+    display:inline-block;font-size:6px;letter-spacing:.08em;color:#C96B85;
+    border:1px solid #F0CEDA;background:#FFF6F9;border-radius:4px;
+    padding:0 3px;margin-left:3px;vertical-align:1px;
+  }
+  .ph-ev{display:flex;gap:5px;align-items:flex-start;padding:5px 0;border-bottom:1px solid #F7F0EC}
+  .ph-ev:last-child{border-bottom:none}
+  .pr{width:4px;height:4px;border-radius:50%;margin-top:4px;flex:0 0 4px}
+  .ph-ev .t2{font-size:8px;color:#4E3E39;line-height:1.35}
+  .ph-ev .d2{font-size:6.5px;color:#B4A29A;margin-top:1px}
+  .ph-chip{font-size:6.5px;padding:3px 7px;border-radius:999px;background:#FBF4F1;color:#9A8A82;border:1px solid transparent}
+  .ph-chip.on{background:#F7DDE4;color:#8E4459;border-color:#F0C8D5;font-weight:600}
+  .ph-chips{display:flex;gap:4px;margin-bottom:5px}
+
+  /* ---------- 步骤 ---------- */
+  .steps{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;counter-reset:s}
+  .step{
+    background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 16px;
+    position:relative;box-shadow:var(--shadow-sm);
+  }
+  .step::before{
+    counter-increment:s;content:counter(s,decimal-leading-zero);
+    font-family:ui-monospace,monospace;font-size:11px;color:#fff;
+    background:linear-gradient(140deg,#E291A7,#C96B85);
+    border-radius:7px;padding:2px 6px;display:inline-block;margin-bottom:10px;
+  }
+  .step h3{font-size:14px;margin-bottom:6px}
+  .step p{font-size:12.5px;color:var(--muted);margin:0}
+
+  /* ---------- 功能块 ---------- */
+  .feature{
+    background:#fff;border:1px solid var(--line);border-radius:18px;
+    padding:26px 28px;margin-bottom:16px;box-shadow:var(--shadow-sm);
+  }
+  .feature-top{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px}
+  .ficon{
+    flex:0 0 40px;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
+    background:var(--rose-pale);border:1px solid #F6DDE4;font-size:17px;
+  }
+  .feature-top .tt{flex:1}
+  .feature-top h3{margin:0 0 3px}
+  .feature-top .lead{font-size:13.5px;color:var(--muted);margin:0}
+  .split{display:grid;grid-template-columns:1.05fr .95fr;gap:26px;align-items:start}
+  ul.plain{margin:0;padding-left:0;list-style:none}
+  ul.plain li{position:relative;padding-left:16px;font-size:14px;color:var(--ink2);margin-bottom:9px}
+  ul.plain li::before{
+    content:"";position:absolute;left:2px;top:10px;width:5px;height:5px;border-radius:50%;
+    background:#E7A9B9;
+  }
+  ul.plain li b{color:var(--ink);font-weight:600}
+  .note{
+    background:var(--gold-soft);border:1px solid #F0E2CC;border-left:3px solid var(--gold);
+    border-radius:10px;padding:12px 15px;font-size:13px;color:#6E5A3F;
+  }
+  .note b{color:#5A4526}
+
+  /* 心情 chips */
+  .mood-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+  .mood-chip{
+    display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink2);
+    background:#FCFAF9;border:1px solid var(--line);border-radius:10px;padding:8px 9px;
+  }
+  .mood-chip i{width:7px;height:7px;border-radius:50%;flex:0 0 7px}
+  .sig-cloud{display:flex;flex-wrap:wrap;gap:7px}
+  .sig{
+    font-size:12.5px;color:#6B4B55;background:var(--rose-pale);
+    border:1px solid #F6DDE4;border-radius:999px;padding:5px 12px;
+  }
+
+  /* 推送卡 */
+  .push-card{
+    background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px;
+    box-shadow:var(--shadow);max-width:430px;
+  }
+  .push-wx{display:flex;align-items:center;gap:6px;font-size:11.5px;color:#A2938C;margin-bottom:10px}
+  .push-wx .sq{width:16px;height:16px;border-radius:5px;background:#2DC100;color:#fff;display:grid;place-items:center;font-size:9px}
+  .push-title{font-size:14px;font-weight:700;color:#2C2523;margin-bottom:6px}
+  .push-body{font-size:13.5px;color:var(--ink2);margin-bottom:8px}
+  .push-suffix{font-size:12px;color:var(--muted);border-top:1px dashed var(--line);padding-top:8px;margin-bottom:12px}
+  .push-cta{
+    display:inline-block;font-size:12.5px;color:var(--rose-deep);
+    border:1px solid #EFC6D2;background:var(--rose-pale);border-radius:8px;padding:6px 12px;
+  }
+
+  /* FAQ */
+  details{
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:0 18px;margin-bottom:10px;
+  }
+  details summary{
+    cursor:pointer;list-style:none;padding:14px 0;font-size:14.5px;font-weight:600;
+    color:var(--ink);display:flex;justify-content:space-between;gap:12px;align-items:center;
+  }
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"+";color:var(--rose);font-weight:400;font-size:18px;line-height:1}
+  details[open] summary::after{content:"–"}
+  details p{font-size:13.8px;color:var(--muted);margin:0 0 16px}
+
+  /* 双列清单 */
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;box-shadow:var(--shadow-sm)}
+  .panel h3{margin-bottom:12px;font-size:15px}
+  .panel.bad h3{color:#8C6A62}
+  .panel.good h3{color:var(--rose-deep)}
+
+  /* 页脚 */
+  footer{
+    border-top:1px solid var(--line);padding:40px 0 56px;
+    font-size:12.5px;color:var(--muted);text-align:center;
+  }
+  footer .fbrand{letter-spacing:.2em;color:var(--ink2);font-weight:600;margin-bottom:8px}
+
+  @media (max-width:960px){
+    .hero-grid{grid-template-columns:1fr}
+    .hero svg{max-width:520px;margin:0 auto}
+    .phones{grid-template-columns:repeat(2,1fr)}
+    .cards3{grid-template-columns:1fr}
+    .steps{grid-template-columns:repeat(2,1fr)}
+    .split{grid-template-columns:1fr}
+    .two-col{grid-template-columns:1fr}
+    .mood-grid{grid-template-columns:repeat(3,1fr)}
+    .nav-links{display:none}
+  }
+  @media (max-width:520px){
+    .phones{grid-template-columns:1fr}
+    .phone-screen{height:420px}
+    .steps{grid-template-columns:1fr}
+    .mood-grid{grid-template-columns:repeat(2,1fr)}
+    section{padding:48px 0}
+  }
+  @media print{
+    body{background:#fff}
+    .nav{display:none}
+    section{break-inside:avoid;padding:24px 0}
+    .phones{grid-template-columns:repeat(4,1fr);gap:8px}
+    .phone{box-shadow:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= 导航 ================= -->
+<nav class="nav">
+  <div class="nav-in">
+    <div class="brand"><span class="brand-mark">我</span>我在 · 产品手册</div>
+    <div class="nav-links">
+      <a href="#what">这是什么</a>
+      <a href="#how">怎么运转</a>
+      <a href="#map">界面地图</a>
+      <a href="#start">五分钟上手</a>
+      <a href="#features">功能详解</a>
+      <a href="#push">推送</a>
+      <a href="#faq">常见问题</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ================= 封面 ================= -->
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="kicker"><i></i>异地恋 · 只服务两个人</div>
+      <h1>我在</h1>
+      <p class="slogan">我在，你就知道。<span>不说，也能被感知。</span></p>
+      <p class="hero-lead">
+        它不聊天、不发照片、不共享位置。它只做一件事：让你此刻的状态，在对方那里可见。
+        在忙、有点累、想你了——点一下，就够了。
+      </p>
+      <div class="hero-chips">
+        <span class="chip">全部点选，零输入</span>
+        <span class="chip">不回不催</span>
+        <span class="chip">微信推送直达</span>
+        <span class="chip">按天回看</span>
+      </div>
+    </div>
+
+    <!-- 封面插画 -->
+    <svg viewBox="0 0 520 340" role="img" aria-label="两台手机之间传递心情与信号">
+      <defs>
+        <linearGradient id="screenA" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#FFFDFC"/><stop offset="100%" stop-color="#FDF3F6"/>
+        </linearGradient>
+        <linearGradient id="headA" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#F8CED9"/><stop offset="100%" stop-color="#E9A2B7"/>
+        </linearGradient>
+        <linearGradient id="heartG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#EEA3B6"/><stop offset="100%" stop-color="#C96B85"/>
+        </linearGradient>
+        <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="10"/>
+        </filter>
+      </defs>
+
+      <!-- 背景光斑 -->
+      <ellipse cx="258" cy="180" rx="176" ry="104" fill="#FDEFF3" filter="url(#soft)"/>
+      <circle cx="66" cy="62" r="4" fill="#F1C3CF" opacity=".8"/>
+      <circle cx="452" cy="88" r="3" fill="#EFC9B4" opacity=".85"/>
+      <circle cx="398" cy="270" r="5" fill="#F3D2DB" opacity=".7"/>
+      <circle cx="120" cy="286" r="3" fill="#EBD6C4" opacity=".9"/>
+
+      <!-- 左手机 -->
+      <g>
+        <rect x="52" y="72" width="128" height="212" rx="20" fill="#241F1E"/>
+        <rect x="57" y="77" width="118" height="202" rx="16" fill="url(#screenA)"/>
+        <rect x="57" y="77" width="118" height="52" rx="16" fill="url(#headA)"/>
+        <rect x="57" y="112" width="118" height="17" fill="url(#headA)" opacity=".9"/>
+        <text x="68" y="96" font-size="8" font-family="sans-serif" fill="#5C3140" font-weight="700">小满</text>
+        <circle cx="104" cy="93" r="2.6" fill="#4FBF83"/>
+        <text x="68" y="108" font-size="6" font-family="sans-serif" fill="#6B3C4A" opacity=".9">相恋 218 天 · 连续陪伴 36 天</text>
+
+        <rect x="66" y="140" width="100" height="30" rx="7" fill="#fff" stroke="#F4E8EC"/>
+        <text x="73" y="152" font-size="5.5" font-family="sans-serif" fill="#A2938C">今天的心情</text>
+        <circle cx="78" cy="162" r="3.4" fill="#E8B44A"/>
+        <text x="85" y="165" font-size="7" font-family="sans-serif" fill="#5B4149" font-weight="700">开心</text>
+
+        <rect x="66" y="177" width="100" height="34" rx="7" fill="#fff" stroke="#F4E8EC"/>
+        <text x="73" y="189" font-size="5.5" font-family="sans-serif" fill="#A2938C">替我说</text>
+        <rect x="73" y="193" width="86" height="12" rx="6" fill="#D2798F"/>
+        <text x="82" y="201.6" font-size="5.5" font-family="sans-serif" fill="#fff">+ 替我说句话</text>
+
+        <rect x="66" y="218" width="100" height="26" rx="7" fill="#FDF6F8" stroke="#F6E4EA"/>
+        <circle cx="79" cy="231" r="6" fill="#F3CBD7"/>
+        <text x="91" y="229" font-size="6" font-family="sans-serif" fill="#6B4B55">今晚吃什么都行</text>
+        <text x="91" y="238" font-size="5" font-family="sans-serif" fill="#A2938C">话题盲盒 · 等 TA 准备</text>
+
+        <rect x="66" y="251" width="100" height="15" rx="6" fill="#FBF4F1"/>
+        <text x="73" y="261" font-size="5.5" font-family="sans-serif" fill="#8A7C75">日子 · 周末去看海</text>
+      </g>
+
+      <!-- 右手机 -->
+      <g>
+        <rect x="341" y="52" width="128" height="212" rx="20" fill="#241F1E"/>
+        <rect x="346" y="57" width="118" height="202" rx="16" fill="url(#screenA)"/>
+        <rect x="346" y="57" width="118" height="52" rx="16" fill="url(#headA)"/>
+        <rect x="346" y="92" width="118" height="17" fill="url(#headA)" opacity=".9"/>
+        <text x="357" y="76" font-size="8" font-family="sans-serif" fill="#5C3140" font-weight="700">阿泽</text>
+        <circle cx="393" cy="73" r="2.6" fill="#4FBF83"/>
+        <text x="357" y="88" font-size="6" font-family="sans-serif" fill="#6B3C4A" opacity=".9">相恋 218 天 · 连续陪伴 36 天</text>
+
+        <rect x="355" y="120" width="100" height="30" rx="7" fill="#fff" stroke="#F4E8EC"/>
+        <text x="362" y="132" font-size="5.5" font-family="sans-serif" fill="#A2938C">今天的心情</text>
+        <circle cx="367" cy="142" r="3.4" fill="#8C7BB5"/>
+        <text x="374" y="145" font-size="7" font-family="sans-serif" fill="#5B4149" font-weight="700">有点累</text>
+
+        <rect x="355" y="157" width="100" height="46" rx="7" fill="#fff" stroke="#F4E8EC"/>
+        <text x="362" y="169" font-size="5.5" font-family="sans-serif" fill="#A2938C">时间线 · 10 月 31 日</text>
+        <text x="362" y="180" font-size="5.5" font-family="sans-serif" fill="#6B5650">你说了「抱抱」</text>
+        <text x="362" y="191" font-size="5.5" font-family="sans-serif" fill="#6B5650">TA 把心情设成了「想你了」</text>
+
+        <rect x="355" y="210" width="100" height="34" rx="7" fill="#FDF6F8" stroke="#F6E4EA"/>
+        <text x="362" y="222" font-size="5.5" font-family="sans-serif" fill="#A2938C">今天还没报到</text>
+        <text x="362" y="234" font-size="5.5" font-family="sans-serif" fill="#8E4459">点一下，TA 就知道了</text>
+      </g>
+
+      <!-- 连接弧线 -->
+      <path d="M186 156 C 236 112, 288 112, 336 150" stroke="#E5AFBF" stroke-width="1.6"
+            fill="none" stroke-dasharray="4 5" stroke-linecap="round"/>
+      <path d="M336 206 C 288 244, 236 244, 186 208" stroke="#E3C7A9" stroke-width="1.4"
+            fill="none" stroke-dasharray="3 5" stroke-linecap="round"/>
+
+      <!-- 中间爱心 -->
+      <g transform="translate(258 150)">
+        <circle r="23" fill="#FFF" opacity=".9"/>
+        <path d="M0 12c-9-6.4-15-11.2-15-17.2C-15-9.4-11.4-6-7-6c2.9 0 5.4 1.6 7 4 1.6-2.4 4.1-4 7-4 4.4 0 8 3.4 8 7.2C15 .8 9 5.6 0 12z"
+              fill="url(#heartG)"/>
+      </g>
+      <text x="266" y="196" font-size="7" font-family="sans-serif" fill="#B08A8F">戳一下</text>
+      <text x="215" y="106" font-size="7.5" font-family="sans-serif" fill="#B08A8F">一个心情</text>
+      <text x="212" y="252" font-size="7.5" font-family="sans-serif" fill="#B39A7C">一个轻信号</text>
+    </svg>
+  </div>
+</header>
+
+<main>
+
+<!-- ================= 01 这是什么 ================= -->
+<section id="what">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">01</span><h2>这是什么</h2></div>
+    <p class="sec-sub">
+      微信负责「说」，它负责「不说也能被感知」。所以它明确地不做聊天、不做语音视频、不做相册、不做位置共享——
+      只保留那些「一句话都懒得打，但对方应该知道」的瞬间。
+    </p>
+
+    <div class="cards3">
+      <div class="card">
+        <span class="num">PAIN 01</span>
+        <h3>想说的话，开不了口</h3>
+        <p>「在忙」打三遍像敷衍，不说又怕对方多想；难过的时候更不想解释为什么。</p>
+        <span class="quote">→ 一个心情，替你说完</span>
+      </div>
+      <div class="card">
+        <span class="num">PAIN 02</span>
+        <h3>想找 TA，又怕打扰</h3>
+        <p>一句「在吗」背后是半小时的犹豫。发出去还得等回复，等不到更难受。</p>
+        <span class="quote">→ 一个信号，不催不问</span>
+      </div>
+      <div class="card">
+        <span class="num">PAIN 03</span>
+        <h3>想记的，记不住</h3>
+        <p>那天你说了什么、TA 心情怎样，全都埋在几千条聊天记录里，翻不回去。</p>
+        <span class="quote">→ 按天回看，一眼到底</span>
+      </div>
+    </div>
+
+    <div style="height:28px"></div>
+
+    <table class="tbl">
+      <thead>
+        <tr><th>维度</th><th>微信里</th><th>在「我在」里</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>要打字吗</td><td class="no">要，而且要斟酌语气</td><td class="yes">不用，全部点选</td></tr>
+        <tr><td>对方有压力吗</td><td class="no">有，「已发送」就在等回复</td><td class="yes">没有，不回不催、不标红</td></tr>
+        <tr><td>状态看得见吗</td><td class="no">埋在聊天流里，要靠猜</td><td class="yes">今天的心情，一眼看到</td></tr>
+        <tr><td>怎么提醒</td><td class="no">消息红点，容易被淹没</td><td class="yes">微信推送，点开直达对应页面</td></tr>
+        <tr><td>能回看吗</td><td class="no">翻聊天记录</td><td class="yes">选一天，当天的都在</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ================= 02 怎么运转 ================= -->
+<section id="how">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">02</span><h2>它是怎么运转的</h2></div>
+    <p class="sec-sub">
+      整条链路只有三步：你点一下 → 服务器判断对方在不在线 → 在线走实时轻提示，不在线走微信推送。
+      对方点开链接，落到的就是这件事对应的页面，不是首页。
+    </p>
+
+    <div class="figure">
+      <svg viewBox="0 0 980 320" role="img" aria-label="从点选到对方收到的完整链路">
+        <defs>
+          <marker id="ar" markerWidth="9" markerHeight="9" refX="7.6" refY="3.2" orient="auto">
+            <path d="M0 0 L7.6 3.2 L0 6.4 z" fill="#D6BCC3"/>
+          </marker>
+          <marker id="ar2" markerWidth="9" markerHeight="9" refX="7.6" refY="3.2" orient="auto">
+            <path d="M0 0 L7.6 3.2 L0 6.4 z" fill="#DCC7A8"/>
+          </marker>
+          <linearGradient id="boxG" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFFDFC"/><stop offset="100%" stop-color="#FDF6F8"/>
+          </linearGradient>
+        </defs>
+
+        <!-- 你 -->
+        <rect x="26" y="96" width="196" height="126" rx="16" fill="url(#boxG)" stroke="#EFE2E6"/>
+        <circle cx="56" cy="126" r="13" fill="#F9E5EB"/>
+        <text x="56" y="130.5" font-size="11" text-anchor="middle" font-family="sans-serif" fill="#C96B85">你</text>
+        <text x="80" y="124" font-size="14" font-family="sans-serif" fill="#3A2C2A" font-weight="700">点一下</text>
+        <text x="80" y="142" font-size="11" font-family="sans-serif" fill="#8A7C75">心情 / 信号 / 日子</text>
+        <text x="50" y="176" font-size="11" font-family="sans-serif" fill="#A2938C">全部是按钮，不用打字</text>
+        <text x="50" y="196" font-size="11" font-family="sans-serif" fill="#A2938C">点完立刻返回，不等外部服务</text>
+
+        <!-- 服务器 -->
+        <rect x="316" y="56" width="348" height="206" rx="18" fill="#FFFFFF" stroke="#F0DCE2"/>
+        <rect x="316" y="56" width="348" height="38" rx="18" fill="#FDF3F6"/>
+        <rect x="316" y="80" width="348" height="14" fill="#FDF3F6"/>
+        <text x="340" y="81" font-size="12.5" font-family="sans-serif" fill="#8E4459" font-weight="700">「我在」服务</text>
+
+        <rect x="338" y="110" width="140" height="46" rx="10" fill="#FCFAF9" stroke="#EFE6E1"/>
+        <text x="352" y="129" font-size="11" font-family="sans-serif" fill="#5A4E49">判断在线状态</text>
+        <text x="352" y="145" font-size="10" font-family="sans-serif" fill="#A2938C">实时通道是否连着</text>
+
+        <rect x="502" y="110" width="140" height="46" rx="10" fill="#FCFAF9" stroke="#EFE6E1"/>
+        <text x="516" y="129" font-size="11" font-family="sans-serif" fill="#5A4E49">组装一条通知</text>
+        <text x="516" y="145" font-size="10" font-family="sans-serif" fill="#A2938C">文案 + 落点链接</text>
+
+        <rect x="338" y="172" width="304" height="42" rx="10" fill="#FFF9F2" stroke="#F1E4CD"/>
+        <text x="352" y="191" font-size="10.5" font-family="sans-serif" fill="#8A6B41">合并 / 免打扰 / 每天一次的限制都在这一层做</text>
+        <text x="352" y="206" font-size="10" font-family="sans-serif" fill="#B39A7C">同一件事短时间内重复发生，只发一条</text>
+
+        <text x="338" y="240" font-size="10" font-family="sans-serif" fill="#B4A29A">发送由后台队列完成，不会拖慢你的操作</text>
+
+        <!-- 两条出口 -->
+        <path d="M664 124 C 716 124, 726 96, 768 96" stroke="#D6BCC3" stroke-width="1.8" fill="none" marker-end="url(#ar)"/>
+        <path d="M664 190 C 716 190, 726 224, 768 224" stroke="#DCC7A8" stroke-width="1.8" fill="none" marker-end="url(#ar2)"/>
+
+        <rect x="768" y="62" width="186" height="72" rx="14" fill="#FFFDFC" stroke="#EFE2E6"/>
+        <text x="786" y="86" font-size="12.5" font-family="sans-serif" fill="#4A3C38" font-weight="700">对方在线</text>
+        <text x="786" y="105" font-size="10.5" font-family="sans-serif" fill="#8A7C75">App 内轻提示，实时到达</text>
+        <text x="786" y="120" font-size="10" font-family="sans-serif" fill="#B4A29A">不响铃、不弹系统通知</text>
+
+        <rect x="768" y="188" width="186" height="72" rx="14" fill="#FFFDFC" stroke="#EFE2E6"/>
+        <text x="786" y="212" font-size="12.5" font-family="sans-serif" fill="#4A3C38" font-weight="700">对方离线</text>
+        <text x="786" y="231" font-size="10.5" font-family="sans-serif" fill="#8A7C75">微信推送一条，点开直达</text>
+        <text x="786" y="246" font-size="10" font-family="sans-serif" fill="#B4A29A">两条通道只走其中一条</text>
+
+        <!-- 回程 -->
+        <path d="M861 268 C 861 302, 560 306, 400 300" stroke="#E3D3C0" stroke-width="1.4"
+              fill="none" stroke-dasharray="4 5" marker-end="url(#ar2)"/>
+        <text x="560" y="316" font-size="10.5" text-anchor="middle" font-family="sans-serif" fill="#B39A7C">
+          对方也可以回一个轻信号，一条只能回一次
+        </text>
+      </svg>
+      <p class="fig-cap">图 1 · 一次点选到对方收到的完整链路</p>
+    </div>
+
+    <div style="height:22px"></div>
+    <div class="cards3">
+      <div class="card"><h3>点选，不打字</h3><p>心情 10 个选项、信号 12 句话，全部是现成的。点一下就发出去。</p></div>
+      <div class="card"><h3>双通道，二选一</h3><p>对方开着 App 就实时轻提示；不在线才发微信，不会两条都来。</p></div>
+      <div class="card"><h3>点开就到</h3><p>微信里那条消息点开，落的是这件事对应的页面，不用再自己找。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 03 界面地图 ================= -->
+<section id="map">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">03</span><h2>界面上有什么</h2></div>
+    <p class="sec-sub">
+      四个 Tab，一条主线：首页看今天 → 时间线看过去 → 日子看安排 → 设置管两个人的信息。
+      第一次打开如果觉得空，是因为还没绑定 TA。
+    </p>
+
+    <div class="phones">
+
+      <!-- 首页 -->
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="ph-status"><b>9:41</b><span>●●● ⌁</span></div>
+          <div class="ph-head">
+            <div class="ph-names">小满 <span class="ph-online"></span> 阿泽</div>
+            <div class="ph-days">相恋 218 天 · 连续陪伴 36 天</div>
+            <div class="ph-wx">北京 晴 12° · 上海 多云 18°</div>
+          </div>
+          <div class="ph-body">
+            <div class="ph-card">
+              <div class="ph-card-t">今天的心情 · 点左边就算报到</div>
+              <div class="ph-moods">
+                <div class="ph-mood"><i>我</i><b style="color:#C79A2E">开心</b></div>
+                <div class="ph-mood"><i>阿泽</i><b style="color:#8C7BB5">有点累</b></div>
+              </div>
+            </div>
+            <div class="ph-card">
+              <div class="ph-card-t">替我说 · TA 会收到一条推送</div>
+              <div class="ph-btn">+ 替我说句话</div>
+              <div class="ph-link">提醒 TA 报到</div>
+            </div>
+            <div class="ph-card" style="background:#FDF6F8;border-color:#F6E3E9">
+              <div class="ph-card-t" style="color:#C0808F">互动空间</div>
+              <div style="font-size:8px;color:#5B4149">话题盲盒 <span style="color:#C0808F">去开一局 ›</span></div>
+            </div>
+            <div class="ph-card">
+              <div class="ph-card-t">日子 · 点一行看看属于谁</div>
+              <div class="ph-ev"><span class="pr" style="background:#D9534F"></span><div><div class="t2">周末去看海</div><div class="d2">11 月 8 日 · 共同</div></div></div>
+              <div class="ph-ev"><span class="pr" style="background:#E8B44A"></span><div><div class="t2">记得吃药</div><div class="d2">今天 · 我</div></div></div>
+            </div>
+          </div>
+          <div class="ph-tabs">
+            <div class="ph-tab on"><span class="ico">⌂</span>首页</div>
+            <div class="ph-tab"><span class="ico">♡</span>时间线<span class="dot"></span></div>
+            <div class="ph-tab"><span class="ico">▤</span>日子</div>
+            <div class="ph-tab"><span class="ico">☺</span>设置</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 时间线 -->
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="ph-status"><b>9:41</b><span>●●● ⌁</span></div>
+          <div class="ph-head" style="padding-bottom:10px">
+            <div class="ph-names" style="font-size:12px">时间线</div>
+            <div class="ph-days">选一天，回看那天的心情和嘴替</div>
+          </div>
+          <div class="ph-body">
+            <div class="ph-strip">
+              <span>一<em>27</em></span>
+              <span>二<em>28</em></span>
+              <span>三<em>29</em></span>
+              <span>四<em>30</em></span>
+              <span class="on">五<em>31</em></span>
+              <span>六<em>1</em></span>
+              <span>日<em>2</em></span>
+            </div>
+            <div class="ph-card">
+              <div class="ph-card-t">10 月 31 日 · 两个人的今天</div>
+              <div class="ph-row"><span class="k">09:12</span><span class="v">小满 的心情：开心</span></div>
+              <div class="ph-row"><span class="k">12:40</span><span class="v">小满 说了「想你了」</span></div>
+              <div class="ph-row"><span class="k">13:05</span><span class="v">阿泽 回了一个「抱抱」</span></div>
+              <div class="ph-row"><span class="k">20:18</span><span class="v">阿泽 的心情：有点累 <span class="newtag">NEW</span></span></div>
+            </div>
+            <div class="ph-card">
+              <div class="ph-card-t">更早</div>
+              <div class="ph-row"><span class="k">10-30</span><span class="v">阿泽 说了「平安无事」</span></div>
+              <div class="ph-row"><span class="k">10-29</span><span class="v">一起加了「周末去看海」</span></div>
+            </div>
+            <div style="font-size:6.5px;color:#B4A29A;text-align:center;margin-top:2px">
+              新内容会在 Tab 上点亮一个红点
+            </div>
+          </div>
+          <div class="ph-tabs">
+            <div class="ph-tab"><span class="ico">⌂</span>首页</div>
+            <div class="ph-tab on"><span class="ico">♡</span>时间线</div>
+            <div class="ph-tab"><span class="ico">▤</span>日子</div>
+            <div class="ph-tab"><span class="ico">☺</span>设置</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 日子 -->
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="ph-status"><b>9:41</b><span>●●● ⌁</span></div>
+          <div class="ph-head">
+            <div class="ph-names" style="font-size:12px">日子</div>
+            <div class="ph-days">按重要程度排，越急越靠前</div>
+          </div>
+          <div class="ph-body">
+            <div class="ph-chips">
+              <span class="ph-chip on">全部</span>
+              <span class="ph-chip">共同</span>
+              <span class="ph-chip">我</span>
+              <span class="ph-chip">TA</span>
+            </div>
+            <div class="ph-chips">
+              <span class="ph-chip on">未完成</span>
+              <span class="ph-chip">日程</span>
+              <span class="ph-chip">待办</span>
+            </div>
+            <div class="ph-card">
+              <div class="ph-ev"><span class="pr" style="background:#D9534F"></span>
+                <div><div class="t2">周末去看海 <span class="newtag">NEW</span></div><div class="d2">11 月 8 日 – 11 月 9 日 · 共同 · 日程</div></div></div>
+              <div class="ph-ev"><span class="pr" style="background:#E8B44A"></span>
+                <div><div class="t2">记得吃药</div><div class="d2">今天 · 我 · 待办</div></div></div>
+              <div class="ph-ev"><span class="pr" style="background:#8FA6B2"></span>
+                <div><div class="t2">给妈妈打电话</div><div class="d2">明天 · TA · 待办</div></div></div>
+              <div class="ph-ev"><span class="pr" style="background:#C9C2BD"></span>
+                <div><div class="t2" style="color:#A2938C;text-decoration:line-through">交水电费</div><div class="d2">10 月 30 日 · 共同 · 已完成</div></div></div>
+            </div>
+            <div style="font-size:6.5px;color:#B4A29A;line-height:1.5">
+              筛选和排序都在手机上完成，切换不需要等网络。
+            </div>
+          </div>
+          <div class="ph-tabs">
+            <div class="ph-tab"><span class="ico">⌂</span>首页</div>
+            <div class="ph-tab"><span class="ico">♡</span>时间线</div>
+            <div class="ph-tab on"><span class="ico">▤</span>日子</div>
+            <div class="ph-tab"><span class="ico">☺</span>设置</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 设置 -->
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="ph-status"><b>9:41</b><span>●●● ⌁</span></div>
+          <div class="ph-head">
+            <div class="ph-names" style="font-size:12px">设置</div>
+            <div class="ph-days">小满</div>
+          </div>
+          <div class="ph-body">
+            <div class="ph-card">
+              <div class="ph-card-t">账号</div>
+              <div class="ph-row"><span class="k">昵称</span><span class="v">小满</span></div>
+              <div class="ph-row"><span class="k">城市</span><span class="v">北京 · 朝阳</span></div>
+              <div class="ph-row"><span class="k">推送绑定</span><span class="v" style="color:#4FBF83">已绑定</span></div>
+            </div>
+            <div class="ph-card">
+              <div class="ph-card-t">我们</div>
+              <div class="ph-row"><span class="k">认识</span><span class="v">412 天</span></div>
+              <div class="ph-row"><span class="k">相恋</span><span class="v">218 天</span></div>
+              <div class="ph-row"><span class="k">连续陪伴</span><span class="v">36 天</span></div>
+            </div>
+            <div class="ph-card">
+              <div class="ph-card-t">关系</div>
+              <div class="ph-row"><span class="k">状态</span><span class="v">已绑定</span></div>
+              <div class="ph-row"><span class="k">TA 的推送</span><span class="v">已绑定</span></div>
+            </div>
+            <div class="ph-card">
+              <div class="ph-card-t">外观</div>
+              <div class="ph-row"><span class="k">主题</span><span class="v">跟随系统</span></div>
+            </div>
+          </div>
+          <div class="ph-tabs">
+            <div class="ph-tab"><span class="ico">⌂</span>首页</div>
+            <div class="ph-tab"><span class="ico">♡</span>时间线</div>
+            <div class="ph-tab"><span class="ico">▤</span>日子</div>
+            <div class="ph-tab on"><span class="ico">☺</span>设置</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="height:26px"></div>
+
+    <div class="two-col">
+      <div class="panel">
+        <h3>首页</h3>
+        <ul class="plain">
+          <li>顶栏是两个人的名字、在线小绿点，以及<b>相恋 X 天 · 连续陪伴 X 天</b></li>
+          <li>两座城市的天气并排显示，只到城市一级</li>
+          <li><b>今天的心情</b>左右两栏：点自己那栏就能设，对方那栏只读</li>
+          <li><b>替我说</b>一个按钮，点开是 12 句现成的话</li>
+          <li>下面是互动空间入口和最近的日子</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>时间线 / 日子 / 设置</h3>
+        <ul class="plain">
+          <li><b>时间线</b>：选一天，回看那天两个人各自的心情和说过的话</li>
+          <li><b>日子</b>：日程与待办混排，按重要程度降序，同级按开始日期</li>
+          <li><b>设置</b>：账号、我们、关系、外观四组，最后一屏是关于「我在」</li>
+          <li>底部 Tab 上的红点，表示那一栏有还没看的新内容</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 04 五分钟上手 ================= -->
+<section id="start">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">04</span><h2>五分钟上手</h2></div>
+    <p class="sec-sub">按顺序做完这五步，两个人就能开始用了。第三步之后，TA 那边的任何动静你都会知道。</p>
+
+    <div class="steps">
+      <div class="step">
+        <h3>注册</h3>
+        <p>邮箱 + 密码 + 昵称，收一封验证码邮件就完成。昵称就是对方看到的名字。</p>
+      </div>
+      <div class="step">
+        <h3>绑定 TA</h3>
+        <p>一方在「设置 → 关系」生成 6 位邀请码（24 小时有效），另一方输入并确认，双向确认才生效。</p>
+      </div>
+      <div class="step">
+        <h3>设置相恋日</h3>
+        <p>首页会有一行提示，选「相恋的第一天」，从那天开始算天数。</p>
+      </div>
+      <div class="step">
+        <h3>报个到</h3>
+        <p>点「今天的心情」里自己那栏，选一个最接近此刻的词，就算今天报到了。</p>
+      </div>
+      <div class="step">
+        <h3>打开推送</h3>
+        <p>「设置 → 账号 → 推送绑定」贴上 WxPusher UID。不绑也能用，但收不到微信提醒。</p>
+      </div>
+    </div>
+
+    <div style="height:22px"></div>
+    <div class="note">
+      <b>关于邀请码：</b>一个邀请码只能被一个人用。24 小时没用会自动失效，可以随时重新生成。
+      一个人同时只能有一段绑定关系——想换人，得先解除绑定。
+    </div>
+  </div>
+</section>
+
+<!-- ================= 05 功能详解 ================= -->
+<section id="features">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">05</span><h2>功能详解</h2></div>
+    <p class="sec-sub">下面每一块，都对应 App 里一个具体的位置。写清楚了什么会推送、什么不会。</p>
+
+    <!-- 心情 -->
+    <div class="feature">
+      <div class="feature-top">
+        <div class="ficon">☺</div>
+        <div class="tt">
+          <h3>今天的心情</h3>
+          <p class="lead">一天一条，点一下就算报到了。这是整个 App 最重要的一件事。</p>
+        </div>
+      </div>
+      <div class="split">
+        <div>
+          <ul class="plain">
+            <li><b>一天只有一条</b>：重复设置只覆盖当天那一条，不会堆成列表</li>
+            <li><b>第一次一定会告诉 TA</b>：当天首次设心情，立刻推给对方一次</li>
+            <li><b>之后修改不重复推</b>：改来改去不会变成连环通知，对方下次打开自然看到最新的</li>
+            <li><b>对方没设也不催</b>：只显示「TA 今天还没报到」，不发推送、不标红</li>
+          </ul>
+        </div>
+        <div>
+          <div class="mood-grid">
+            <span class="mood-chip"><i style="background:#E8B44A"></i>开心</span>
+            <span class="mood-chip"><i style="background:#8FA6B2"></i>平静</span>
+            <span class="mood-chip"><i style="background:#8C7BB5"></i>有点累</span>
+            <span class="mood-chip"><i style="background:#6E84B8"></i>难过</span>
+            <span class="mood-chip"><i style="background:#C97B6B"></i>生气</span>
+            <span class="mood-chip"><i style="background:#8A8A8A"></i>在忙</span>
+            <span class="mood-chip"><i style="background:#D98AA8"></i>想你了</span>
+            <span class="mood-chip"><i style="background:#E9A05A"></i>兴奋</span>
+            <span class="mood-chip"><i style="background:#6FA89A"></i>生病了</span>
+            <span class="mood-chip"><i style="background:#9B8DB8"></i>委屈</span>
+          </div>
+          <p class="muted" style="font-size:12px;margin-top:10px">共 10 个选项，顺序与配色都由后台配置，可随时调整。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 替我说 -->
+    <div class="feature">
+      <div class="feature-top">
+        <div class="ficon">✎</div>
+        <div class="tt">
+          <h3>替我说</h3>
+          <p class="lead">十二句已经写好的话。你只需要选一句，剩下的交给它。</p>
+        </div>
+      </div>
+      <div class="split">
+        <div>
+          <ul class="plain">
+            <li><b>点一下就是一条推送</b>：文案就是那句话本身，不加工、不加系统废话</li>
+            <li><b>对方可以回一个</b>：一条信号只能回一次，回完这条就结束</li>
+            <li><b>不回不催</b>：没有「已读」，没有倒计时，也不标红</li>
+            <li><b>短时间连发会合并</b>：同一类型 1 分钟内超过 3 条，合成一条通知，避免轰炸</li>
+          </ul>
+        </div>
+        <div>
+          <div class="sig-cloud">
+            <span class="sig">想你</span><span class="sig">想见你</span><span class="sig">抱抱</span>
+            <span class="sig">亲亲</span><span class="sig">平安无事</span><span class="sig">今天挺好</span>
+            <span class="sig">有点累了</span><span class="sig">先睡啦</span><span class="sig">求安慰</span>
+            <span class="sig">不开心</span><span class="sig">想听你说话</span><span class="sig">来找我</span>
+          </div>
+          <p class="muted" style="font-size:12px;margin-top:12px">这 12 句来自后台配置，加减一句话不需要更新 App。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 日子 -->
+    <div class="feature">
+      <div class="feature-top">
+        <div class="ficon">▤</div>
+        <div class="tt">
+          <h3>日子</h3>
+          <p class="lead">不只是纪念日，也包括「记得吃药」「周末去看海」这种小事。</p>
+        </div>
+      </div>
+      <ul class="plain">
+        <li><b>两种类型</b>：日程要填起止日期，待办只填一天。结束日期早于开始日期会被直接拒绝</li>
+        <li><b>三种归属</b>：共同 / 我 / TA。归属是 TA 的那条，只有 TA 能改，你只能看</li>
+        <li><b>重要程度排序</b>：越重要的越靠前，同级按开始日期升序，不会把急事埋在后面</li>
+        <li><b>筛选在本地</b>：重要程度、归属、完成状态三个维度的筛选和排序都在手机上完成，切换瞬间响应</li>
+        <li><b>改动都会告诉对方</b>：新增、修改、删除、勾选完成，都会推一条，没有审批流</li>
+      </ul>
+      <div class="note" style="margin-top:6px">
+        <b>小提示：</b>5 分钟内的多条改动会合并成一条通知。所以你放心连续改三遍，对方不会被弹三次。
+      </div>
+    </div>
+
+    <!-- 时间线 -->
+    <div class="feature">
+      <div class="feature-top">
+        <div class="ficon">♡</div>
+        <div class="tt">
+          <h3>时间线</h3>
+          <p class="lead">选一天，把那一天两个人的状态摊开来看。</p>
+        </div>
+      </div>
+      <div class="split">
+        <div>
+          <ul class="plain">
+            <li><b>按天回看</b>：当天谁设了什么心情、说了哪句话、回了什么，按时间排好</li>
+            <li><b>新内容有标记</b>：底部 Tab 一个红点，卡片一个很淡的 <span class="newtag">NEW</span></li>
+            <li><b>进一次就清掉</b>：点进时间线，红点立刻消失；再进来，NEW 也不见了</li>
+            <li><b>停在页面时不打扰</b>：正看着的时候来了新内容，直接插到列表顶部，不亮不闪</li>
+            <li><b>已读只存在手机上</b>：不上传服务器，换设备不会同步「已读」</li>
+          </ul>
+        </div>
+        <div class="figure" style="padding:20px 18px 14px">
+          <div class="ph-strip" style="gap:6px">
+            <span>一<em>27</em></span><span>二<em>28</em></span><span>三<em>29</em></span>
+            <span>四<em>30</em></span><span class="on">五<em>31</em></span>
+          </div>
+          <div style="margin-top:14px;display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;gap:10px;font-size:12.5px">
+              <span style="color:#B4A29A;flex:0 0 42px">09:12</span>
+              <span style="color:#5A4E49">小满 的心情：<b style="color:#C79A2E">开心</b></span>
+            </div>
+            <div style="display:flex;gap:10px;font-size:12.5px">
+              <span style="color:#B4A29A;flex:0 0 42px">12:40</span>
+              <span style="color:#5A4E49">小满 说了「想你了」</span>
+            </div>
+            <div style="display:flex;gap:10px;font-size:12.5px">
+              <span style="color:#B4A29A;flex:0 0 42px">13:05</span>
+              <span style="color:#5A4E49">阿泽 回了一个「抱抱」</span>
+            </div>
+            <div style="display:flex;gap:10px;font-size:12.5px">
+              <span style="color:#B4A29A;flex:0 0 42px">20:18</span>
+              <span style="color:#5A4E49">阿泽 的心情：有点累 <span class="newtag">NEW</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 相恋与陪伴 -->
+    <div class="feature">
+      <div class="feature-top">
+        <div class="ficon">∞</div>
+        <div class="tt">
+          <h3>相恋天数与连续陪伴</h3>
+          <p class="lead">两个数字，一个算的是「多久了」，一个算的是「每天都在」。</p>
+        </div>
+      </div>
+      <div class="split">
+        <div>
+          <ul class="plain">
+            <li><b>相恋 X 天</b>：从「相恋的第一天」算起，那天本身算第 1 天</li>
+            <li><b>没设置就不显示 0 天</b>：首页会给一行引导，而不是显示一个尴尬的「0」</li>
+            <li><b>连续陪伴</b>：每天 00:00 结算一次。昨天两个人都动过（心情 / 信号 / 日子任一），就 +1</li>
+            <li><b>断一天就清零</b>：有一个人一整天什么都没做，连续天数从头再来</li>
+          </ul>
+        </div>
+        <div class="panel" style="background:linear-gradient(140deg,#FFF9FB,#FDF1F5);border-color:#F6E1E8">
+          <div style="font-size:12px;color:#A2938C;letter-spacing:.1em;margin-bottom:8px">TODAY</div>
+          <div style="font-size:19px;font-weight:700;color:#4A2B35;line-height:1.5">
+            相恋 <span style="color:#C96B85">218</span> 天<br>
+            连续陪伴 <span style="color:#C96B85">36</span> 天
+          </div>
+          <div style="font-size:12px;color:#9A8A82;margin-top:10px;line-height:1.7">
+            连续陪伴不是打卡任务，没有惩罚提示。<br>它只是安静地告诉你：这段日子你们都在。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 爱心与天气 -->
+    <div class="feature">
+      <div class="feature-top">
+        <div class="ficon">✧</div>
+        <div class="tt">
+          <h3>戳一下 &amp; 双城天气</h3>
+          <p class="lead">顶栏上两个很小的东西：一个是心跳，一个是天气。</p>
+        </div>
+      </div>
+      <div class="split">
+        <div>
+          <h3 style="font-size:14px">戳一下</h3>
+          <ul class="plain">
+            <li>只有对方<b>在线</b>时爱心才亮，点一下两边各出现一次心跳动画</li>
+            <li>动画 2.5 秒，樱花粉渐变 + 缓慢上升的光斑，不挡输入、不抢焦点</li>
+            <li>有冷却，连续点不会堆成一片</li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="font-size:14px">天气</h3>
+          <ul class="plain">
+            <li>顶栏并排显示两座城市的天气，一眼看到「你那边冷不冷」</li>
+            <li>坐标只从「设置 → 城市」解析，<b>不读取手机定位</b></li>
+            <li>结果缓存 10 分钟，先在本地拿旧值、后台再刷新，不会卡在加载中</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 提醒 -->
+    <div class="feature">
+      <div class="feature-top">
+        <div class="ficon">◔</div>
+        <div class="tt">
+          <h3>三种提醒，都不会啰嗦</h3>
+          <p class="lead">提醒的原则是：只提醒本人，不替对方施压。</p>
+        </div>
+      </div>
+      <table class="tbl">
+        <thead><tr><th>提醒</th><th>什么时候</th><th>发给谁</th></tr></thead>
+        <tbody>
+          <tr><td>今天还没报到</td><td>每天 21:00，当天没设心情</td><td>发给你自己，一天一次</td></tr>
+          <tr><td>好久没来了</td><td>连续 7 天没有打开</td><td>发给你自己</td></tr>
+          <tr><td>提醒 TA 报到</td><td>你在首页手动点</td><td>发给 TA，一天只能点一次</td></tr>
+        </tbody>
+      </table>
+      <p class="muted" style="font-size:12.5px;margin-top:12px">
+        对方没设心情这件事，App 只会安静地展示，绝不会替你发一条「TA 今天还没报到」过去。
+      </p>
+    </div>
+
+    <!-- 话题盲盒 -->
+    <div class="feature">
+      <div class="feature-top">
+        <div class="ficon">◈</div>
+        <div class="tt">
+          <h3>互动空间 · 话题盲盒</h3>
+          <p class="lead">不知道聊什么的时候，两个人同时抽一道题。没有输入框，只有「戳中我了」「笑死」「陷入沉思」。</p>
+        </div>
+      </div>
+
+      <div class="figure" style="margin-bottom:18px">
+        <svg viewBox="0 0 940 250" role="img" aria-label="话题盲盒的状态流转">
+          <defs>
+            <marker id="ar3" markerWidth="9" markerHeight="9" refX="7.6" refY="3.2" orient="auto">
+              <path d="M0 0 L7.6 3.2 L0 6.4 z" fill="#D6BCC3"/>
+            </marker>
+          </defs>
+          <rect x="20" y="70" width="150" height="66" rx="14" fill="#FCFAF9" stroke="#EFE6E1"/>
+          <text x="95" y="98" font-size="12.5" text-anchor="middle" font-family="sans-serif" fill="#4A3C38" font-weight="700">进入大厅</text>
+          <text x="95" y="116" font-size="10.5" text-anchor="middle" font-family="sans-serif" fill="#A2938C">选一个标签胶囊</text>
+
+          <rect x="228" y="70" width="150" height="66" rx="14" fill="#FCFAF9" stroke="#EFE6E1"/>
+          <text x="303" y="98" font-size="12.5" text-anchor="middle" font-family="sans-serif" fill="#4A3C38" font-weight="700">双方就绪</text>
+          <text x="303" y="116" font-size="10.5" text-anchor="middle" font-family="sans-serif" fill="#A2938C">自动摇人、抽题</text>
+
+          <rect x="436" y="70" width="160" height="66" rx="14" fill="#FDF3F6" stroke="#F0DCE2"/>
+          <text x="516" y="98" font-size="12.5" text-anchor="middle" font-family="sans-serif" fill="#8E4459" font-weight="700">聊起来</text>
+          <text x="516" y="116" font-size="10.5" text-anchor="middle" font-family="sans-serif" fill="#A2938C">三个情绪胶囊 · 换一个</text>
+
+          <rect x="654" y="70" width="150" height="66" rx="14" fill="#FBF7F1" stroke="#EFE4D3"/>
+          <text x="729" y="98" font-size="12.5" text-anchor="middle" font-family="sans-serif" fill="#7A6340" font-weight="700">聊完了</text>
+          <text x="729" y="116" font-size="10.5" text-anchor="middle" font-family="sans-serif" fill="#B39A7C">结果落库，可回看</text>
+
+          <path d="M170 103 L226 103" stroke="#D6BCC3" stroke-width="1.6" fill="none" marker-end="url(#ar3)"/>
+          <path d="M378 103 L434 103" stroke="#D6BCC3" stroke-width="1.6" fill="none" marker-end="url(#ar3)"/>
+          <path d="M596 103 L652 103" stroke="#D6BCC3" stroke-width="1.6" fill="none" marker-end="url(#ar3)"/>
+
+          <rect x="436" y="182" width="368" height="44" rx="12" fill="#FFF7F8" stroke="#F6DDE4" stroke-dasharray="4 4"/>
+          <text x="620" y="209" font-size="11" text-anchor="middle" font-family="sans-serif" fill="#B0697F">
+            有人退出 / 切后台 / 断网 → 这一局立刻结束，对方会被告知
+          </text>
+          <path d="M516 136 L516 180" stroke="#E9CBD4" stroke-width="1.4" fill="none" stroke-dasharray="4 4" marker-end="url(#ar3)"/>
+        </svg>
+        <p class="fig-cap">图 2 · 一局话题盲盒的完整流转</p>
+      </div>
+
+      <div class="split">
+        <div>
+          <ul class="plain">
+            <li><b>标签胶囊</b>：除了「不限」，其余标签都来自题库。管理员加一档「电影」，App 里就多一个胶囊</li>
+            <li><b>双人就绪才抽题</b>：两个人同时点准备，题目立刻发下来，不用再多点一次确认</li>
+            <li><b>零输入</b>：房间里没有输入框。三个情绪胶囊各自 2 秒冷却，只发给对方、不存档</li>
+            <li><b>换题要同意</b>：发起方不能自己点头，对方同意后才重抽</li>
+          </ul>
+        </div>
+        <div>
+          <ul class="plain">
+            <li><b>退屏即终结</b>：点返回会先问一次；确认退出、切后台、断网，这一局直接结束</li>
+            <li><b>只存结果</b>：服务器不保存聊天流水，只记这一局用了什么标签、有没有聊完</li>
+            <li><b>推送分两条</b>：对方开着 App 就轻提示；不在线才发微信，并带一个直接进大厅的链接</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= 06 推送 ================= -->
+<section id="push">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">06</span><h2>推送长什么样</h2></div>
+    <p class="sec-sub">
+      每条微信推送都是固定的四段：标题、正文、一句说明、一个按钮。点按钮直接进 App 的对应页面。
+      所有文案都在后台配置里，改完下一次推送就生效，不需要更新 App。
+    </p>
+
+    <div class="split">
+      <div>
+        <div class="push-card">
+          <div class="push-wx"><span class="sq">我</span>「我在」· 刚刚</div>
+          <div class="push-title">【小满】的心情动态</div>
+          <div class="push-body">小满 刚刚在「我在」APP 里把心情改成了「开心」。</div>
+          <div class="push-suffix">「我在」是一个专为异地恋设计的轻量陪伴工具，点击下方链接直接查看。</div>
+          <span class="push-cta">点击直达「我在」</span>
+        </div>
+        <p class="muted" style="font-size:12px;margin-top:12px">这是一个真实样例，用词随具体动作变化。</p>
+      </div>
+
+      <div>
+        <h3 style="font-size:15px;margin-bottom:10px">合并规则</h3>
+        <table class="tbl">
+          <thead><tr><th>场景</th><th>窗口</th><th>合并条件</th></tr></thead>
+          <tbody>
+            <tr><td>日子</td><td>5 分钟</td><td>2 条以上合成一条</td></tr>
+            <tr><td>替我说（同类型）</td><td>1 分钟</td><td>3 条以上合成一条</td></tr>
+            <tr><td>每天一次的提醒</td><td>—</td><td>不合并，也不会重复</td></tr>
+          </tbody>
+        </table>
+        <div class="note" style="margin-top:14px">
+          <b>为什么会合并：</b>连续改三次日子，你希望对方收到三条一样的通知吗？合并是为了让通知保持「值得一看」，而不是变成噪音。
+        </div>
+      </div>
+    </div>
+
+    <div style="height:26px"></div>
+    <div class="cards3">
+      <div class="card"><h3>只走一条通道</h3><p>对方开着 App 时走实时轻提示，就不发微信了。两条都来是最烦的。</p></div>
+      <div class="card"><h3>落点是这件事</h3><p>心情的链接进时间线，日子的链接进日子列表，不用点进去再自己找。</p></div>
+      <div class="card"><h3>发不出去不挡你</h3><p>推送在后台排队发送。外部服务慢或者挂了，你的操作照样立刻完成。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 07 设置 ================= -->
+<section id="settings">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">07</span><h2>设置与个性化</h2></div>
+    <p class="sec-sub">设置页分四组，从上到下依次是：账号、我们、关系、外观。</p>
+
+    <table class="tbl">
+      <thead><tr><th>位置</th><th>能改什么</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>账号 → 昵称</td><td>对方看到的名字</td><td>改完对方下次打开就看到新名字</td></tr>
+        <tr><td>账号 → 邮箱</td><td>登录账号</td><td>改邮箱需要重新验证</td></tr>
+        <tr><td>账号 → 城市</td><td>省 / 市 / 区</td><td>只用于天气，不取手机定位</td></tr>
+        <tr><td>账号 → 推送绑定</td><td>WxPusher UID</td><td>不绑定就收不到微信提醒；可换绑、可解绑</td></tr>
+        <tr><td>我们</td><td>认识那天、相恋的第一天</td><td>两个日期各算一个天数，互不影响</td></tr>
+        <tr><td>关系</td><td>邀请码、绑定状态、解除绑定</td><td>解除后数据冻结，重新绑定同一个人可恢复</td></tr>
+        <tr><td>外观</td><td>跟随系统 / 浅色 / 深色</td><td>只影响本机显示</td></tr>
+      </tbody>
+    </table>
+
+    <div style="height:20px"></div>
+    <div class="note">
+      <b>解除绑定不会删数据。</b>日子、心情、信号都还在，只是两个人暂时看不到。
+      如果之后又和同一个人重新绑定，历史会接上；和另一个人绑定，则是一段新的空白。
+    </div>
+  </div>
+</section>
+
+<!-- ================= 08 边界与隐私 ================= -->
+<section id="privacy">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">08</span><h2>边界与隐私</h2></div>
+    <p class="sec-sub">一个工具的可信度，一半来自它做了什么，一半来自它明确不做什么。</p>
+
+    <div class="two-col">
+      <div class="panel bad">
+        <h3>它不做这些</h3>
+        <ul class="plain">
+          <li>不做聊天、不发消息，也没有输入框</li>
+          <li>不做语音、视频通话</li>
+          <li>不做相册、不发图片</li>
+          <li>不共享位置、不画轨迹、不做地图</li>
+          <li>不做「多久没互动」的倒计时</li>
+          <li>不支持多情侣关系，一个人同一时间只有一段</li>
+          <li>没有已读统计，也没有「对方正在输入」</li>
+        </ul>
+      </div>
+      <div class="panel good">
+        <h3>它只存这些</h3>
+        <ul class="plain">
+          <li><b>账号</b>：邮箱、昵称、城市、密码（加密存储，不存明文）</li>
+          <li><b>关系</b>：和谁绑定的、认识与相恋的日期</li>
+          <li><b>日常</b>：每天的心情、发过的信号、日子的内容</li>
+          <li><b>推送</b>：你填的 WxPusher UID，仅用于发送通知</li>
+          <li>话题盲盒只保存这一局的结果，<b>不保存聊天内容</b></li>
+          <li>「已读」只记在手机上，不上传</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 09 FAQ ================= -->
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">09</span><h2>常见问题</h2></div>
+    <p class="sec-sub">下面这些是实际最容易卡住的地方。</p>
+
+    <details>
+      <summary>收不到微信推送怎么办？</summary>
+      <p>先看「设置 → 账号 → 推送绑定」是不是「已绑定」。没绑定就贴一次 WxPusher UID。
+        已绑定还收不到，检查微信里有没有把该服务号设为免打扰或取关。另外：如果对方当时正开着 App，
+        消息会走 App 内轻提示，本来就不会再发一条微信。</p>
+    </details>
+
+    <details>
+      <summary>我改了心情，为什么对方没有收到通知？</summary>
+      <p>当天第一次设置一定会推。之后再改，只更新、不重复推——不然你一天改五次，对方会收到五条。
+        对方下次打开 App 时看到的就是最新的。</p>
+    </details>
+
+    <details>
+      <summary>为什么首页显示的是「设置相恋日期」而不是天数？</summary>
+      <p>因为还没设置「相恋的第一天」。点那行提示选一个日期，之后就会显示「相恋 X 天 · 连续陪伴 X 天」。
+        没有设置时不会显示 0 天，那看起来像在提醒你们还没开始。</p>
+    </details>
+
+    <details>
+      <summary>连续陪伴天数为什么突然清零了？</summary>
+      <p>它要求昨天两个人都动过：设心情、发信号、加日子，任意一件都算。
+        只要有一个人一整天什么都没做，连续天数就从头算。这个规则没有惩罚提示，是为了让数字有意义。</p>
+    </details>
+
+    <details>
+      <summary>戳爱心点不动 / 没有反应</summary>
+      <p>爱心只在对方在线（App 正开着且连接正常）时才会亮。对方不在线时点不了，这是有意的——
+        不然你戳一下，对方那边什么都没有，反而更失落。</p>
+    </details>
+
+    <details>
+      <summary>解绑之后数据还在吗？</summary>
+      <p>都在，只是两个人暂时看不到。重新和同一个人绑定，历史会接上。需要注意：解绑后对方看不到你的状态，
+        也不会再收到你的推送。</p>
+    </details>
+
+    <details>
+      <summary>换手机 / 重装 App 要重新绑定吗？</summary>
+      <p>账号还是那个账号，用邮箱登录就回来了，关系和日子都在。
+        但「已读」记录存在本机，新设备上时间线的红点可能会重新亮一次。</p>
+    </details>
+
+    <details>
+      <summary>话题盲盒为什么一退出就结束了？</summary>
+      <p>它设计成「两个人都得在场」的东西。你走了却把对方留在房间里等，比直接结束更难受。
+        所以返回、切后台、断网都会立刻结束这一局，并告诉对方。</p>
+    </details>
+
+    <details>
+      <summary>邀请码在哪里、多久有效？</summary>
+      <p>「设置 → 关系」里可以生成和查看。6 位，24 小时有效，只能被一个人使用。
+        过期或想换人，随时重新生成，旧码立即失效。</p>
+    </details>
+  </div>
+</section>
+
+<!-- ================= 附录 ================= -->
+<section id="appendix">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">A</span><h2>附录 · 管理员速查</h2></div>
+    <p class="sec-sub">如果你同时是这套服务的维护者，下面这些是最常动的几项。全部在管理后台改，保存后立即生效。</p>
+
+    <table class="tbl">
+      <thead><tr><th>配置</th><th>管什么</th><th>改了会怎样</th></tr></thead>
+      <tbody>
+        <tr><td>心情选项</td><td>首页那 10 个心情</td><td>App 下次刷新就多/少一个选项，无需发版</td></tr>
+        <tr><td>信号模板</td><td>「替我说」的 12 句话</td><td>同上，文案与推送内容一起变</td></tr>
+        <tr><td>推送规则</td><td>提醒时间、合并窗口、未使用天数</td><td>下一个周期生效</td></tr>
+        <tr><td>推送文案模板</td><td>标题 / 正文 / 后缀 / 按钮四段</td><td>下一次推送就用新文案</td></tr>
+        <tr><td>推送链接基地址</td><td>微信推送里的域名</td><td>必须是对外可访问的地址，否则链接打不开</td></tr>
+        <tr><td>注册开关</td><td>是否允许新用户注册</td><td>关掉后注册页会提示暂停</td></tr>
+        <tr><td>关于页 / 开屏</td><td>「关于我在」的内容、启动动画</td><td>关掉开屏直接进首页</td></tr>
+        <tr><td>题库</td><td>话题盲盒的题目与标签</td><td>加一个标签，App 的准备大厅就多一个胶囊</td></tr>
+      </tbody>
+    </table>
+
+    <div style="height:20px"></div>
+    <div class="note">
+      <b>系统级配置不允许禁用。</b>推送链接、推送文案、注册开关这类一旦关掉会让功能静默失效的配置，
+      后台不显示开关，强行禁用会被服务端拒绝。
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="fbrand">我 在</div>
+    <div>我在，你就知道。不说，也能被感知。</div>
+    <div style="margin-top:10px">产品介绍与使用手册 · v1.0 · 2026 年 11 月</div>
+  </div>
+</footer>
+
+</body>
+</html>
+
+    
